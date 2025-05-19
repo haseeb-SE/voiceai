@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     siteName: "Dynamo Downloader",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/ytlogo.jpg",
         width: 1200,
         height: 630,
         alt: "Dynamo Downloader - YouTube Video Downloader",
