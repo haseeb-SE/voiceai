@@ -1,205 +1,359 @@
 import { YoutubeDownloader } from "@/components/youtube-downloader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Facebook, Twitter, MessageCircle, Share2 } from "lucide-react"
+import { Facebook, Twitter } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
+import { ShareButtons } from "@/components/ShareButtons"
 
 export const metadata: Metadata = {
-  title: "Dynamo Downloader - Best YouTube Video Downloader Online",
+  title: "Convert YouTube to MP4 Instantly | Free YTMP4 Download",
   description:
-    "Download YouTube videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
+    "Convert YouTube to MP4 with the best YouTube video downloader online. Quick, free YTMP4 tool with no signup.",
   keywords:
     "YouTube downloader, video downloader, MP4 downloader, MP3 converter, download YouTube videos, 1080p downloader, 4K video download",
   openGraph: {
-    title: "Dynamo Downloader - Best YouTube Video Downloader Online",
+    title: "Convert YouTube to MP4 Instantly | Free YTMP4 Download",
     description:
-      "Download YouTube videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
+      "Convert YouTube to MP4 with the best YouTube video downloader online. Quick, free YTMP4 tool with no signup.",
     url: "https://youtubetomp4download.com",
-    siteName: "Dynamo Downloader",
+    siteName: "Free YTMP4 Download",
     images: [
       {
-        url: "/ytlogo.jpg",
+        url: "/Fav.svg",
         width: 1200,
         height: 630,
-        alt: "Dynamo Downloader - YouTube Video Downloader",
+        alt: "Free YTMP4 Download- YouTube Video Downloader",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dynamo Downloader - Best YouTube Video Downloader Online",
+    title: "Free YTMP4 Download | Free YTMP4 Download",
     description:
-      "Download YouTube videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
+      "Convert YouTube to MP4 with the best YouTube video downloader online. Quick, free YTMP4 tool with no signup.",
     images: ["/twitter-image.jpg"],
   },
 }
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
-      {/* Hero Section */}
-      <header className="relative overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-20 bg-[url('/hero-bg.jpg')] bg-cover bg-center"></div>
-        <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 text-red-500 drop-shadow-lg">
-              Dynamo Downloader
-            </h1>
-            <p className="text-xl md:text-2xl font-medium text-white mb-8">Best YouTube Video Downloader Online</p>
-            <p className="text-gray-300 text-lg max-w-3xl mx-auto">
-              Looking for the best YouTube videos downloader online? Dynamo Downloader offers a fast, secure, and free
-              solution to save YouTube videos in various formats, including MP4, 1080p HD, 4K, and MP3.
-            </p>
-            {/* Main Downloader Section */}
-            <section className="py-12" id="downloader">
-              <div className="container mx-auto px-4 md:px-8 max-w-6xl">
-                <Card className="border border-gray-700 bg-gray-800/80 text-white shadow-2xl backdrop-blur-sm">
-                  <CardHeader className="border-b border-gray-700">
-                    <CardTitle className="text-red-500 text-2xl md:text-3xl">YouTube Downloader</CardTitle>
-                    <CardDescription className="text-gray-300">
-                      Enter a YouTube URL to download videos in MP3 or MP4 format
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-6">
-                    <YoutubeDownloader />
-                  </CardContent>
-                </Card>
+    <div className="min-h-screen bg-[#121620] text-white">
+      {/* Header Section with more prominent logo */}
+      <header className="sticky top-0 z-50 bg-[#121620]/90 backdrop-blur-sm border-b border-gray-800">
+        <div className="container mx-auto px-4 py-4 relative">
+          <div className="flex items-center justify-between max-w-6xl mx-auto">
+            <div className="flex items-center gap-4">
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-red-400 rounded-full opacity-70 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
+                <div className="relative">
+                  <img
+                    src="/ytlogo.jpg"
+                    alt="Free YTMP4 Download"
+                    className="h-14 w-14 rounded-full border-2 border-red-500 p-0.5 bg-gray-900 transform group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
               </div>
-            </section>
-            <div className="flex flex-wrap justify-center gap-4 mt-8">
-              <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-                <span className="text-red-400 mr-2">✓</span>
-                <span className="text-sm md:text-base">No software needed</span>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold text-white">YouTube Video</span>
+                <span className="text-xl font-bold text-red-500">Downloader</span>
               </div>
-              <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-                <span className="text-red-400 mr-2">✓</span>
-                <span className="text-sm md:text-base">Convert to MP4 or MP3</span>
-              </div>
-              <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-                <span className="text-red-400 mr-2">✓</span>
-                <span className="text-sm md:text-base">Mac & Windows compatible</span>
-              </div>
-              <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-                <span className="text-red-400 mr-2">✓</span>
-                <span className="text-sm md:text-base">High-quality downloads</span>
-              </div>
+            </div>
+
+            <div>
+              <Link href="#downloader">
+                <Button className="bg-red-600 hover:bg-red-700 hover:scale-105 transition-all duration-300 shadow-lg shadow-red-500/20">
+                  Download
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </header>
 
+     
 
+      {/* Hero Section - Reduced padding */}
+      <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
+        <div className="max-w-4xl mx-auto text-center space-y-4">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-2 text-red-500 drop-shadow-lg">
+            YouTube Video Downloader
+          </h1>
+          <p className="text-xl md:text-2xl font-medium text-white mb-4">
+            Download YouTube to MP4 with the Best Video Downloader Online
+          </p>
+          <p className="text-gray-300 text-lg max-w-3xl mx-auto">
+            Use our YouTube video downloader to download and convert YouTube to MP4 or MP3 securely. All you need is a
+            browser; no additional software installation is required. Experience high-resolution ytmp4 downloads.
+          </p>
+        </div>
+      </div>
 
-      {/* Features Section */}
+      <section className="py-8" id="downloader">
+        <div className="container mx-auto px-4 md:px-8 max-w-6xl">
+          <Card className="border border-gray-700 bg-gray-800/80 text-white shadow-2xl backdrop-blur-sm">
+            <CardHeader className="border-b border-gray-700">
+              <CardTitle className="text-red-500 text-2xl md:text-3xl">YouTube Vedio Downloader</CardTitle>
+              <CardDescription className="text-gray-300">
+                Enter a YouTube URL to download videos in MP3 or MP4 format
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <YoutubeDownloader />
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+      <div className="flex flex-wrap justify-center gap-4 mt-8">
+        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+          <span className="text-red-400 mr-2">✓</span>
+          <span className="text-sm md:text-base">No Additional Software Or Plug-ins </span>
+        </div>
+        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+          <span className="text-red-400 mr-2">✓</span>
+          <span className="text-sm md:text-base">Convert YouTube Videos to MP4 or MP3</span>
+        </div>
+        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+          <span className="text-red-400 mr-2">✓</span>
+          <span className="text-sm md:text-base">Compatible with Mac & Windows</span>
+        </div>
+        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+          <span className="text-red-400 mr-2">✓</span>
+          <span className="text-sm md:text-base">Videos in HD or 4K resolution</span>
+        </div>
+      </div>
+
+      {/* Features Section with enhanced hover effects */}
       <section className="py-16 bg-gray-900/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Key Features of Our YouTube Video Downloader
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
+              Key Features of Our YTMP4 Downloader
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
             </h2>
-            <div className="w-24 h-1 bg-red-500 mx-auto"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300">
-              <h3 className="text-xl font-bold text-red-400 mb-3">Effortless YouTube Video Downloads</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-red-500/20">
+              <div className="bg-red-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-500/20 transition-all duration-300">
+                <svg
+                  className="w-6 h-6 text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
+                Convert YouTube to MP4 or MP3 in Seconds
+              </h3>
               <p className="text-gray-300">
-                Download YouTube videos in formats like MP4, WebM, and 1080p HD without restrictions.
+                It converts YTMP4 links instantly. Paste, click, and download. It processes video links as soon as you
+                drop them in the search field, ensuring high-quality output files.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300">
-              <h3 className="text-xl font-bold text-red-400 mb-3">User-Friendly Interface</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-red-500/20">
+              <div className="bg-red-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-500/20 transition-all duration-300">
+                <svg
+                  className="w-6 h-6 text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
+                User-Centric Interface for YouTube Video Downloads
+              </h3>
               <p className="text-gray-300">
-                No technical skills are required; just paste the link and download instantly.
+                The downloader is built to convert YouTube to MP4 efficiently with a simple interface. You just have to
+                paste your video link, select MP4 or MP3, and start the download. No technical background required.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300">
-              <h3 className="text-xl font-bold text-red-400 mb-3">Multi-Format YouTube Video Converter</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-red-500/20">
+              <div className="bg-red-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-500/20 transition-all duration-300">
+                <svg
+                  className="w-6 h-6 text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
+                  ></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
+                Multi-Format YouTube to MP4 Converter
+              </h3>
               <p className="text-gray-300">
-                Dynamo Downloader serves as a YouTube video to MP4 downloader and a video downloader MP3 converter.
+                You can convert YouTube to MP4 for the full video or extract MP3 audio with precision. It supports
+                flexible format selection, ensuring compatibility with your playback devices.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300">
-              <h3 className="text-xl font-bold text-red-400 mb-3">High-Quality 1080p & 4K Downloads</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-red-500/20">
+              <div className="bg-red-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-500/20 transition-all duration-300">
+                <svg
+                  className="w-6 h-6 text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
+                Download YouTube to MP4 in HD and 4K
+              </h3>
               <p className="text-gray-300">
-                Get crisp and clear videos with our YouTube video downloader 1080p/4K feature.
+                Pick from the standard definition options, 1080p HD, or 4K resolution. This YTMP4 download platform
+                guarantees high visual clarity for every file.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300">
-              <h3 className="text-xl font-bold text-red-400 mb-3">Supports Windows & Mac Users</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-red-500/20">
+              <div className="bg-red-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-500/20 transition-all duration-300">
+                <svg
+                  className="w-6 h-6 text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
+                Compatible with Windows and Mac Systems
+              </h3>
               <p className="text-gray-300">
-                Download YouTube videos on Mac and Windows devices without installing any software.
+                The Downloader is compatible with both operating systems: Mac and Windows. The YTMP4 process runs
+                entirely online without the need for any additional software or device-specific versions.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300">
-              <h3 className="text-xl font-bold text-red-400 mb-3">Fast & Secure Downloads</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-red-500/20">
+              <div className="bg-red-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-500/20 transition-all duration-300">
+                <svg
+                  className="w-6 h-6 text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
+                Fast and Secure YouTube to MP4 Download Performance
+              </h3>
               <p className="text-gray-300">
-                Dynamo Downloader provides lightning-fast download speeds while ensuring your privacy is protected.
+                The downloader uses encrypted connections and secure servers. Your video downloads are private, fast,
+                and free from intrusive ads or tracking.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
+      {/* How It Works Section with animated steps */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Download YouTube Videos Online in 3 Simple Steps
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
+              3 Steps to Convert YTMP4 Online
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
             </h2>
-            <div className="w-24 h-1 bg-red-500 mx-auto"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="relative">
-              <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg h-full">
-                <div className="absolute -top-4 -left-4 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-xl font-bold">
+            <div className="relative group">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600 to-red-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
+              <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
+                <div className="absolute -top-4 -left-4 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
                   1
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3 mt-4">Copy the YouTube Video URL</h3>
+                <h3 className="text-xl font-bold text-white mb-3 mt-4">Grab the Link</h3>
                 <p className="text-gray-300">
-                  Find the video you want on YouTube and copy its link from the address bar.
+                  Find the video you want to download or convert from YouTube. Copy its full URL directly from the
+                  browser's address bar.
                 </p>
               </div>
             </div>
 
-            <div className="relative">
-              <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg h-full">
-                <div className="absolute -top-4 -left-4 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-xl font-bold">
+            <div className="relative group">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600 to-red-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
+              <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
+                <div className="absolute -top-4 -left-4 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
                   2
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3 mt-4">Paste the Link in YouTube to MP4</h3>
-                <p className="text-gray-300">Enter the copied URL into the search box above and click "Download."</p>
+                <h3 className="text-xl font-bold text-white mb-3 mt-4">Drop It In & Hit Go</h3>
+                <p className="text-gray-300">
+                  Paste the YouTube link into the ytmp4 tool's search field. Then, click on Download to begin converting
+                  videos to MP3 or MP4.
+                </p>
               </div>
             </div>
 
-            <div className="relative">
-              <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg h-full">
-                <div className="absolute -top-4 -left-4 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-xl font-bold">
+            <div className="relative group">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600 to-red-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
+              <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
+                <div className="absolute -top-4 -left-4 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
                   3
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3 mt-4">Choose Format & Download</h3>
+                <h3 className="text-xl font-bold text-white mb-3 mt-4">Pick Your Format, Get Your File</h3>
                 <p className="text-gray-300">
-                  Select from MP4, 1080p HD, or MP3, then hit "Download" for instant access.
+                  Choose MP4, MP3, 1080p, or even 4K. Hit Download, and your converted YTMP4 file will be ready in
+                  seconds.
                 </p>
               </div>
             </div>
           </div>
 
           <div className="text-center mt-12">
-            <Button className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-red-500/20 transition-all duration-300">
+            <Button className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-red-500/30 transition-all duration-300 transform hover:scale-105 group">
               <a href="#downloader" className="flex items-center">
                 Download Now
                 <svg
-                  className="w-5 h-5 ml-2"
+                  className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -223,102 +377,72 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between max-w-4xl mx-auto">
             <div className="mb-4 md:mb-0">
-              <h3 className="text-xl font-bold text-white">Share Dynamo Downloader:</h3>
+              <h3 className="text-xl font-bold text-white">Share Free YTMP4 Download:</h3>
             </div>
-            <div className="flex space-x-4">
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full border-gray-600 hover:bg-red-500 hover:border-red-500"
-              >
-                <Facebook className="h-5 w-5" />
-                <span className="sr-only">Share on Facebook</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full border-gray-600 hover:bg-red-500 hover:border-red-500"
-              >
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Share on Twitter</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full border-gray-600 hover:bg-red-500 hover:border-red-500"
-              >
-                <MessageCircle className="h-5 w-5" />
-                <span className="sr-only">Share on WhatsApp</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full border-gray-600 hover:bg-red-500 hover:border-red-500"
-              >
-                <Share2 className="h-5 w-5" />
-                <span className="sr-only">Share on Reddit</span>
-              </Button>
-            </div>
+            <ShareButtons />
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
+      {/* FAQ Section with animated accordions */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              FAQ – Dynamo Downloader Your Ultimate YouTube Video Downloader
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
+              Frequently Asked Questions
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
             </h2>
-            <div className="w-24 h-1 bg-red-500 mx-auto"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg">
-              <h3 className="text-lg font-bold text-red-400 mb-2">1. Is it legal to download YouTube videos?</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
+              <h3 className="text-lg font-bold text-red-400 mb-2">
+                1. Is the downloader for YouTube to MP4 free to use?
+              </h3>
               <p className="text-gray-300">
-                Downloading videos for personal use is generally fine, but downloading copyrighted content without
-                permission violates YouTube's policies.
+                Yes. The downloader offers unlimited YouTube to MP4 download access without cost or subscription.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg">
-              <h3 className="text-lg font-bold text-red-400 mb-2">2. Can I download YouTube videos on Mac?</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
+              <h3 className="text-lg font-bold text-red-400 mb-2">2. Which formats are supported by the downloader?</h3>
               <p className="text-gray-300">
-                Yes! Our YouTube video downloader for Mac works directly in your browser—no installation is required.
+                You can convert YouTube to MP4 for video or MP3 for audio. Other supported formats include WebM and
+                high-resolution variants.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg">
-              <h3 className="text-lg font-bold text-red-400 mb-2">3. How can I convert YouTube videos to MP4?</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
+              <h3 className="text-lg font-bold text-red-400 mb-2">3. Does ytmp4 work on all browsers and devices?</h3>
               <p className="text-gray-300">
-                Use Dynamo YouTube video to MP4 downloader to save videos in MP4 format for smooth playback on any
-                device.
+                Yes. This YouTube to MP4 downloader is fully operational on Chrome, Safari, Firefox, and all major
+                browsers on mobile and desktop.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg">
-              <h3 className="text-lg font-bold text-red-400 mb-2">4. Does Dynamo Downloader support Windows users?</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
+              <h3 className="text-lg font-bold text-red-400 mb-2">4. Does ytmp4 support HD and 4K resolutions?</h3>
               <p className="text-gray-300">
-                Dynamo Downloader works as a YouTube video downloader for Windows, supporting all major browsers.
+                Yes. It allows YouTube to make MP4 downloads in both HD and 4K resolutions.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg">
-              <h3 className="text-lg font-bold text-red-400 mb-2">5. Can I download 1080p YouTube videos?</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
+              <h3 className="text-lg font-bold text-red-400 mb-2">5. Do you have any file size or download limits?</h3>
               <p className="text-gray-300">
-                Use our YouTube video downloader 1080p feature to get high-definition videos without quality loss.
+                No. The YouTube to MP4 service is unlimited. You can download as many videos as needed.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg">
-              <h3 className="text-lg font-bold text-red-400 mb-2">6. How do I convert YouTube videos to MP3?</h3>
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
+              <h3 className="text-lg font-bold text-red-400 mb-2">6. Is this YouTube to MP4 converter secure?</h3>
               <p className="text-gray-300">
-                Our video downloader MP3 feature allows you to extract audio from videos easily.
+                Yes. All YouTube to MP4 downloads are processed over encrypted HTTPS connections, ensuring privacy and
+                data protection with the downloader.
               </p>
             </div>
 
-            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg">
+            <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
               <h3 className="text-lg font-bold text-red-400 mb-2">7. Why is my video not downloading?</h3>
               <p className="text-gray-300">
                 If you're experiencing issues, check if the video is public and not restricted. Try refreshing the page
@@ -329,25 +453,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer with Links */}
-      <footer className="bg-gray-900 py-12">
+      {/* Updated Footer with animated hover effects */}
+      <footer className="bg-[#121620] py-12 border-t border-gray-800">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <div>
-              <h3 className="text-xl font-bold text-white mb-4">Dynamo Downloader</h3>
-              <p className="text-gray-400 mb-4">Download your favorite YouTube videos now – fast, free, & secure!</p>
+              <div className="flex items-center gap-3 mb-4">
+                <img
+                  src="/ytlogo.jpg"
+                  alt="Free YTMP4 Download"
+                  className="h-10 w-10 rounded-full border border-red-500"
+                />
+                <h3 className="text-xl font-bold text-white">
+                  Free YTMP4 <span className="text-red-500">Download</span>
+                </h3>
+              </div>
+              <p className="text-gray-400 mb-4">Convert YouTube to MP4 instantly – fast, free, & secure!</p>
               <div className="flex space-x-4">
                 <Button
                   variant="outline"
                   size="icon"
-                  className="rounded-full border-gray-600 hover:bg-red-500 hover:border-red-500"
+                  className="rounded-full border-gray-600 hover:bg-red-500 hover:border-red-500 transition-colors duration-300"
                 >
                   <Facebook className="h-5 w-5" />
                 </Button>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="rounded-full border-gray-600 hover:bg-red-500 hover:border-red-500"
+                  className="rounded-full border-gray-600 hover:bg-red-500 hover:border-red-500 transition-colors duration-300"
                 >
                   <Twitter className="h-5 w-5" />
                 </Button>
@@ -358,22 +491,38 @@ export default function Home() {
               <h3 className="text-xl font-bold text-white mb-4">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/" className="text-gray-400 hover:text-red-400 transition-colors">
+                  <Link
+                    href="/"
+                    className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
+                  >
+                    <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                     Home
                   </Link>
                 </li>
                 <li>
-                  <Link href="/privacy-policy" className="text-gray-400 hover:text-red-400 transition-colors">
+                  <Link
+                    href="/privacy-policy"
+                    className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
+                  >
+                    <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link href="/terms" className="text-gray-400 hover:text-red-400 transition-colors">
+                  <Link
+                    href="/terms"
+                    className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
+                  >
+                    <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                     Terms & Conditions
                   </Link>
                 </li>
                 <li>
-                  <Link href="/disclaimer" className="text-gray-400 hover:text-red-400 transition-colors">
+                  <Link
+                    href="/disclaimer"
+                    className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
+                  >
+                    <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                     Disclaimer
                   </Link>
                 </li>
@@ -382,15 +531,21 @@ export default function Home() {
 
             <div>
               <h3 className="text-xl font-bold text-white mb-4">Contact Us</h3>
-              <p className="text-gray-400">Have questions or feedback? We'd love to hear from you!</p>
-              <Link href="/contact" className="inline-block mt-4 text-red-400 hover:text-red-300 transition-colors">
-                Get in touch →
+              <p className="text-gray-400">
+                Have questions about our YouTube to MP4 converter? We'd love to hear from you!
+              </p>
+              <Link
+                href="/contact"
+                className="inline-flex items-center mt-4 text-red-400 hover:text-red-300 transition-colors duration-300 group"
+              >
+                Get in touch
+                <span className="ml-1 group-hover:ml-2 transition-all duration-300">→</span>
               </Link>
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center">
-            <p className="text-gray-500">© {new Date().getFullYear()} Dynamo Downloader. All rights reserved.</p>
+          <div className="border-t border-gray-800 mt-8 pt-6 text-center">
+            <p className="text-gray-500">© {new Date().getFullYear()} Free YTMP4 Download. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -402,8 +557,8 @@ export default function Home() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            name: "Dynamo Downloader",
-            url: "https://dynamodownloader.com",
+            name: "Free YTMP4 Download",
+            url: "https://youtubetomp4download.com",
             description:
               "Download YouTube videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
             applicationCategory: "MultimediaApplication",
