@@ -254,3 +254,17 @@ export async function getCompletedDownloadsCount() {
     return 0
   }
 }
+
+export async function updateJobFile(job_id: string, path: string, size: number) {
+  try {
+    await sql_client`
+      UPDATE jobs
+      SET download_path = ${path}, file_size = ${size}, updated_at = CURRENT_TIMESTAMP
+      WHERE job_id = ${job_id}
+    `
+    return true
+  } catch (error) {
+    console.error("Error updating job file info:", error)
+    return false
+  }
+}

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: "Dynamo Downloader - Best YouTube Video Downloader Online",
     description:
       "Download YouTube videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
-    url: "https://dynamodownloader.com",
+    url: "https://youtubetomp4download.com",
     siteName: "Dynamo Downloader",
     images: [
       {
