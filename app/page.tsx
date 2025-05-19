@@ -52,7 +52,22 @@ export default function Home() {
               Looking for the best YouTube videos downloader online? Dynamo Downloader offers a fast, secure, and free
               solution to save YouTube videos in various formats, including MP4, 1080p HD, 4K, and MP3.
             </p>
-
+            {/* Main Downloader Section */}
+            <section className="py-12" id="downloader">
+              <div className="container mx-auto px-4 md:px-8 max-w-6xl">
+                <Card className="border border-gray-700 bg-gray-800/80 text-white shadow-2xl backdrop-blur-sm">
+                  <CardHeader className="border-b border-gray-700">
+                    <CardTitle className="text-red-500 text-2xl md:text-3xl">YouTube Downloader</CardTitle>
+                    <CardDescription className="text-gray-300">
+                      Enter a YouTube URL to download videos in MP3 or MP4 format
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    <YoutubeDownloader />
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
             <div className="flex flex-wrap justify-center gap-4 mt-8">
               <div className="flex items-center p-3 bg-gray-800 rounded-lg">
                 <span className="text-red-400 mr-2">✓</span>
@@ -75,22 +90,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Downloader Section */}
-      <section className="py-12" id="downloader">
-        <div className="container mx-auto px-4 md:px-8 max-w-6xl">
-          <Card className="border border-gray-700 bg-gray-800/80 text-white shadow-2xl backdrop-blur-sm">
-            <CardHeader className="border-b border-gray-700">
-              <CardTitle className="text-red-500 text-2xl md:text-3xl">YouTube Downloader</CardTitle>
-              <CardDescription className="text-gray-300">
-                Enter a YouTube URL to download videos in MP3 or MP4 format
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <YoutubeDownloader />
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+
 
       {/* Features Section */}
       <section className="py-16 bg-gray-900/50">
