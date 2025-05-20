@@ -1,34 +1,64 @@
-// Configuration for the application
-import os from "os"
-import path from "path"
+import * as os from "os"
+import * as path from "path"
+import * as fs from "fs"
+
+const isWin = process.platform === "win32"
+const isProd = process.env.NODE_ENV === "production"
+const BIN_DIR = path.join(process.cwd(), "bin")
+
+// Update the resolveBinary function to handle both development and production environments better
+function resolveBinary(name: string): string {
+  const bin = isWin ? `${name}.exe` : name
+  const localPath = path.join(BIN_DIR, bin)
+
+  // Check if the binary exists at the specified path
+  if (fs.existsSync(localPath)) {
+    console.log(`Found binary at: ${localPath}`)
+    return localPath
+  }
+
+  // In production, also check in PATH
+  if (isProd) {
+    // Try to find in standard locations
+    const standardPaths = [`/usr/bin/${bin}`, `/usr/local/bin/${bin}`, `/app/bin/${bin}`, `/bin/${bin}`]
+
+    for (const stdPath of standardPaths) {
+      if (fs.existsSync(stdPath)) {
+        console.log(`Found binary at standard path: ${stdPath}`)
+        return stdPath
+      }
+    }
+  }
+
+  // Log that we're falling back to just the binary name
+  console.log(`Binary not found at expected paths, falling back to: ${bin}`)
+  return bin
+}
+
+// Add a function to ensure temp directory exists
+function ensureTempDirExists() {
+  const tempDir = path.join(os.tmpdir(), "youtube-downloader", "temp")
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true })
+    console.log(`Created temp directory: ${tempDir}`)
+  }
+  return tempDir
+}
 
 export const config = {
-  // YouTube downloader configuration
   ytdl: {
-    // Path to yt-dlp executable
-    ytDlpPath: process.env.YT_DLP_PATH || "yt-dlp",
-    // Path to ffmpeg executable
-    ffmpegPath: process.env.FFMPEG_PATH,
-    // Path to ffprobe executable
-    ffprobePath: process.env.FFPROBE_PATH,
-    // Maximum concurrent downloads
+    ytDlpPath: resolveBinary("yt-dlp"),
+    ffmpegPath: resolveBinary("ffmpeg"),
+    ffprobePath: resolveBinary("ffprobe"),
     maxConcurrentDownloads: 5,
-    // Use system temp directory for temporary files
-    tempDir: path.join(os.tmpdir(), "youtube-downloader", "temp"),
-    // Cleanup interval in milliseconds (5 minutes)
+    tempDir: ensureTempDirExists(),
     cleanupInterval: 300000,
-    // Maximum file age in milliseconds (10 minutes)
     maxFileAge: 600000,
   },
-  // Redis configuration
   redis: {
-    // Check if we're in production (Vercel)
-    enabled: process.env.NODE_ENV === "development" || !!process.env.REDIS_URL,
-    // Redis URL (for Upstash)
+    enabled: !!process.env.REDIS_URL,
     url: process.env.REDIS_URL,
-    // Redis host
     host: process.env.REDIS_HOST || "localhost",
-    // Redis port
     port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
   },
 }

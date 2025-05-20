@@ -1,20 +1,24 @@
+version: '3.8'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DATABASE_URL=${DATABASE_URL}
+      - ENABLE_WORKER=true
+      - USE_QUEUE=true
+    restart: always
+
   redis:
     image: redis:alpine
-    container_name: youtube-downloader-redis
     ports:
-      - "6380:6379"
-    volumes:
-      - redis-data:/data
-    command: redis-server --appendonly yes
-    restart: unless-stopped
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
-
-volumes:
-  redis-data:
+      - "6379:6379"
+    restart: always
