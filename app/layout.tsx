@@ -39,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-         <link rel="icon" href="/ytlogo.jpg" sizes="any" />
+         <link  rel="icon" href="/ytlogo.jpg" sizes="any" />
         <link rel="apple-touch-icon" href="/ytlogo.jpg" />
       </head>
       <body className={inter.className} suppressHydrationWarning>

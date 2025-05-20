@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -12,17 +12,28 @@ import { useToast } from "@/components/ui/use-toast"
 import { Search, Loader2, AlertCircle } from "lucide-react"
 import { useVideoInfo } from "@/hooks/use-video-info"
 import { useDownloadManager } from "@/hooks/use-download-manager"
-import { getYoutubeVideoId } from "@/lib/utils"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { detectPlatform, getPlatformBorderColor, getPlatformButtonColor } from "@/lib/platform-detector"
 
 export function YoutubeDownloader() {
   const [url, setUrl] = useState("")
   const [isValidUrl, setIsValidUrl] = useState(false)
   const [showError, setShowError] = useState(false)
   const [retryCount, setRetryCount] = useState(0)
+  const [platform, setPlatform] = useState<string | null>(null)
   const { toast } = useToast()
+  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const autoRefreshTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const { videoInfo, isLoading: isLoadingInfo, error: videoInfoError, fetchVideoInfo } = useVideoInfo()
+  const {
+    videoInfo,
+    isLoading: isLoadingInfo,
+    isRefreshing,
+    error: videoInfoError,
+    fetchVideoInfo,
+    refreshVideoInfo,
+  } = useVideoInfo()
+
   const {
     activeDownload,
     startDownload,
@@ -42,14 +53,59 @@ export function YoutubeDownloader() {
 
   // Validate URL as user types
   useEffect(() => {
-    setIsValidUrl(!!getYoutubeVideoId(url))
-  }, [url])
+    const detectedPlatform = detectPlatform(url)
+    setPlatform(detectedPlatform)
+    setIsValidUrl(!!detectedPlatform)
+
+    // Reset error state when URL changes
+    if (showError) {
+      setShowError(false)
+    }
+  }, [url, showError])
+
+  // Clean up timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current)
+      }
+      if (autoRefreshTimeoutRef.current) {
+        clearTimeout(autoRefreshTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  // Auto-refresh incomplete video info after a delay
+  useEffect(() => {
+    if (videoInfo && (!videoInfo.thumbnail || !videoInfo.duration || !videoInfo.view_count)) {
+      if (autoRefreshTimeoutRef.current) {
+        clearTimeout(autoRefreshTimeoutRef.current)
+      }
+
+      // Set a timeout to auto-refresh after 3 seconds
+      autoRefreshTimeoutRef.current = setTimeout(() => {
+        refreshVideoInfo()
+          .then(() => {
+            console.log("Auto-refreshed video info")
+          })
+          .catch((err) => {
+            console.error("Error auto-refreshing video info:", err)
+          })
+      }, 3000)
+    }
+
+    return () => {
+      if (autoRefreshTimeoutRef.current) {
+        clearTimeout(autoRefreshTimeoutRef.current)
+      }
+    }
+  }, [videoInfo, refreshVideoInfo])
 
   const handleFetchInfo = async () => {
     if (!isValidUrl) {
       toast({
         title: "Invalid URL",
-        description: "Please enter a valid YouTube URL",
+        description: `Please enter a valid ${platform || "video"} URL`,
         variant: "destructive",
       })
       return
@@ -59,10 +115,34 @@ export function YoutubeDownloader() {
     setRetryCount(0)
 
     try {
+      // Set a timeout to show a loading toast if it takes too long
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current)
+      }
+
+      fetchTimeoutRef.current = setTimeout(() => {
+        toast({
+          title: "Still working...",
+          description: "This might take a moment. We're fetching your video information.",
+          duration: 5000,
+        })
+      }, 3000)
+
       await fetchVideoInfo(url)
+
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current)
+        fetchTimeoutRef.current = null
+      }
     } catch (error) {
       console.error("Error fetching video info:", error)
       setShowError(true)
+
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current)
+        fetchTimeoutRef.current = null
+      }
+
       toast({
         title: "Error",
         description: "Failed to fetch video information. Please try again.",
@@ -83,7 +163,7 @@ export function YoutubeDownloader() {
         description: "Attempting to fetch video information again...",
       })
 
-      await fetchVideoInfo(url)
+      await fetchVideoInfo(url, true)
     } catch (error) {
       console.error("Error retrying fetch:", error)
       setShowError(true)
@@ -124,19 +204,35 @@ export function YoutubeDownloader() {
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
           <Input
-            placeholder="Enter a YouTube URL to download videos in MP3 or MP4 format"
+            placeholder="Enter a URL from YouTube, Facebook, Instagram, TikTok, or Snapchat"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            className={`pr-10 bg-gray-900 border-gray-700 text-white ${isValidUrl ? "border-green-500" : ""}`}
+            className={`pr-10 bg-gray-900 border-gray-700 text-white ${isValidUrl ? getPlatformBorderColor(platform) : ""}`}
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            {isValidUrl && <div className="h-2 w-2 rounded-full bg-green-500" />}
+            {isValidUrl && (
+              <div
+                className={`h-2 w-2 rounded-full ${
+                  platform === "youtube"
+                    ? "bg-red-500"
+                    : platform === "facebook"
+                      ? "bg-blue-500"
+                      : platform === "instagram"
+                        ? "bg-pink-500"
+                        : platform === "tiktok"
+                          ? "bg-teal-500"
+                          : platform === "snapchat"
+                            ? "bg-yellow-500"
+                            : "bg-green-500"
+                }`}
+              />
+            )}
           </div>
         </div>
         <Button
           onClick={handleFetchInfo}
           disabled={isLoadingInfo || !isValidUrl}
-          className="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white"
+          className={`w-full md:w-auto ${getPlatformButtonColor(platform)} text-white`}
         >
           {isLoadingInfo ? (
             <>
@@ -152,12 +248,18 @@ export function YoutubeDownloader() {
         </Button>
       </div>
 
+      {platform && (
+        <div className="text-sm text-gray-400">
+          Detected platform: <span className="font-medium capitalize">{platform}</span>
+        </div>
+      )}
+
       {showError && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>YouTube Bot Detection</AlertTitle>
+          <AlertTitle>Detection Error</AlertTitle>
           <AlertDescription>
-            YouTube is detecting our request as automated. We're showing limited information.
+            We're having trouble accessing this video. It may be private or restricted.
             <div className="mt-2 flex justify-between items-center">
               <span className="text-xs">Some videos may be restricted or require authentication.</span>
               <Button
@@ -176,7 +278,7 @@ export function YoutubeDownloader() {
 
       {videoInfo && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <VideoInfo videoInfo={videoInfo} />
+          <VideoInfo videoInfo={videoInfo} onRefresh={refreshVideoInfo} isRefreshing={isRefreshing} />
 
           <div className="md:col-span-2">
             <Card className="border border-gray-700 bg-gray-800 text-white shadow-lg">
@@ -185,22 +287,22 @@ export function YoutubeDownloader() {
                   <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-700">
                     <TabsTrigger
                       value="audio"
-                      className="data-[state=active]:bg-red-600 data-[state=active]:text-white"
+                      className={`data-[state=active]:${getPlatformButtonColor(platform)} data-[state=active]:text-white`}
                     >
                       Audio (MP3)
                     </TabsTrigger>
                     <TabsTrigger
                       value="video"
-                      className="data-[state=active]:bg-red-600 data-[state=active]:text-white"
+                      className={`data-[state=active]:${getPlatformButtonColor(platform)} data-[state=active]:text-white`}
                     >
                       Video (MP4)
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent value="audio" className="mt-4">
-                    <DownloadOptions type="audio" onDownload={handleDownload} />
+                    <DownloadOptions type="audio" onDownload={handleDownload} platform={platform} />
                   </TabsContent>
                   <TabsContent value="video" className="mt-4">
-                    <DownloadOptions type="video" onDownload={handleDownload} />
+                    <DownloadOptions type="video" onDownload={handleDownload} platform={platform} />
                   </TabsContent>
                 </Tabs>
               </CardContent>
@@ -222,6 +324,7 @@ export function YoutubeDownloader() {
         onDownload={handleDownloadNow}
         status={downloadStatus}
         isAudioOnly={isAudioOnly}
+        platform={platform}
       />
     </div>
   )

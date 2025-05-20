@@ -1,4 +1,4 @@
-# robots.txt for Dynamo Downloader
+# robots.txt for Free YTMP4 Download
 
 User-agent: *
 Allow: /

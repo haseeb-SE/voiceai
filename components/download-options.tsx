@@ -3,13 +3,15 @@
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Download, Music, Video } from "lucide-react"
+import { getPlatformButtonColor } from "@/lib/platform-detector"
 
 interface DownloadOptionsProps {
   type: "audio" | "video"
   onDownload: (format: string) => void
+  platform: string | null
 }
 
-export function DownloadOptions({ type, onDownload }: DownloadOptionsProps) {
+export function DownloadOptions({ type, onDownload, platform }: DownloadOptionsProps) {
   const audioFormats = [
     { id: "mp3_320", name: "MP3 320kbps", quality: "High Quality", icon: Music, description: "Best audio quality" },
     {
@@ -35,6 +37,7 @@ export function DownloadOptions({ type, onDownload }: DownloadOptionsProps) {
   ]
 
   const formats = type === "audio" ? audioFormats : videoFormats
+  const buttonColorClass = getPlatformButtonColor(platform) || "bg-red-600 hover:bg-red-700"
 
   return (
     <Table className="border-gray-700">
@@ -58,11 +61,7 @@ export function DownloadOptions({ type, onDownload }: DownloadOptionsProps) {
             <TableCell className="text-white">{format.quality}</TableCell>
             <TableCell className="hidden md:table-cell text-gray-400">{format.description}</TableCell>
             <TableCell className="text-right">
-              <Button
-                size="sm"
-                onClick={() => onDownload(format.id)}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
+              <Button size="sm" onClick={() => onDownload(format.id)} className={`${buttonColorClass} text-white`}>
                 <Download className="h-4 w-4 mr-1" />
                 Download
               </Button>
