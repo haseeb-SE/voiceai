@@ -191,9 +191,27 @@ export function YoutubeDownloader() {
       await startDownload(url, format, videoInfo.title || "")
     } catch (error) {
       console.error("Error starting download:", error)
+
+      // If the first attempt fails, try with a more generic format
+      if (error instanceof Error && error.message.includes("format not available")) {
+        toast({
+          title: "Retrying Download",
+          description: "The selected format is not available. Trying with a different format...",
+        })
+
+        try {
+          // Try with a more generic format
+          const genericFormat = format.includes("mp3") ? "mp3_128" : "mp4_best"
+          await startDownload(url, genericFormat, videoInfo.title || "")
+          return
+        } catch (retryError) {
+          console.error("Error on retry download:", retryError)
+        }
+      }
+
       toast({
         title: "Error",
-        description: "Failed to start download. Please try again.",
+        description: "Failed to start download. Please try again with a different format or video.",
         variant: "destructive",
       })
     }

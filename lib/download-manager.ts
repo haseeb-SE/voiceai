@@ -8,6 +8,7 @@ import { EventEmitter } from "events"
 import { updateProgress } from "@/lib/global-store"
 import { config } from "@/lib/config"
 import { convertJsonCookiesToNetscape } from "@/lib/cookie-converter"
+import { ensureValidBinaryPath } from "./path-helper"
 
 // In-memory store for active downloads
 interface DownloadRecord {

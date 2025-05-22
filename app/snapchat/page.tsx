@@ -78,24 +78,28 @@ export default function SnapchatPage() {
                     </Card>
                 </div>
             </section>
-            <div className="flex flex-wrap justify-center gap-4 mt-8">
-                <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-                    <span className="text-yellow-400 mr-2">✓</span>
-                    <span className="text-sm md:text-base">No Additional Software Or Plug-ins </span>
-                </div>
-                <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-                    <span className="text-yellow-400 mr-2">✓</span>
-                    <span className="text-sm md:text-base">Convert Snapchat Videos to MP4 or MP3</span>
-                </div>
-                <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-                    <span className="text-yellow-400 mr-2">✓</span>
-                    <span className="text-sm md:text-base">Compatible with Mac & Windows</span>
-                </div>
-                <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-                    <span className="text-yellow-400 mr-2">✓</span>
-                    <span className="text-sm md:text-base">Videos in HD or 4K resolution</span>
-                </div>
-            </div>
+            
+      <div className="flex flex-wrap justify-center gap-4 mt-8">
+         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+          <span className="text-red-400 mr-2">✓</span>
+          <span className="text-sm md:text-base">Videos in HD or 4K resolution</span>
+        </div>
+          <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+          <span className="text-red-400 mr-2">✓</span>
+          <span className="text-sm md:text-base">Compatible with Mac & Windows</span>
+        </div>
+        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+          <span className="text-red-400 mr-2">✓</span>
+          <span className="text-sm md:text-base">No Additional Software Or Plug-ins </span>
+        </div>
+        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+          <span className="text-red-400 mr-2">✓</span>
+          <span className="text-sm md:text-base">Convert Videos to MP4 or MP3</span>
+        </div>
+      
+       
+      </div>
+
 
             {/* Features Section with enhanced hover effects */}
             <section className="py-16 bg-gray-900/50">

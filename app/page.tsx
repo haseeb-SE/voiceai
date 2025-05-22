@@ -1,18 +1,17 @@
 import { YoutubeDownloader } from "@/components/youtube-downloader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Facebook, Twitter } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { ShareButtons } from "@/components/ShareButtons"
 import { PlatformSelector } from "@/components/platform-selector"
 
 export const metadata: Metadata = {
-  title: "Convert YouTube to MP4 Instantly | Free YTMP4 Download",
+  title: "Free YouTube To MP4 Download",
   description:
-    "Convert YouTube to MP4 with the best YouTube video downloader online. Quick, free YTMP4 tool with no signup.",
+    "Convert YouTube to MP4 with the best YouTube video downloader online. Quick, free YouTube video converter to MP4.",
   keywords:
-    "YouTube downloader, video downloader, MP4 downloader, MP3 converter, download YouTube videos, 1080p downloader, 4K video download",
+    "YouTube to MP4 download, youtube to mp4 converter, YouTube video to MP4, YouTube shorts to MP4, YouTube video converter to MP4, convert YouTube to MP4, download youtube to mp4",
   openGraph: {
     title: "Convert YouTube to MP4 Instantly | Free YTMP4 Download",
     description:
@@ -38,7 +37,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Home() {
+export default function YouTubePage() {
   return (
     <div className="min-h-screen bg-[#121620] text-white">
       {/* Header Section with more prominent logo */}
@@ -51,21 +50,21 @@ export default function Home() {
                 <div className="relative">
                   <img
                     src="/ytlogo.jpg"
-                    alt="Free YTMP4 Download"
+                    alt="YouTube Downloader"
                     className="h-14 w-14 rounded-full border-2 border-red-500 p-0.5 bg-gray-900 transform group-hover:scale-110 transition-transform duration-300"
                   />
                 </div>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-bold text-white">Video</span>
+                <span className="text-xl font-bold text-white">YouTube</span>
                 <span className="text-xl font-bold text-red-500">Downloader</span>
               </div>
             </div>
 
             <div>
-              <Link href="#downloader">
-                <Button className="bg-red-600 hover:bg-red-700 hover:scale-105 transition-all duration-300 shadow-lg shadow-red-500/20">
-                  Download
+              <Link href="/">
+                <Button className="bg-gray-700 hover:bg-gray-600 hover:scale-105 transition-all duration-300 shadow-lg">
+                  All Platforms
                 </Button>
               </Link>
             </div>
@@ -77,33 +76,20 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-2 text-red-500 drop-shadow-lg">
-            Multi-Platform Video Downloader
+            Fast & Free YouTube To MP4 Download
           </h1>
-          <p className="text-l md:text-1xl font-medium text-white mb-4">
-            Download Videos from YouTube, Facebook, Instagram, TikTok & More
-          </p>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Use our video downloader to download and convert videos to MP4 or MP3 securely. All you need is a browser;
-            no additional software installation is required. Experience high-resolution downloads.
-          </p>
+          <p className="text-l md:text-1xl font-medium text-white mb-4">The Best YouTube to MP4 Converter</p>
+         
         </div>
       </div>
-
-      {/* Platform Selector */}
-      <section className="py-4">
-        <div className="container mx-auto px-4">
-          <PlatformSelector />
-        </div>
-      </section>
 
       <section className="py-8" id="downloader">
         <div className="container mx-auto px-4 md:px-8 max-w-6xl">
           <Card className="border border-gray-700 bg-gray-800/80 text-white shadow-2xl backdrop-blur-sm">
             <CardHeader className="border-b border-gray-700">
-              <CardTitle className="text-red-500 text-2xl md:text-3xl">Video Downloader</CardTitle>
+              <CardTitle className="text-red-500 text-2xl md:text-3xl">YouTube Video Downloader</CardTitle>
               <CardDescription className="text-gray-300">
-                Enter a URL from YouTube, Facebook, Instagram, TikTok, or Snapchat to download videos in MP3 or MP4
-                format
+                Enter a YouTube URL to download videos in MP3 or MP4 format
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
@@ -112,8 +98,26 @@ export default function Home() {
           </Card>
         </div>
       </section>
-
+      {/* Platform Selector */}
+      <section className="py-2">
+        <div className="container mx-auto px-2">
+          <PlatformSelector />
+        </div>
+      </section>
+      <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+        Enjoy a fast and free YouTube to MP4 download with our online tool. No software is needed; just paste your
+        link into the browser and start converting. Experience seamless YouTube to MP4 converter performance with
+        high-resolution output every time.
+      </p>
       <div className="flex flex-wrap justify-center gap-4 mt-8">
+        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+          <span className="text-red-400 mr-2">✓</span>
+          <span className="text-sm md:text-base">Videos in HD or 4K resolution</span>
+        </div>
+        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+          <span className="text-red-400 mr-2">✓</span>
+          <span className="text-sm md:text-base">Compatible with Mac & Windows</span>
+        </div>
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
           <span className="text-sm md:text-base">No Additional Software Or Plug-ins </span>
@@ -122,14 +126,6 @@ export default function Home() {
           <span className="text-red-400 mr-2">✓</span>
           <span className="text-sm md:text-base">Convert Videos to MP4 or MP3</span>
         </div>
-        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-          <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Compatible with Mac & Windows</span>
-        </div>
-        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-          <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Videos in HD or 4K resolution</span>
-        </div>
       </div>
 
       {/* Features Section with enhanced hover effects */}
@@ -137,7 +133,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
-              Key Features of Our Video Downloader
+              Key Features of Our YouTube To MP4 Converter
               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
             </h2>
           </div>
@@ -161,11 +157,11 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
-                Multi-Platform Support
+                Fast & Free YouTube to MP4 Download
               </h3>
               <p className="text-gray-300">
-                Download videos from YouTube, Facebook, Instagram, TikTok, and Snapchat. Our tool works with all major
-                social media platforms.
+                Get a fast, free YouTube to MP4 download with our online tool. No software is needed; just paste the
+                video link and start converting. Reliable, high-quality output is guaranteed every time.
               </p>
             </div>
 
@@ -187,11 +183,11 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
-                User-Centric Interface
+                The Best YouTube to MP4 Converter
               </h3>
               <p className="text-gray-300">
-                The downloader is built with a simple interface. You just have to paste your video link, select MP4 or
-                MP3, and start the download. No technical background required.
+                Use the best converter to convert a YouTube video to MP4 or YouTube Shorts to MP4. This tool delivers
+                fast, high-quality downloads with no extra steps.
               </p>
             </div>
 
@@ -213,11 +209,11 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
-                Multi-Format Converter
+                Convert YouTube to MP4
               </h3>
               <p className="text-gray-300">
-                You can convert videos to MP4 or extract MP3 audio with precision. It supports flexible format
-                selection, ensuring compatibility with your playback devices.
+                Convert YouTube to MP4 online hassle-free. Just use your regular browser; no software installation is
+                needed. Get high-resolution, fast, and easy YouTube to MP4 downloads every time.
               </p>
             </div>
 
@@ -239,11 +235,11 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
-                Download Videos in HD and 4K
+                Convert YouTube Video to MP4
               </h3>
               <p className="text-gray-300">
-                Pick from the standard definition options, 1080p HD, or 4K resolution. Our download platform guarantees
-                high visual clarity for every file.
+                Paste any YouTube video URL to instantly convert YouTube video to MP4. Choose your format, then download
+                your file in seconds with no delays.
               </p>
             </div>
 
@@ -265,11 +261,11 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
-                Compatible with All Systems
+                Convert YouTube Shorts to MP4
               </h3>
               <p className="text-gray-300">
-                The Downloader is compatible with all operating systems: Mac, Windows, Android, and iOS. The process
-                runs entirely online without the need for any additional software.
+                Convert YouTube Shorts to MP4 quickly and easily. The process is simple: paste the Short URL, select
+                MP4, and get your video fast and reliably.
               </p>
             </div>
 
@@ -291,11 +287,11 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-red-400 mb-3 group-hover:text-red-300 transition-colors">
-                Fast and Secure Download Performance
+                Compatible with Mac & Windows
               </h3>
               <p className="text-gray-300">
-                The downloader uses encrypted connections and secure servers. Your video downloads are private, fast,
-                and free from intrusive ads or tracking.
+                Our YouTube to MP4 converter works smoothly on both Mac and Windows. No downloads or plugins are
+                required; just paste your link and convert it online in seconds.
               </p>
             </div>
           </div>
@@ -307,7 +303,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
-              3 Steps to Download Any Video
+              3 Simple Steps to Convert YouTube Videos
               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
             </h2>
           </div>
@@ -321,8 +317,8 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3 mt-4">Grab the Link</h3>
                 <p className="text-gray-300">
-                  Find the video you want to download from YouTube, Facebook, Instagram, TikTok, or Snapchat. Copy its
-                  URL directly.
+                  Find the video you want to download or convert from YouTube. Copy its full URL directly from the
+                  browser's address bar.
                 </p>
               </div>
             </div>
@@ -335,8 +331,8 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3 mt-4">Drop It In & Hit Go</h3>
                 <p className="text-gray-300">
-                  Paste the link into our tool's search field. Then, click on "Get Video Info" to begin analyzing the
-                  video.
+                  Paste the YouTube link into the ytmp4 tool's search field. Then, click on Download to begin converting
+                  videos to MP3 or MP4.
                 </p>
               </div>
             </div>
@@ -384,7 +380,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between max-w-4xl mx-auto">
             <div className="mb-4 md:mb-0">
-              <h3 className="text-xl font-bold text-white">Share Our Video Downloader:</h3>
+              <h3 className="text-xl font-bold text-white">Share Free YTMP4 Download:</h3>
             </div>
             <ShareButtons />
           </div>
@@ -403,48 +399,51 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
-              <h3 className="text-lg font-bold text-red-400 mb-2">1. Which platforms does this downloader support?</h3>
+              <h3 className="text-lg font-bold text-red-400 mb-2">
+                1. Is the downloader for YouTube to MP4 free to use?
+              </h3>
               <p className="text-gray-300">
-                Our downloader supports YouTube, YouTube Shorts, Facebook, Instagram, TikTok, and Snapchat. We're
-                constantly adding support for more platforms.
+                Yes. The downloader offers unlimited YouTube to MP4 download access without cost or subscription.
               </p>
             </div>
 
             <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
               <h3 className="text-lg font-bold text-red-400 mb-2">2. Which formats are supported by the downloader?</h3>
               <p className="text-gray-300">
-                You can convert videos to MP4 for video or MP3 for audio. Other supported formats include WebM and
+                You can convert YouTube to MP4 for video or MP3 for audio. Other supported formats include WebM and
                 high-resolution variants.
               </p>
             </div>
 
             <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
               <h3 className="text-lg font-bold text-red-400 mb-2">
-                3. Does the downloader work on all browsers and devices?
+                3. Does YouTube to MP4 work on all browsers and devices?
               </h3>
               <p className="text-gray-300">
-                Yes. Our video downloader is fully operational on Chrome, Safari, Firefox, and all major browsers on
-                mobile and desktop.
+                Yes. This YouTube to MP4 downloader is fully operational on Chrome, Safari, Firefox, and all major
+                browsers on mobile and desktop.
               </p>
             </div>
 
             <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
-              <h3 className="text-lg font-bold text-red-400 mb-2">4. Does it support HD and 4K resolutions?</h3>
+              <h3 className="text-lg font-bold text-red-400 mb-2">4. Does ytmp4 support HD and 4K resolutions?</h3>
               <p className="text-gray-300">
-                Yes. It allows downloads in both HD and 4K resolutions when available from the source.
+                Yes. It allows YouTube to make MP4 downloads in both HD and 4K resolutions.
               </p>
             </div>
 
             <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
               <h3 className="text-lg font-bold text-red-400 mb-2">5. Do you have any file size or download limits?</h3>
-              <p className="text-gray-300">No. Our service is unlimited. You can download as many videos as needed.</p>
+              <p className="text-gray-300">
+                No. The YouTube to MP4 service is unlimited. You can download as many videos as needed.
+              </p>
             </div>
 
             <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-1">
-              <h3 className="text-lg font-bold text-red-400 mb-2">6. Is this video converter secure?</h3>
+              <h3 className="text-lg font-bold text-red-400 mb-2">6. Is this YouTube to MP4 converter secure?</h3>
               <p className="text-gray-300">
-                Yes. All downloads are processed over encrypted HTTPS connections, ensuring privacy and data protection
-                with the downloader.
+                Yes. All YouTube to MP4 downloads are processed over encrypted HTTPS connections, ensuring privacy and
+                data protection with the downloader.
               </p>
             </div>
 
@@ -459,7 +458,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Updated Footer with animated hover effects */}
+      {/* Footer */}
       <footer className="bg-[#121620] py-12 border-t border-gray-800">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -467,51 +466,26 @@ export default function Home() {
               <div className="flex items-center gap-3 mb-4">
                 <img
                   src="/ytlogo.jpg"
-                  alt="Video Downloader"
+                  alt="YouTube Downloader"
                   className="h-10 w-10 rounded-full border border-red-500"
                 />
                 <h3 className="text-xl font-bold text-white">
-                  Video <span className="text-red-500">Downloader</span>
+                  YouTube <span className="text-red-500">Downloader</span>
                 </h3>
               </div>
-              <p className="text-gray-400 mb-4">Download videos from multiple platforms – fast, free, & secure!</p>
-              <div className="flex space-x-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full border-gray-600 hover:bg-red-500 hover:border-red-500 transition-colors duration-300"
-                >
-                  <Facebook className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full border-gray-600 hover:bg-red-500 hover:border-red-500 transition-colors duration-300"
-                >
-                  <Twitter className="h-5 w-5" />
-                </Button>
-              </div>
+              <p className="text-gray-400 mb-4">Download YouTube videos and shorts – fast, free, & secure!</p>
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-white mb-4">Supported Platforms</h3>
+              <h3 className="text-xl font-bold text-white mb-4">Other Platforms</h3>
               <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/youtube"
-                    className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
-                  >
-                    <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    YouTube & YouTube Shorts
-                  </Link>
-                </li>
                 <li>
                   <Link
                     href="/facebook"
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Facebook
+                    Facebook Downloader
                   </Link>
                 </li>
                 <li>
@@ -520,7 +494,7 @@ export default function Home() {
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Instagram
+                    Instagram Downloader
                   </Link>
                 </li>
                 <li>
@@ -529,7 +503,7 @@ export default function Home() {
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    TikTok
+                    TikTok Downloader
                   </Link>
                 </li>
                 <li>
@@ -538,7 +512,7 @@ export default function Home() {
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Snapchat
+                    Snapchat Downloader
                   </Link>
                 </li>
               </ul>
@@ -588,7 +562,7 @@ export default function Home() {
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-6 text-center">
-            <p className="text-gray-500">© {new Date().getFullYear()} Video Downloader. All rights reserved.</p>
+            <p className="text-gray-500">© {new Date().getFullYear()} YouTube Video Downloader. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -600,10 +574,10 @@ export default function Home() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            name: "Video Downloader",
+            name: "Free YTMP4 Download",
             url: "https://youtubetomp4download.com",
             description:
-              "Download videos from YouTube, Facebook, Instagram, TikTok, and Snapchat in MP4, HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
+              "Download YouTube videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
             applicationCategory: "MultimediaApplication",
             operatingSystem: "Windows, macOS, Android, iOS",
             offers: {

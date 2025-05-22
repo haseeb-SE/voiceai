@@ -2,130 +2,261 @@
  * Proxy Manager for handling proxy rotation and management
  */
 
-// List of free proxy servers (for demonstration - in production you would use paid/private proxies)
-// Format: protocol://username:password@host:port
-const FREE_PROXIES = [
-    // These are placeholders - you should replace with actual proxies
-    "http://35.86.81.136:3128",
-    "http://18.132.36.51:3128",
-    "http://34.221.119.219:999",
-    "http://54.184.124.175:14581",
-    "http://54.245.34.166:10001",
-    "http://18.236.175.208:10001",
-    "http://18.175.118.106:999",
-    "http://40.76.69.94:8080",
-    "http://3.10.207.94:4222",
-    "http://35.90.245.227:31293",
-    "http://52.11.48.124:3128",
-    "http://13.40.152.64:3128",
-    "http://54.245.27.232:999",
-    "http://54.214.109.103:10001",
-    "http://52.194.186.70:1080",   // SOCKS-compatible if supported
-    "http://8.219.97.248:80",
-    "http://66.201.7.151:3128",
-    "http://47.254.88.250:13001"
-
-]
-
-// Environment variable for private proxies
-const PRIVATE_PROXIES = process.env.PROXY_LIST ? process.env.PROXY_LIST.split(",") : []
-
-class ProxyManager {
-    private proxies: string[]
-    private currentIndex = 0
-    private lastRotation: number = Date.now()
-    private rotationInterval: number = 10 * 60 * 1000 // 10 minutes
-
-    constructor() {
-        // Combine private and free proxies, prioritizing private ones
-        this.proxies = [...PRIVATE_PROXIES, ...FREE_PROXIES]
-
-        // Shuffle the proxies for better distribution
-        this.shuffleProxies()
-
-        console.log(`Initialized proxy manager with ${this.proxies.length} proxies`)
-    }
-
-    /**
-     * Get the current proxy
-     */
-    public getCurrentProxy(): string | null {
-        if (this.proxies.length === 0) {
-            return null
-        }
-
-        // Check if we need to rotate based on time
-        if (Date.now() - this.lastRotation > this.rotationInterval) {
-            this.rotateProxy()
-        }
-
-        return this.proxies[this.currentIndex]
-    }
-
-    /**
-     * Rotate to the next proxy
-     */
-    public rotateProxy(): string | null {
-        if (this.proxies.length === 0) {
-            return null
-        }
-
-        this.currentIndex = (this.currentIndex + 1) % this.proxies.length
-        this.lastRotation = Date.now()
-
-        console.log(`Rotated to proxy #${this.currentIndex + 1}`)
-        return this.proxies[this.currentIndex]
-    }
-
-    /**
-     * Mark the current proxy as failed and rotate to the next one
-     */
-    public markCurrentProxyAsFailed(): string | null {
-        if (this.proxies.length === 0) {
-            return null
-        }
-
-        // Remove the failed proxy
-        const failedProxy = this.proxies[this.currentIndex]
-        this.proxies.splice(this.currentIndex, 1)
-
-        console.log(`Marked proxy as failed and removed: ${failedProxy}`)
-
-        // If we have no more proxies, return null
-        if (this.proxies.length === 0) {
-            console.log("No more proxies available")
-            return null
-        }
-
-        // Adjust the index if needed
-        if (this.currentIndex >= this.proxies.length) {
-            this.currentIndex = 0
-        }
-
-        return this.proxies[this.currentIndex]
-    }
-
-    /**
-     * Shuffle the proxies array
-     */
-    private shuffleProxies(): void {
-        for (let i = this.proxies.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1))
-                ;[this.proxies[i], this.proxies[j]] = [this.proxies[j], this.proxies[i]]
-        }
-    }
-
-    /**
-     * Get proxy arguments for yt-dlp
-     */
-    public getProxyArgs(): string[] {
-        const proxy = this.getCurrentProxy()
-        if (!proxy) {
-            return []
-        }
-
-        return ["--proxy", proxy]
-    }
+// Define proxy types
+interface Proxy {
+  url: string
+  type: "http" | "https" | "socks4" | "socks5"
+  failCount: number
+  lastUsed: number
+  isActive: boolean
+  timeoutCount: number
+  successCount: number
 }
 
+class ProxyManager {
+  private proxies: Proxy[] = []
+  private currentProxyIndex = 0
+  private maxFailCount = 3
+  private maxTimeoutCount = 2
+  private debug = true
+  private lastRotationTime = 0
+  private rotationCooldown = 5000 // 5 seconds cooldown between rotations
+  private directConnectionEnabled = true // Allow direct connection as fallback
+
+  constructor() {
+    this.initializeProxies()
+    console.log(`Initialized proxy manager with ${this.proxies.length} proxies`)
+  }
+
+  private initializeProxies() {
+    // Load proxies from environment variable if available
+    const proxyList = process.env.PROXY_LIST ? process.env.PROXY_LIST.split(",") : []
+
+    // Add some fallback proxies if none provided
+    if (proxyList.length === 0) {
+      // These are just examples and likely won't work
+      // In production, you should use your own proxies
+      this.proxies = [
+        { url: "direct", type: "http", failCount: 0, timeoutCount: 0, successCount: 0, lastUsed: 0, isActive: true },
+        {
+          url: "http://localhost:8888",
+          type: "http",
+          failCount: 0,
+          timeoutCount: 0,
+          successCount: 0,
+          lastUsed: 0,
+          isActive: false,
+        },
+      ]
+    } else {
+      // Convert the proxy list to Proxy objects
+      this.proxies = proxyList.map((proxy) => {
+        // Parse proxy string (format: type://host:port)
+        const [typeStr, hostPort] = proxy.split("://")
+        const type = (typeStr as "http" | "https" | "socks4" | "socks5") || "http"
+
+        return {
+          url: proxy,
+          type,
+          failCount: 0,
+          timeoutCount: 0,
+          successCount: 0,
+          lastUsed: 0,
+          isActive: true,
+        }
+      })
+    }
+
+    // Always add direct connection as a fallback
+    if (!this.proxies.some((p) => p.url === "direct")) {
+      this.proxies.push({
+        url: "direct",
+        type: "http",
+        failCount: 0,
+        timeoutCount: 0,
+        successCount: 0,
+        lastUsed: 0,
+        isActive: true,
+      })
+    }
+  }
+
+  /**
+   * Get the current proxy
+   */
+  public getCurrentProxy(): string | null {
+    if (this.proxies.length === 0) return null
+
+    // Find the current active proxy
+    const activeProxies = this.proxies.filter((p) => p.isActive)
+    if (activeProxies.length === 0) {
+      // Reset all proxies if none are active
+      this.proxies.forEach((p) => (p.isActive = true))
+      this.currentProxyIndex = 0
+      return this.proxies[0].url === "direct" ? null : this.proxies[0].url
+    }
+
+    // Return the current proxy
+    const proxy = activeProxies[this.currentProxyIndex % activeProxies.length]
+    return proxy.url === "direct" ? null : proxy.url
+  }
+
+  /**
+   * Get proxy arguments for yt-dlp
+   */
+  public getProxyArgs(url?: string): string[] {
+    const proxy = this.getCurrentProxy()
+
+    // If no proxy or using direct connection, return empty array
+    if (!proxy) return []
+
+    // Update last used timestamp
+    const proxyObj = this.proxies.find((p) => p.url === proxy)
+    if (proxyObj) {
+      proxyObj.lastUsed = Date.now()
+    }
+
+    // Return proxy arguments for yt-dlp
+    if (this.debug) {
+      console.log(`Using proxy: --proxy ${proxy}`)
+    }
+
+    return ["--proxy", proxy]
+  }
+
+  /**
+   * Rotate to the next proxy
+   */
+  public rotateProxy(): string | null {
+    const now = Date.now()
+
+    // Check if we're rotating too frequently
+    if (now - this.lastRotationTime < this.rotationCooldown) {
+      if (this.debug) {
+        console.log(`Skipping proxy rotation (cooldown: ${this.rotationCooldown}ms)`)
+      }
+      return this.getCurrentProxy()
+    }
+
+    this.lastRotationTime = now
+
+    if (this.proxies.length <= 1) return this.getCurrentProxy()
+
+    const activeProxies = this.proxies.filter((p) => p.isActive)
+    if (activeProxies.length === 0) {
+      // Reset all proxies if none are active
+      this.proxies.forEach((p) => (p.isActive = true))
+      this.currentProxyIndex = 0
+    } else {
+      // Move to the next proxy
+      this.currentProxyIndex = (this.currentProxyIndex + 1) % activeProxies.length
+    }
+
+    if (this.debug) {
+      const proxy = this.getCurrentProxy()
+      console.log(`Rotated to proxy: ${proxy || "direct connection"}`)
+    }
+
+    return this.getCurrentProxy()
+  }
+
+  /**
+   * Mark the current proxy as failed
+   */
+  public markCurrentProxyAsFailed(isTimeout = false): void {
+    const proxy = this.getCurrentProxy()
+    if (!proxy) return
+
+    const proxyObj = this.proxies.find((p) => p.url === proxy)
+    if (!proxyObj) return
+
+    if (isTimeout) {
+      proxyObj.timeoutCount++
+      if (this.debug) {
+        console.log(`Marked proxy ${proxy} as timed out (count: ${proxyObj.timeoutCount})`)
+      }
+
+      // Disable proxy if it has timed out too many times
+      if (proxyObj.timeoutCount >= this.maxTimeoutCount) {
+        proxyObj.isActive = false
+        console.log(`Disabled proxy ${proxy} due to too many timeouts`)
+      }
+    } else {
+      proxyObj.failCount++
+      if (this.debug) {
+        console.log(`Marked proxy ${proxy} as failed (count: ${proxyObj.failCount})`)
+      }
+
+      // Disable proxy if it has failed too many times
+      if (proxyObj.failCount >= this.maxFailCount) {
+        proxyObj.isActive = false
+        console.log(`Disabled proxy ${proxy} due to too many failures`)
+      }
+    }
+
+    // Rotate to the next proxy
+    this.rotateProxy()
+  }
+
+  /**
+   * Mark the current proxy as successful
+   */
+  public markCurrentProxyAsSuccessful(): void {
+    const proxy = this.getCurrentProxy()
+    if (!proxy) return
+
+    const proxyObj = this.proxies.find((p) => p.url === proxy)
+    if (!proxyObj) return
+
+    proxyObj.successCount++
+
+    // Reset failure counts after some successes
+    if (proxyObj.successCount >= 3) {
+      proxyObj.failCount = Math.max(0, proxyObj.failCount - 1)
+      proxyObj.timeoutCount = Math.max(0, proxyObj.timeoutCount - 1)
+    }
+  }
+
+  /**
+   * Reset all proxies
+   */
+  public resetProxies(): void {
+    this.proxies.forEach((proxy) => {
+      proxy.failCount = 0
+      proxy.timeoutCount = 0
+      proxy.isActive = true
+    })
+    this.currentProxyIndex = 0
+
+    if (this.debug) {
+      console.log("Reset all proxies")
+    }
+  }
+
+  /**
+   * Enable or disable direct connection
+   */
+  public setDirectConnectionEnabled(enabled: boolean): void {
+    this.directConnectionEnabled = enabled
+
+    // Update the direct proxy
+    const directProxy = this.proxies.find((p) => p.url === "direct")
+    if (directProxy) {
+      directProxy.isActive = enabled
+    }
+
+    if (this.debug) {
+      console.log(`Direct connection ${enabled ? "enabled" : "disabled"}`)
+    }
+  }
+
+  /**
+   * Get all active proxies
+   */
+  public getActiveProxies(): string[] {
+    return this.proxies.filter((p) => p.isActive).map((p) => (p.url === "direct" ? "Direct Connection" : p.url))
+  }
+}
+
+// Create a singleton instance
 export const proxyManager = new ProxyManager()

@@ -26,18 +26,18 @@ async function downloadFFmpeg() {
     const zipPath = path.join(binDir, "ffmpeg.zip");
     downloadCommand = `
       curl -L https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -o ${zipPath} && `
-      + `powershell -Command "Expand-Archive -Path '${zipPath}' -DestinationPath '${binDir}' -Force" && `
-      + `del ${zipPath}`;
+       `powershell -Command "Expand-Archive -Path '${zipPath}' -DestinationPath '${binDir}' -Force" && `
+       `del ${zipPath}`;
   } else if (isMac || isLinux) {
     ffmpegPath = path.join(binDir, "ffmpeg");
     ffprobePath = path.join(binDir, "ffprobe");
     downloadCommand = `
       curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -o ${binDir}/ffmpeg.tar.xz && `
-      + `tar -xf ${binDir}/ffmpeg.tar.xz -C ${binDir} && `
-      + `mv ${binDir}/ffmpeg-*-static/ffmpeg ${ffmpegPath} && `
-      + `mv ${binDir}/ffmpeg-*-static/ffprobe ${ffprobePath} && `
-      + `chmod +x ${ffmpegPath} ${ffprobePath} && `
-      + `rm -rf ${binDir}/ffmpeg.tar.xz ${binDir}/ffmpeg-*-static`;
+       `tar -xf ${binDir}/ffmpeg.tar.xz -C ${binDir} && `
+       `mv ${binDir}/ffmpeg-*-static/ffmpeg ${ffmpegPath} && `
+       `mv ${binDir}/ffmpeg-*-static/ffprobe ${ffprobePath} && `
+       `chmod +x ${ffmpegPath} ${ffprobePath} && `
+       `rm -rf ${binDir}/ffmpeg.tar.xz ${binDir}/ffmpeg-*-static`;
   } else {
     console.error("Unsupported platform");
     return;
