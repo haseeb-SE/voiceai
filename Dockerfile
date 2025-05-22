@@ -4,26 +4,27 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Install required tools
-RUN apk add --no-cache curl xz python3 ca-certificates
+# Install required tools + Python3/pip
+RUN apk add --no-cache \
+      curl \
+      xz \
+      python3 \
+      py3-pip \
+      ca-certificates \
+    && pip3 install --no-cache-dir --upgrade yt-dlp
 
-# Create binary directory
-RUN mkdir -p /app/bin
+# Create binary directory and symlink yt-dlp into it
+RUN mkdir -p /app/bin \
+    && ln -s $(which yt-dlp) /usr/local/bin/yt-dlp \
+    && ln -s $(which yt-dlp) /app/bin/yt-dlp \
+    && ln -s $(which yt-dlp) /usr/local/bin/ytdlp
 
 ENV NODE_ENV=production
-
-ENV DATABASE_URL=postgresql://neondb_owner:npg_j3Fftup2RJIA@ep-broad-dream-a4jw9cwh-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
-
-# Download yt-dlp
-RUN curl -L "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp" -o /usr/local/bin/yt-dlp \
-    && chmod +x /usr/local/bin/yt-dlp \
-    && ln -s /usr/local/bin/yt-dlp /app/bin/yt-dlp
-
-# Create a symlink for ytdlp (to handle both naming conventions)
-RUN ln -s /usr/local/bin/yt-dlp /usr/local/bin/ytdlp
+ENV DATABASE_URL="postgresql://neondb_owner:…"
 
 # Download and extract FFmpeg static build
-RUN curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" -o /tmp/ffmpeg.tar.xz \
+RUN curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+      -o /tmp/ffmpeg.tar.xz \
     && mkdir -p /tmp/ffmpeg \
     && tar -xJf /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg \
     && cp /tmp/ffmpeg/ffmpeg-*/ffmpeg /usr/local/bin/ \
@@ -33,29 +34,24 @@ RUN curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-stat
     && ln -s /usr/local/bin/ffprobe /app/bin/ffprobe \
     && rm -rf /tmp/ffmpeg /tmp/ffmpeg.tar.xz
 
-# Make sure binaries are in PATH
+# Ensure our binaries come first in PATH
 ENV PATH="/usr/local/bin:/app/bin:$PATH"
 
-# Create temp directory
-RUN mkdir -p /tmp/youtube-downloader/temp && chmod 777 /tmp/youtube-downloader/temp
+# Prepare temp directory
+RUN mkdir -p /tmp/youtube-downloader/temp \
+    && chmod 777 /tmp/youtube-downloader/temp
 
-# Install PNPM globally
+# Install PNPM
 RUN npm install -g pnpm@10.10.0
 
-# Copy dependency files first
+# Copy and install dependencies
 COPY package.json pnpm-lock.yaml* ./
-
-# Install deps (ignore scripts to skip postinstall)
 RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
-# Copy the rest of the app
+# Copy app source and build
 COPY . .
-
-# Verify binaries are accessible
 RUN which yt-dlp && which ffmpeg && which ffprobe
-
-# Build app
 RUN pnpm build
 
-# Start app
+# Run
 CMD ["pnpm", "start"]
