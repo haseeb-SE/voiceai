@@ -350,7 +350,8 @@ export class DownloadManager extends EventEmitter {
         // For MP4, download as a single file directly
         ytdlpArgs.push(
           "--format",
-          "best[ext=mp4]/best", // Get the best quality available as a single file
+          // 1) best MP4 video  + best M4A audio,  2) fallback to any single “best” file
+          "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
           "--merge-output-format",
           "mp4",
           "--output",
