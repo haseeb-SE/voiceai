@@ -4,14 +4,13 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Install required tools + Python3/pip
-RUN apk add --no-cache \
+# Install required tools + Python3/pip\RUN apk add --no-cache \
       curl \
       xz \
       python3 \
       py3-pip \
       ca-certificates \
-    && pip3 install --no-cache-dir --upgrade yt-dlp
+    && pip3 install --no-cache-dir --upgrade yt-dlp --break-system-packages
 
 # Create binary directory and symlink yt-dlp into it
 RUN mkdir -p /app/bin \
@@ -19,8 +18,9 @@ RUN mkdir -p /app/bin \
     && ln -s $(which yt-dlp) /app/bin/yt-dlp \
     && ln -s $(which yt-dlp) /usr/local/bin/ytdlp
 
+# Environment variables
 ENV NODE_ENV=production
-ENV DATABASE_URL="postgresql://neondb_owner:…"
+ENV DATABASE_URL="postgresql://neondb_owner:npg_j3Fftup2RJIA@ep-broad-dream-a4jw9cwh-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
 # Download and extract FFmpeg static build
 RUN curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
@@ -48,10 +48,10 @@ RUN npm install -g pnpm@10.10.0
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
-# Copy app source and build
+# Copy application source and build
 COPY . .
 RUN which yt-dlp && which ffmpeg && which ffprobe
 RUN pnpm build
 
-# Run
+# Start the application
 CMD ["pnpm", "start"]
