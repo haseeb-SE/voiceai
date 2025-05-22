@@ -4,7 +4,8 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Install required tools + Python3/pip\RUN apk add --no-cache \
+# Install required tools + Python3/pip
+RUN apk add --no-cache \
       curl \
       xz \
       python3 \
@@ -14,9 +15,9 @@ WORKDIR /app
 
 # Create binary directory and symlink yt-dlp into it
 RUN mkdir -p /app/bin \
-    && ln -s $(which yt-dlp) /usr/local/bin/yt-dlp \
-    && ln -s $(which yt-dlp) /app/bin/yt-dlp \
-    && ln -s $(which yt-dlp) /usr/local/bin/ytdlp
+    && ln -s "$(which yt-dlp)" /usr/local/bin/yt-dlp \
+    && ln -s "$(which yt-dlp)" /app/bin/yt-dlp \
+    && ln -s "$(which yt-dlp)" /usr/local/bin/ytdlp
 
 # Environment variables
 ENV NODE_ENV=production
@@ -24,33 +25,37 @@ ENV DATABASE_URL="postgresql://neondb_owner:npg_j3Fftup2RJIA@ep-broad-dream-a4jw
 
 # Download and extract FFmpeg static build
 RUN curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
-      -o /tmp/ffmpeg.tar.xz \
-    && mkdir -p /tmp/ffmpeg \
-    && tar -xJf /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg \
-    && cp /tmp/ffmpeg/ffmpeg-*/ffmpeg /usr/local/bin/ \
-    && cp /tmp/ffmpeg/ffmpeg-*/ffprobe /usr/local/bin/ \
-    && chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
-    && ln -s /usr/local/bin/ffmpeg /app/bin/ffmpeg \
-    && ln -s /usr/local/bin/ffprobe /app/bin/ffprobe \
-    && rm -rf /tmp/ffmpeg /tmp/ffmpeg.tar.xz
+    -o /tmp/ffmpeg.tar.xz \
+  && mkdir -p /tmp/ffmpeg \
+  && tar -xJf /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg \
+  && cp /tmp/ffmpeg/ffmpeg-*/ffmpeg /usr/local/bin/ \
+  && cp /tmp/ffmpeg/ffmpeg-*/ffprobe /usr/local/bin/ \
+  && chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
+  && ln -s /usr/local/bin/ffmpeg /app/bin/ffmpeg \
+  && ln -s /usr/local/bin/ffprobe /app/bin/ffprobe \
+  && rm -rf /tmp/ffmpeg /tmp/ffmpeg.tar.xz
 
 # Ensure our binaries come first in PATH
 ENV PATH="/usr/local/bin:/app/bin:$PATH"
 
 # Prepare temp directory
 RUN mkdir -p /tmp/youtube-downloader/temp \
-    && chmod 777 /tmp/youtube-downloader/temp
+  && chmod 777 /tmp/youtube-downloader/temp
 
-# Install PNPM
+# Install PNPM globally
 RUN npm install -g pnpm@10.10.0
 
-# Copy and install dependencies
+# Copy dependency files and install dependencies
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
-# Copy application source and build
+# Copy application source code
 COPY . .
+
+# Verify binaries are accessible
 RUN which yt-dlp && which ffmpeg && which ffprobe
+
+# Build the application
 RUN pnpm build
 
 # Start the application
