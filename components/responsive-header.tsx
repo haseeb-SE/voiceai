@@ -107,7 +107,7 @@ export function ResponsiveHeader() {
             <Link href="/">
               <Button className="bg-gray-700 hover:bg-gray-600 hover:scale-105 transition-all duration-300 shadow-lg text-sm md:text-base px-3 md:px-4">
                 <span className="hidden sm:inline">All Platforms</span>
-                <span className="sm:hidden">Home</span>
+               
               </Button>
             </Link>
           </div>
