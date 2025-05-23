@@ -5,6 +5,7 @@ import { Facebook } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { ShareButtons } from "@/components/ShareButtons"
+import { ResponsiveHeader } from "@/components/responsive-header"
 
 export const metadata: Metadata = {
   title: "Free Facebook Video Downloader Online",
@@ -17,35 +18,7 @@ export const metadata: Metadata = {
 export default function FacebookPage() {
   return (
     <div className="min-h-screen bg-[#121620] text-white">
-      {/* Header Section */}
-      <header className="sticky top-0 z-50 bg-[#121620]/90 backdrop-blur-sm border-b border-gray-800">
-        <div className="container mx-auto px-4 py-4 relative">
-          <div className="flex items-center justify-between max-w-6xl mx-auto">
-            <div className="flex items-center gap-4">
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full opacity-70 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
-                <div className="relative">
-                  <div className="h-14 w-14 rounded-full border-2 border-blue-500 p-0.5 bg-gray-900 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
-                    <Facebook className="h-8 w-8 text-blue-500" />
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold text-white">Facebook</span>
-                <span className="text-xl font-bold text-blue-500">Downloader</span>
-              </div>
-            </div>
-
-            <div>
-              <Link href="/">
-                <Button className="bg-gray-700 hover:bg-gray-600 hover:scale-105 transition-all duration-300 shadow-lg">
-                  All Platforms
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ResponsiveHeader />
 
       {/* Hero Section - Reduced padding */}
       <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
@@ -54,10 +27,7 @@ export default function FacebookPage() {
             Top-Rated Facebook Video Downloader
           </h1>
           <p className="text-l md:text-1xl font-medium text-white mb-4">Facebook Video Download Is Now The Easiest!</p>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Easily download Facebook videos with our efficient Facebook video downloader. No apps or plugins are
-            required; just paste the video link and get a high-quality Facebook video download instantly.
-          </p>
+          
         </div>
       </div>
 
@@ -74,6 +44,15 @@ export default function FacebookPage() {
               <YoutubeDownloader />
             </CardContent>
           </Card>
+        </div>
+      </section>
+
+      <section className="py-8 bg-gray-900/50">
+        <div className="container mx-auto px-4 md:px-8">
+          <p className="mt-8 text-center text-gray-300 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
+            Easily download Facebook videos with our efficient Facebook video downloader. No apps or plugins are
+            required; just paste the video link and get a high-quality Facebook video download instantly.
+          </p>
         </div>
       </section>
 
@@ -414,7 +393,7 @@ export default function FacebookPage() {
               <p className="text-gray-300">Yes, it uses secure, encrypted connections for safe downloads.</p>
             </div>
 
-           
+
           </div>
         </div>
       </section>
@@ -549,6 +528,6 @@ export default function FacebookPage() {
           }),
         }}
       />
-    </div>
+    </div >
   )
 }

@@ -5,6 +5,7 @@ import { Instagram } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { ShareButtons } from "@/components/ShareButtons"
+import { ResponsiveHeader } from "@/components/responsive-header"
 
 export const metadata: Metadata = {
   title: "Free Instagram Video Downloader Online",
@@ -17,35 +18,8 @@ export const metadata: Metadata = {
 export default function InstagramPage() {
   return (
     <div className="min-h-screen bg-[#121620] text-white">
-      {/* Header Section */}
-      <header className="sticky top-0 z-50 bg-[#121620]/90 backdrop-blur-sm border-b border-gray-800">
-        <div className="container mx-auto px-4 py-4 relative">
-          <div className="flex items-center justify-between max-w-6xl mx-auto">
-            <div className="flex items-center gap-4">
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 to-pink-400 rounded-full opacity-70 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
-                <div className="relative">
-                  <div className="h-14 w-14 rounded-full border-2 border-pink-500 p-0.5 bg-gray-900 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
-                    <Instagram className="h-8 w-8 text-pink-500" />
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold text-white">Instagram</span>
-                <span className="text-xl font-bold text-pink-500">Downloader</span>
-              </div>
-            </div>
+      <ResponsiveHeader />
 
-            <div>
-              <Link href="/">
-                <Button className="bg-gray-700 hover:bg-gray-600 hover:scale-105 transition-all duration-300 shadow-lg">
-                  All Platforms
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
 
       {/* Hero Section - Reduced padding */}
       <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
@@ -54,11 +28,7 @@ export default function InstagramPage() {
             Download With Free Instagram Videos Downloader
           </h1>
           <p className="text-l md:text-1xl font-medium text-white mb-4">Instantly Download Insta Videos</p>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Download Insta videos and reels quickly using our free Instagram video downloader. No software or app
-            installation required. Just paste the Instagram video or reel link and start downloading high-quality MP4
-            files instantly.
-          </p>
+
         </div>
       </div>
 
@@ -77,7 +47,15 @@ export default function InstagramPage() {
           </Card>
         </div>
       </section>
-
+      <section className="py-8 bg-gray-900/50">
+        <div className="container mx-auto px-4 md:px-8">
+          <p className="mt-8 text-center text-gray-300 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
+            Download Insta videos and reels quickly using our free Instagram video downloader. No software or app
+            installation required. Just paste the Instagram video or reel link and start downloading high-quality MP4
+            files instantly.
+          </p>
+        </div>
+      </section>
       <div className="flex flex-wrap justify-center gap-4 mt-8">
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
@@ -378,7 +356,7 @@ export default function InstagramPage() {
               </p>
             </div>
 
-           
+
           </div>
         </div>
       </section>

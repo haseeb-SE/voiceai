@@ -1,75 +1,43 @@
 import { YoutubeDownloader } from "@/components/youtube-downloader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { SnailIcon as Snapchat } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { ShareButtons } from "@/components/ShareButtons"
+import { ResponsiveHeader } from "@/components/responsive-header"
 
 export const metadata: Metadata = {
-    title: "Snapchat Video Downloader | Download Snapchat Videos Free",
-    description: "Download Snapchat stories and videos in MP4 or MP3 format. Free, fast, and no signup required.",
-    keywords:
-        "Snapchat downloader, Snapchat to MP4, Snapchat to MP3, download Snapchat videos, Snapchat story downloader",
+    title: "TikTok Video Downloader | Download TikTok Videos Free",
+    description: "Download TikTok videos in MP4 or MP3 format. Free, fast, and no signup required.",
+    keywords: "TikTok downloader, TikTok to MP4, TikTok to MP3, download TikTok videos, TikTok video downloader",
 }
 
-export default function SnapchatPage() {
+export default function TikTokPage() {
     return (
         <div className="min-h-screen bg-[#121620] text-white">
-            {/* Header Section */}
-            <header className="sticky top-0 z-50 bg-[#121620]/90 backdrop-blur-sm border-b border-gray-800">
-                <div className="container mx-auto px-4 py-4 relative">
-                    <div className="flex items-center justify-between max-w-6xl mx-auto">
-                        <div className="flex items-center gap-4">
-                            <div className="relative group">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-yellow-300 rounded-full opacity-70 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
-                                <div className="relative">
-                                    <div className="h-14 w-14 rounded-full border-2 border-yellow-500 p-0.5 bg-gray-900 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
-                                        <Snapchat className="h-8 w-8 text-yellow-500" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-xl font-bold text-white">Snapchat</span>
-                                <span className="text-xl font-bold text-yellow-500">Downloader</span>
-                            </div>
-                        </div>
+            <ResponsiveHeader />
 
-                        <div>
-                            <Link href="/">
-                                <Button className="bg-gray-700 hover:bg-gray-600 hover:scale-105 transition-all duration-300 shadow-lg">
-                                    All Platforms
-                                </Button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </header>
 
             {/* Hero Section - Reduced padding */}
             <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
                 <div className="max-w-4xl mx-auto text-center space-y-4">
-                    <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-2 text-yellow-500 drop-shadow-lg">
-                        Snapchat Video Downloader
+                    <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-2 text-teal-500 drop-shadow-lg">
+                        TikTok Video Downloader
                     </h1>
                     <p className="text-l md:text-1xl font-medium text-white mb-4">
-                        Download Snapchat to MP4 with the Best Video Downloader Online
+                        Download TikTok to MP4 with the Best Video Downloader Online
                     </p>
-                    <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-                        Use our Snapchat video downloader to download and convert Snapchat to MP4 or MP3 securely. All you need is a
-                        browser; no additional software installation is required. Experience high-resolution ytmp4 downloads.
-                    </p>
+                   
                 </div>
             </div>
 
-
             <section className="py-8" id="downloader">
                 <div className="container mx-auto px-4 md:px-8 max-w-6xl">
-                    <Card className="border border-gray-700 bg-gray-800/80 text-white shadow-2xl backdrop-blur-sm hover:shadow-yellow-500/10 transition-all duration-500">
+                    <Card className="border border-gray-700 bg-gray-800/80 text-white shadow-2xl backdrop-blur-sm hover:shadow-teal-500/10 transition-all duration-500">
                         <CardHeader className="border-b border-gray-700">
-                            <CardTitle className="text-yellow-500 text-2xl md:text-3xl">Snapchat Video Downloader</CardTitle>
+                            <CardTitle className="text-teal-500 text-2xl md:text-3xl">TikTok Video Downloader</CardTitle>
                             <CardDescription className="text-gray-300">
-                                Enter a Snapchat story or video URL to download in MP3 or MP4 format
+                                Enter a TikTok video URL to download in MP3 or MP4 format
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="pt-6">
@@ -78,27 +46,36 @@ export default function SnapchatPage() {
                     </Card>
                 </div>
             </section>
-            
-      <div className="flex flex-wrap justify-center gap-4 mt-8">
-         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-          <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Videos in HD or 4K resolution</span>
-        </div>
-          <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-          <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Compatible with Mac & Windows</span>
-        </div>
-        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-          <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">No Additional Software Or Plug-ins </span>
-        </div>
-        <div className="flex items-center p-3 bg-gray-800 rounded-lg">
-          <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Convert Videos to MP4 or MP3</span>
-        </div>
-      
-       
-      </div>
+            <section className="py-8 bg-gray-900/50">
+                <div className="container mx-auto px-4 md:px-8">
+                    <p className="mt-8 text-center text-gray-300 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
+                        Use our TikTok video downloader to download and convert TikTok to MP4 or MP3 securely. All you need is a
+                        browser; no additional software installation is required. Experience high-resolution ytmp4 downloads.
+                    </p>
+                </div>
+            </section>
+
+
+            <div className="flex flex-wrap justify-center gap-4 mt-8">
+                <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+                    <span className="text-red-400 mr-2">✓</span>
+                    <span className="text-sm md:text-base">Videos in HD or 4K resolution</span>
+                </div>
+                <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+                    <span className="text-red-400 mr-2">✓</span>
+                    <span className="text-sm md:text-base">Compatible with Mac & Windows</span>
+                </div>
+                <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+                    <span className="text-red-400 mr-2">✓</span>
+                    <span className="text-sm md:text-base">No Additional Software Or Plug-ins </span>
+                </div>
+                <div className="flex items-center p-3 bg-gray-800 rounded-lg">
+                    <span className="text-red-400 mr-2">✓</span>
+                    <span className="text-sm md:text-base">Convert Videos to MP4 or MP3</span>
+                </div>
+
+
+            </div>
 
 
             {/* Features Section with enhanced hover effects */}
@@ -107,15 +84,15 @@ export default function SnapchatPage() {
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
                             Key Features of Our YTMP4 Downloader
-                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-yellow-600 to-yellow-400"></div>
+                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-teal-600 to-teal-400"></div>
                         </h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-yellow-500/20">
-                            <div className="bg-yellow-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-500/20 transition-all duration-300">
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-teal-500/20">
+                            <div className="bg-teal-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-500/20 transition-all duration-300">
                                 <svg
-                                    className="w-6 h-6 text-yellow-400"
+                                    className="w-6 h-6 text-teal-400"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -129,8 +106,8 @@ export default function SnapchatPage() {
                                     ></path>
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-yellow-400 mb-3 group-hover:text-yellow-300 transition-colors">
-                                Convert Snapchat to MP4 or MP3 in Seconds
+                            <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
+                                Convert TikTok to MP4 or MP3 in Seconds
                             </h3>
                             <p className="text-gray-300">
                                 It converts YTMP4 links instantly. Paste, click, and download. It processes video links as soon as you
@@ -138,10 +115,10 @@ export default function SnapchatPage() {
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-yellow-500/20">
-                            <div className="bg-yellow-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-500/20 transition-all duration-300">
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-teal-500/20">
+                            <div className="bg-teal-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-500/20 transition-all duration-300">
                                 <svg
-                                    className="w-6 h-6 text-yellow-400"
+                                    className="w-6 h-6 text-teal-400"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -155,19 +132,19 @@ export default function SnapchatPage() {
                                     ></path>
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-yellow-400 mb-3 group-hover:text-yellow-300 transition-colors">
-                                User-Centric Interface for Snapchat Video Downloads
+                            <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
+                                User-Centric Interface for TikTok Video Downloads
                             </h3>
                             <p className="text-gray-300">
-                                The downloader is built to convert Snapchat to MP4 efficiently with a simple interface. You just have to
+                                The downloader is built to convert TikTok to MP4 efficiently with a simple interface. You just have to
                                 paste your video link, select MP4 or MP3, and start the download. No technical background required.
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-yellow-500/20">
-                            <div className="bg-yellow-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-500/20 transition-all duration-300">
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-teal-500/20">
+                            <div className="bg-teal-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-500/20 transition-all duration-300">
                                 <svg
-                                    className="w-6 h-6 text-yellow-400"
+                                    className="w-6 h-6 text-teal-400"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -181,19 +158,19 @@ export default function SnapchatPage() {
                                     ></path>
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-yellow-400 mb-3 group-hover:text-yellow-300 transition-colors">
-                                Multi-Format Snapchat to MP4 Converter
+                            <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
+                                Multi-Format TikTok to MP4 Converter
                             </h3>
                             <p className="text-gray-300">
-                                You can convert Snapchat to MP4 for the full video or extract MP3 audio with precision. It supports
+                                You can convert TikTok to MP4 for the full video or extract MP3 audio with precision. It supports
                                 flexible format selection, ensuring compatibility with your playback devices.
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-yellow-500/20">
-                            <div className="bg-yellow-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-500/20 transition-all duration-300">
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-teal-500/20">
+                            <div className="bg-teal-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-500/20 transition-all duration-300">
                                 <svg
-                                    className="w-6 h-6 text-yellow-400"
+                                    className="w-6 h-6 text-teal-400"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -207,8 +184,8 @@ export default function SnapchatPage() {
                                     ></path>
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-yellow-400 mb-3 group-hover:text-yellow-300 transition-colors">
-                                Download Snapchat to MP4 in HD and 4K
+                            <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
+                                Download TikTok to MP4 in HD and 4K
                             </h3>
                             <p className="text-gray-300">
                                 Pick from the standard definition options, 1080p HD, or 4K resolution. This YTMP4 download platform
@@ -216,10 +193,10 @@ export default function SnapchatPage() {
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-yellow-500/20">
-                            <div className="bg-yellow-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-500/20 transition-all duration-300">
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-teal-500/20">
+                            <div className="bg-teal-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-500/20 transition-all duration-300">
                                 <svg
-                                    className="w-6 h-6 text-yellow-400"
+                                    className="w-6 h-6 text-teal-400"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -233,7 +210,7 @@ export default function SnapchatPage() {
                                     ></path>
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-yellow-400 mb-3 group-hover:text-yellow-300 transition-colors">
+                            <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
                                 Compatible with Windows and Mac Systems
                             </h3>
                             <p className="text-gray-300">
@@ -242,10 +219,10 @@ export default function SnapchatPage() {
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-yellow-500/20">
-                            <div className="bg-yellow-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-500/20 transition-all duration-300">
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg group hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-teal-500/20">
+                            <div className="bg-teal-500/10 w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-500/20 transition-all duration-300">
                                 <svg
-                                    className="w-6 h-6 text-yellow-400"
+                                    className="w-6 h-6 text-teal-400"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -259,8 +236,8 @@ export default function SnapchatPage() {
                                     ></path>
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-yellow-400 mb-3 group-hover:text-yellow-300 transition-colors">
-                                Fast and Secure Snapchat to MP4 Download Performance
+                            <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
+                                Fast and Secure TikTok to MP4 Download Performance
                             </h3>
                             <p className="text-gray-300">
                                 The downloader uses encrypted connections and secure servers. Your video downloads are private, fast,
@@ -270,62 +247,117 @@ export default function SnapchatPage() {
                     </div>
                 </div>
             </section>
-
-
             {/* How It Works Section */}
             <section className="py-16">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
-                            How to Download Snapchat Videos
-                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-yellow-500 to-yellow-300"></div>
+                            How to Download TikTok Videos
+                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-teal-600 to-teal-400"></div>
                         </h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                         <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-500 to-yellow-300 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-teal-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
                             <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
-                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
+                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
                                     1
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Copy the Snapchat Link</h3>
+                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Copy the TikTok Link</h3>
                                 <p className="text-gray-300">
-                                    Find the story or video you want to download from Snapchat. Use the share option to copy the link to
-                                    the content.
+                                    Find the video you want to download from TikTok. Tap "Share" and then "Copy Link" to get the video
+                                    URL.
                                 </p>
                             </div>
                         </div>
 
                         <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-500 to-yellow-300 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-teal-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
                             <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
-                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
+                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
                                     2
                                 </div>
                                 <h3 className="text-xl font-bold text-white mb-3 mt-4">Paste & Analyze</h3>
                                 <p className="text-gray-300">
-                                    Paste the Snapchat link into our downloader tool. Click "Get Video Info" and our system will analyze
-                                    the available download options.
+                                    Paste the TikTok link into our downloader tool. Click "Get Video Info" and our system will analyze the
+                                    available download options.
                                 </p>
                             </div>
                         </div>
 
                         <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-500 to-yellow-300 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-teal-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
                             <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
-                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
+                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
                                     3
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Download Your Video</h3>
+                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Download Video</h3>
                                 <p className="text-gray-300">
-                                    Choose the desired format (MP4 or MP3) and click "Download". Your video will be ready for you to save.
+                                    Choose your preferred format (MP4 or MP3) and click "Download" to start the download process.
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
+            {/* How It Works Section */}
+            <section className="py-16">
+                <div className="container mx-auto px-4">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
+                            How to Download TikTok Videos
+                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-teal-600 to-teal-400"></div>
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-teal-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
+                            <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
+                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
+                                    1
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Copy the TikTok Link</h3>
+                                <p className="text-gray-300">
+                                    Find the video, reel, or story you want to download from TikTok. Tap the three dots and select
+                                    "Copy Link".
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-teal-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
+                            <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
+                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
+                                    2
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Paste & Analyze</h3>
+                                <p className="text-gray-300">
+                                    Paste the TikTok link into our downloader tool. Click "Get Video Info" and our system will analyze
+                                    the available download options.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-teal-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
+                            <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
+                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
+                                    3
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Choose Format & Download</h3>
+                                <p className="text-gray-300">
+                                    Select your preferred format (MP4 video or MP3 audio) and quality. Click Download, and your TikTok
+                                    content will be ready in seconds.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Share Section */}
             <section className="py-8 bg-gray-800/30">
                 <div className="container mx-auto px-4">
@@ -344,60 +376,60 @@ export default function SnapchatPage() {
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
                             Frequently Asked Questions
-                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-yellow-600 to-yellow-400"></div>
+                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-teal-600 to-teal-400"></div>
                         </h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-yellow-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-yellow-400 mb-2">
-                                1. Is the downloader for Snapchat to MP4 free to use?
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">
+                                1. Is the downloader for TikTok to MP4 free to use?
                             </h3>
                             <p className="text-gray-300">
-                                Yes. The downloader offers unlimited Snapchat to MP4 download access without cost or subscription.
+                                Yes. The downloader offers unlimited TikTok to MP4 download access without cost or subscription.
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-yellow-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-yellow-400 mb-2">2. Which formats are supported by the downloader?</h3>
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">2. Which formats are supported by the downloader?</h3>
                             <p className="text-gray-300">
-                                You can convert Snapchat to MP4 for video or MP3 for audio. Other supported formats include WebM and
+                                You can convert TikTok to MP4 for video or MP3 for audio. Other supported formats include WebM and
                                 high-resolution variants.
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-yellow-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-yellow-400 mb-2">3. Does ytmp4 work on all browsers and devices?</h3>
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">3. Does ytmp4 work on all browsers and devices?</h3>
                             <p className="text-gray-300">
-                                Yes. This Snapchat to MP4 downloader is fully operational on Chrome, Safari, Firefox, and all major
+                                Yes. This TikTok to MP4 downloader is fully operational on Chrome, Safari, Firefox, and all major
                                 browsers on mobile and desktop.
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-yellow-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-yellow-400 mb-2">4. Does ytmp4 support HD and 4K resolutions?</h3>
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">4. Does ytmp4 support HD and 4K resolutions?</h3>
                             <p className="text-gray-300">
-                                Yes. It allows Snapchat to make MP4 downloads in both HD and 4K resolutions.
+                                Yes. It allows TikTok to make MP4 downloads in both HD and 4K resolutions.
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-yellow-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-yellow-400 mb-2">5. Do you have any file size or download limits?</h3>
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">5. Do you have any file size or download limits?</h3>
                             <p className="text-gray-300">
-                                No. The Snapchat to MP4 service is unlimited. You can download as many videos as needed.
+                                No. The TikTok to MP4 service is unlimited. You can download as many videos as needed.
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-yellow-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-yellow-400 mb-2">6. Is this Snapchat to MP4 converter secure?</h3>
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">6. Is this TikTok to MP4 converter secure?</h3>
                             <p className="text-gray-300">
-                                Yes. All Snapchat to MP4 downloads are processed over encrypted HTTPS connections, ensuring privacy and
+                                Yes. All TikTok to MP4 downloads are processed over encrypted HTTPS connections, ensuring privacy and
                                 data protection with the downloader.
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-yellow-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-yellow-400 mb-2">7. Why is my video not downloading?</h3>
+                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">7. Why is my video not downloading?</h3>
                             <p className="text-gray-300">
                                 If you're experiencing issues, check if the video is public and not restricted. Try refreshing the page
                                 and entering the link again.
@@ -412,16 +444,17 @@ export default function SnapchatPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                         <div>
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="h-14 w-14 rounded-full border-2 border-yellow-500 p-0.5 bg-gray-900 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
-                                    <Snapchat className="h-8 w-8 text-yellow-500" />
-
+                                <div className="h-14 w-14 rounded-full border-2 border-teal-500 p-0.5 bg-gray-900 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
+                                    <svg className="h-8 w-8 text-teal-500" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+                                    </svg>
                                 </div>
                                 <h3 className="text-xl font-bold text-white">
-                                    Snapchat <span className="text-yellow-500">Downloader</span>
+                                    TikTok <span className="text-teal-500">Downloader</span>
                                 </h3>
                             </div>
                             <p className="text-gray-400 mb-4">
-                                Download Snapchat videos, reels, and stories – fast, free, & secure!
+                                Download TikTok videos, reels, and stories – fast, free, & secure!
                             </p>
                         </div>
 
@@ -431,7 +464,7 @@ export default function SnapchatPage() {
                                 <li>
                                     <Link
                                         href="/youtube"
-                                        className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 flex items-center group"
+                                        className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                                         YouTube Downloader
@@ -440,7 +473,7 @@ export default function SnapchatPage() {
                                 <li>
                                     <Link
                                         href="/facebook"
-                                        className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 flex items-center group"
+                                        className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                                         Facebook Downloader
@@ -449,7 +482,7 @@ export default function SnapchatPage() {
                                 <li>
                                     <Link
                                         href="/tiktok"
-                                        className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 flex items-center group"
+                                        className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                                         TikTok Downloader
@@ -458,7 +491,7 @@ export default function SnapchatPage() {
                                 <li>
                                     <Link
                                         href="/snapchat"
-                                        className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 flex items-center group"
+                                        className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                                         Snapchat Downloader
@@ -473,7 +506,7 @@ export default function SnapchatPage() {
                                 <li>
                                     <Link
                                         href="/"
-                                        className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 flex items-center group"
+                                        className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                                         Home
@@ -482,7 +515,7 @@ export default function SnapchatPage() {
                                 <li>
                                     <Link
                                         href="/privacy-policy"
-                                        className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 flex items-center group"
+                                        className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                                         Privacy Policy
@@ -491,7 +524,7 @@ export default function SnapchatPage() {
                                 <li>
                                     <Link
                                         href="/terms"
-                                        className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 flex items-center group"
+                                        className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                                         Terms & Conditions
@@ -500,7 +533,7 @@ export default function SnapchatPage() {
                                 <li>
                                     <Link
                                         href="/contact"
-                                        className="text-gray-400 hover:text-yellow-400 transition-colors duration-300 flex items-center group"
+                                        className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
                                         Contact Us
