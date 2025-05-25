@@ -115,7 +115,7 @@ export class DownloadManager extends EventEmitter {
   private async initializeCookiesFile(): Promise<string> {
     try {
       // Create a temporary cookies file
-      const cookiesPath = path.join(this.cookiesDir, "youtube-cookies.txt")
+      const cookiesPath = path.join(this.cookiesDir, "youtube.com_cookies.txt")
 
       // Check if we have cookies in the environment variable
       const cookiesContent = process.env.YOUTUBE_COOKIES || ""
