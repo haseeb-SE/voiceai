@@ -5,7 +5,7 @@ const readline = require("readline");
 const os = require("os");
 const { convertJsonCookiesToNetscape } = require("../lib/cookie-converter");
 
-const CHROME_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"; // Adjust if needed
+const CHROME_PATH = "/usr/bin/google-chrome"; // Adjust if needed
 
 async function waitForEnter() {
   return new Promise((resolve) => {
