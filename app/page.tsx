@@ -451,7 +451,7 @@ export default function YouTubePage() {
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="/facebook"
+                    href="/facebook-video-downloader"
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
@@ -460,7 +460,7 @@ export default function YouTubePage() {
                 </li>
                 <li>
                   <Link
-                    href="/instagram"
+                    href="/instagram-video-downloader"
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
@@ -469,7 +469,7 @@ export default function YouTubePage() {
                 </li>
                 <li>
                   <Link
-                    href="/tiktok"
+                    href="/tiktok-video-downloader"
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
@@ -478,7 +478,7 @@ export default function YouTubePage() {
                 </li>
                 <li>
                   <Link
-                    href="/snapchat"
+                    href="/snapchat-video-downloader"
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
@@ -518,15 +518,7 @@ export default function YouTubePage() {
                     Terms & Conditions
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="/contact"
-                    className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
-                  >
-                    <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Contact Us
-                  </Link>
-                </li>
+              
               </ul>
             </div>
           </div>

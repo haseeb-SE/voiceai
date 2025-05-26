@@ -2,8 +2,8 @@ import Link from "next/link"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Terms and Conditions - Dynamo Downloader",
-  description: "Terms and Conditions for using Dynamo Downloader - YouTube video downloader service.",
+  title: "Terms and Conditions - youtubetomp4download",
+  description: "Terms and Conditions for using youtubetomp4download.com - YouTube video downloader service.",
 }
 
 export default function Terms() {
@@ -16,7 +16,7 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-bold mb-4 text-white">1. Acceptance of Terms</h2>
             <p>
-              By accessing and using dynamodownloader.com ("Website"), you accept and agree to be bound by the terms and
+              By accessing and using  youtubetomp4download.com ("Website"), you accept and agree to be bound by the terms and
               provision of this agreement. In addition, when using this Website's particular services, you shall be
               subject to any posted guidelines or rules applicable to such services. Any participation in this service
               will constitute acceptance of this agreement. If you do not agree to abide by the above, please do not use
@@ -27,7 +27,7 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-bold mb-4 text-white">2. Intellectual Property</h2>
             <p>
-              The Website and its original content, features, and functionality are owned by Dynamo Downloader and are
+              The Website and its original content, features, and functionality are owned by youtubetomp4download.com and are
               protected by international copyright, trademark, patent, trade secret, and other intellectual property or
               proprietary rights laws.
             </p>
@@ -63,7 +63,6 @@ export default function Terms() {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-white">6. Contact Us</h2>
-            <p>If you have any questions about this Agreement, please contact us at contact@dynamodownloader.com.</p>
           </section>
         </div>
 

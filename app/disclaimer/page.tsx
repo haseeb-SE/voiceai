@@ -2,8 +2,8 @@ import Link from "next/link"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Disclaimer - Dynamo Downloader",
-  description: "Disclaimer for Dynamo Downloader - YouTube video downloader service.",
+  title: "Disclaimer - youtubetomp4download",
+  description: "Disclaimer for youtubetomp4download  - YouTube video downloader service.",
 }
 
 export default function Disclaimer() {
@@ -16,7 +16,7 @@ export default function Disclaimer() {
           <section>
             <h2 className="text-2xl font-bold mb-4 text-white">1. General Information</h2>
             <p>
-              The information provided by Dynamo Downloader ("we," "us," or "our") on dynamodownloader.com is for
+              The information provided by youtubetomp4download.com ("we," "us," or "our") on youtubetomp4download.com is for
               general informational purposes only. All information on the Website is provided in good faith; however, we
               make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy,
               validity, reliability, availability, or completeness of any information on the Website.
@@ -54,9 +54,9 @@ export default function Disclaimer() {
             <p>
               The Website may contain views and opinions that are those of the authors and do not necessarily reflect
               the official policy or position of any other author, agency, organization, employer, or company, including
-              Dynamo Downloader. Comments published by users are their sole responsibility, and the users will take full
+              youtubetomp4download . Comments published by users are their sole responsibility, and the users will take full
               responsibility, liability, and blame for any libel or litigation that results from something written in or
-              as a direct result of something written in a comment. Dynamo Downloader is not liable for any comment
+              as a direct result of something written in a comment. youtubetomp4download is not liable for any comment
               published by users and reserves the right to delete any comment for any reason whatsoever.
             </p>
           </section>

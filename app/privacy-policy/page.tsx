@@ -2,9 +2,9 @@ import Link from "next/link"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - Dynamo Downloader",
+  title: "Privacy Policy - youtubetomp4download ",
   description:
-    "Privacy Policy for Dynamo Downloader - Learn how we protect your data and privacy when using our YouTube video downloader service.",
+    "Privacy Policy for youtubetomp4download.com - Learn how we protect your data and privacy when using our YouTube video downloader service.",
 }
 
 export default function PrivacyPolicy() {
@@ -17,7 +17,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-2xl font-bold mb-4 text-white">1. Introduction</h2>
             <p>
-              Welcome to Dynamo Downloader ("Company", "we", "our", "us"). We value your privacy and are committed to
+              Welcome to youtubetomp4download.com ("Company", "we", "our", "us"). We value your privacy and are committed to
               protecting your personal data. This Privacy Policy outlines how we collect, use, and safeguard your
               information when you use our website youtubetomp4download.com and services.
             </p>
@@ -78,7 +78,7 @@ export default function PrivacyPolicy() {
               <li>Request the deletion of your personal data.</li>
               <li>Object to or restrict the processing of your data.</li>
             </ul>
-            <p className="mt-4">To exercise these rights, please contact us at contact@dynamodownloader.com.</p>
+           
           </section>
 
           <section>
