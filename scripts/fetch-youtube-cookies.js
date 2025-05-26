@@ -29,6 +29,14 @@ async function refreshCookies() {
   fs.writeFileSync(path.join(outputDir, "youtube.com_cookies.txt"), netscapeCookies)
 
   console.log(`✅ Updated yt-dlp cookies at ${outputDir}/youtube.com_cookies.txt`)
+  cookies.forEach(cookie => {
+  if (cookie.expires) {
+    const daysLeft = Math.floor((cookie.expires * 1000 - Date.now()) / (1000 * 60 * 60 * 24));
+    if (daysLeft <= 7) {
+      console.warn(`⚠️ Cookie "${cookie.name}" is expiring in ${daysLeft} days`);
+    }
+  }
+});
 }
 
 refreshCookies()
