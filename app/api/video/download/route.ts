@@ -7,6 +7,7 @@ import os from "os"
 import { config } from "@/lib/config"
 import { convertJsonCookiesToNetscape } from "@/lib/cookie-converter"
 import { proxyManager } from "@/lib/proxy-manager"
+import mime from "mime-types"
 
 // Global store for download tasks
 const downloadTasks = new Map()
@@ -180,7 +181,9 @@ async function startDownloadProcess(taskId: string, url: string, format: string,
     // Determine output format and options
     const isAudioOnly = format.startsWith("mp3")
     const outputFormat = isAudioOnly ? "mp3" : "mp4"
-    const outputPath = path.join(tempDir, `${taskId}.${outputFormat}`)
+    const safeTitle = videoTitle.replace(/[^\w\s-]/g, "").replace(/\s+/g, "_").toLowerCase()
+    const outputPath = path.join(tempDir, `${safeTitle}_${taskId}.${outputFormat}`)
+
 
     // Get cookies file
     const cookiesPath = await createCookiesFile()
@@ -251,22 +254,46 @@ async function startDownloadProcess(taskId: string, url: string, format: string,
         ytDlpArgs.push("--audio-quality", "5") // Lower quality
       }
     } else {
-      // Video format
-      if (format === "mp4_best") {
-        ytDlpArgs.push("--format", "best[ext=mp4]/best")
-      } else if (format === "mp4_1024") {
-        ytDlpArgs.push(
-          "--format",
-          "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best",
-        )
-      } else if (format === "mp4_720") {
-        ytDlpArgs.push("--format", "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best")
-      } else {
-        ytDlpArgs.push("--format", "best[ext=mp4]/best")
-      }
+      // Handle video formats
+      switch (format) {
+        case "mp4_best":
+          ytDlpArgs.push(
+            "--format",
+            "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
+            "--merge-output-format",
+            "mp4"
+          )
+          break
 
-      ytDlpArgs.push("--merge-output-format", "mp4")
+        case "mp4_1024":
+          ytDlpArgs.push(
+            "--format",
+            "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best",
+            "--merge-output-format",
+            "mp4"
+          )
+          break
+
+        case "mp4_720":
+          ytDlpArgs.push(
+            "--format",
+            "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best",
+            "--merge-output-format",
+            "mp4"
+          )
+          break
+
+        default:
+          ytDlpArgs.push(
+            "--format",
+            "best[ext=mp4]/best",
+            "--merge-output-format",
+            "mp4"
+          )
+          break
+      }
     }
+
 
     // Output path
     ytDlpArgs.push("--output", outputPath)
@@ -417,61 +444,66 @@ export const maxDuration = 60 // Increase timeout for large files
 
 export async function GET(request: NextRequest) {
   try {
-    // Get the taskId from the query parameters
-    const taskId = request.nextUrl.searchParams.get("taskId")
+    const taskId = request.nextUrl.searchParams.get("taskId");
 
     if (!taskId) {
-      return NextResponse.json({ error: "Task ID is required" }, { status: 400 })
+      return NextResponse.json({ error: "Task ID is required" }, { status: 400 });
     }
 
-    console.log(`Processing download request for task: ${taskId}`)
+    console.log(`Processing download request for task: ${taskId}`);
 
-    const tempDir = config.ytdl.tempDir
+    const tempDir = config.ytdl.tempDir;
+    const files = fs.readdirSync(tempDir);
+    const task = downloadTasks.get(taskId);
 
-    // Find the file
-    const files = fs.readdirSync(tempDir)
-    const matchingFile = files.find((file) => file.includes(taskId))
+    let matchingFile: string | undefined;
+
+    // Prefer matching by exact saved filename
+    if (task?.safeFilename) {
+      matchingFile = files.find((file) => file === task.safeFilename);
+    }
+
+    // Fallback: find by taskId
+    if (!matchingFile) {
+      matchingFile = files.find((file) =>
+        file.includes(taskId) && (file.endsWith(".mp4") || file.endsWith(".mp3"))
+      );
+    }
 
     if (!matchingFile) {
-      console.error(`File not found for task ${taskId}. Available files:`, files)
-      return NextResponse.json({ error: "File not found" }, { status: 404 })
+      console.error(`File not found for task ${taskId}. Available files:`, files);
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
-    const filePath = path.join(tempDir, matchingFile)
+    const filePath = path.join(tempDir, matchingFile);
 
-    // Verify file exists and is readable
     if (!fs.existsSync(filePath)) {
-      console.error(`File does not exist: ${filePath}`)
-      return NextResponse.json({ error: "File not found" }, { status: 404 })
+      console.error(`File does not exist: ${filePath}`);
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
-    // Get file stats
-    const fileStats = fs.statSync(filePath)
+    const fileStats = fs.statSync(filePath);
+    const fileStream = fs.createReadStream(filePath);
+    const contentType = mime.lookup(matchingFile) || "application/octet-stream";
 
-    // Get file extension
-    const ext = path.extname(matchingFile).substring(1)
+    // Use title or filename for download name
+    const baseName = task?.safeFilename || task?.title || "download";
+    const safeName = baseName.replace(/[^\w\s-]/g, "").replace(/\s+/g, "_").toLowerCase();
+    const ext = path.extname(matchingFile).replace(".", "");
+    const finalFilename = `${safeName}_${taskId}.${ext}`;
 
-    // Set appropriate content type
-    const contentType = ext === "mp3" ? "audio/mpeg" : "video/mp4"
-
-    console.log(`Serving file: ${filePath} (${fileStats.size} bytes, ${contentType})`)
-
-    // Create readable stream
-    const fileStream = fs.createReadStream(filePath)
-
-    // Return the file as a stream with proper headers
     return new NextResponse(fileStream as any, {
       headers: {
         "Content-Type": contentType,
-        "Content-Disposition": `attachment; filename="${encodeURIComponent(matchingFile)}"`,
+        "Content-Disposition": `attachment; filename="${finalFilename}"`,
         "Content-Length": fileStats.size.toString(),
         "Cache-Control": "no-cache, no-store, must-revalidate",
         Pragma: "no-cache",
         Expires: "0",
       },
-    })
+    });
   } catch (error) {
-    console.error("Error serving download:", error)
-    return NextResponse.json({ error: "Failed to serve file" }, { status: 500 })
+    console.error("Error serving download:", error);
+    return NextResponse.json({ error: "Failed to serve file" }, { status: 500 });
   }
 }

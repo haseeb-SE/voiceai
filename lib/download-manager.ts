@@ -24,6 +24,8 @@ interface DownloadRecord {
   originalFile?: string // Store the original file path as fallback
   isAudioOnly?: boolean
   lastUpdated: number
+  safeFilename?: string
+  error?: string
 }
 
 const activeDownloads = new Map<string, DownloadRecord>()
@@ -266,13 +268,11 @@ export class DownloadManager extends EventEmitter {
    * Start the download and conversion process
    */
   async startDownload(url: string, format: string, title: string, taskId?: string): Promise<string> {
-    // Use the provided taskId or generate a new one
     const downloadTaskId = taskId || uuidv4().slice(0, 8)
     const isMP3 = format.includes("mp3")
 
     console.log(`Starting download for task ${downloadTaskId}: ${url} (${format})`)
 
-    // Create a record for this download
     activeDownloads.set(downloadTaskId, {
       url,
       format,
@@ -285,213 +285,140 @@ export class DownloadManager extends EventEmitter {
       lastUpdated: Date.now(),
     })
 
-    // Emit initial progress
     this.emit("progress", {
       taskId: downloadTaskId,
       percentage: 0,
-      estimated: 60, // Initial estimate of 60 seconds
+      estimated: 60,
       fileSize: null,
       format,
       status: "processing",
     })
 
     try {
-      // Ensure cookies file is initialized
       if (!this.cookiesPath) {
         await this.initializeCookiesFile()
       }
 
-      // Create a unique filename for this download
       const tempBase = path.join(this.tempDir, `${downloadTaskId}`)
 
-      // Build yt-dlp arguments based on format
       const ytdlpArgs = [
-        "--newline", // Important: Print progress on new lines
-        "--progress", // Show progress
-        "--no-playlist", // Don't download playlists
-        "--no-warnings", // Suppress warnings
-        "--verbose", // Add verbose output for debugging
+        "--newline",
+        "--progress",
+        "--no-playlist",
+        "--no-warnings",
+        "--verbose",
         "--cookies",
-        this.cookiesPath!, // Use cookies file
+        this.cookiesPath!,
         "--user-agent",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "--add-header",
-        "Accept-Language:en-US,en;q=0.9",
-        "--add-header",
-        "Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-        "--add-header",
-        "Sec-Fetch-Mode:navigate",
-        "--add-header",
-        "Sec-Fetch-Site:none",
-        "--add-header",
-        "Sec-Fetch-User:?1",
-        "--add-header",
-        "Upgrade-Insecure-Requests:1",
+        "--add-header", "Accept-Language:en-US,en;q=0.9",
+        "--add-header", "Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        "--add-header", "Sec-Fetch-Mode:navigate",
+        "--add-header", "Sec-Fetch-Site:none",
+        "--add-header", "Sec-Fetch-User:?1",
+        "--add-header", "Upgrade-Insecure-Requests:1",
         "--geo-bypass",
         "--no-check-certificate",
-        "--extractor-retries",
-        "3",
-        "--socket-timeout",
-        "30",
+        "--extractor-retries", "3",
+        "--socket-timeout", "30",
       ]
 
       if (isMP3) {
-        // For MP3, get the best audio
         ytdlpArgs.push(
-          "--format",
-          "bestaudio[ext=m4a]/bestaudio",
+          "--format", "bestaudio[ext=m4a]/bestaudio",
           "--extract-audio",
-          "--audio-format",
-          "m4a",
-          "--output",
-          `${tempBase}.%(ext)s`,
+          "--audio-format", "m4a",
+          "--output", `${tempBase}.%(ext)s`,
         )
       } else {
-        // For MP4, download as a single file directly
         ytdlpArgs.push(
-          "--format",
-          // 1) best MP4 video  + best M4A audio,  2) fallback to any single “best” file
-          "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
-          "--merge-output-format",
-          "mp4",
-          "--output",
-          `${tempBase}.%(ext)s`,
+          "--format", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio/bestvideo+bestaudio",
+          "--merge-output-format", "mp4",
+          "--output", `${tempBase}.%(ext)s`,
         )
       }
 
-      // Add the URL as the last argument
       ytdlpArgs.push(url)
 
       console.log(`Starting yt-dlp with args:`, ytdlpArgs)
 
-      // Spawn yt-dlp process
       const ytdlpProcess = spawn(this.ytDlpPath, ytdlpArgs)
       activeDownloads.get(downloadTaskId)!.process = ytdlpProcess
 
-      // Track stdout for progress updates
       let stdoutBuffer = ""
       ytdlpProcess.stdout.on("data", (data) => {
         const text = data.toString()
         stdoutBuffer += text
-
-        if (this.debug) {
-          console.log(`yt-dlp stdout: ${text}`)
-        }
-
-        // Process each line
+        if (this.debug) console.log(`yt-dlp stdout: ${text}`)
         const lines = stdoutBuffer.split("\n")
-        stdoutBuffer = lines.pop() || "" // Keep the last incomplete line
-
+        stdoutBuffer = lines.pop() || ""
         for (const line of lines) {
-          // Parse progress information
           this.parseYtDlpProgress(line, downloadTaskId, format)
         }
       })
 
-      // Track stderr for errors
       let stderrBuffer = ""
       ytdlpProcess.stderr.on("data", (data) => {
         stderrBuffer += data.toString()
         console.error(`yt-dlp stderr: ${data}`)
-
-        // Check for cookie errors and try to refresh cookies
         if (data.toString().includes("Sign in to confirm you're not a bot")) {
           console.log("Bot detection triggered, refreshing cookies...")
-          this.initializeCookiesFile().catch((err) => {
-            console.error("Failed to refresh cookies:", err)
-          })
+          this.initializeCookiesFile().catch((err) => console.error("Failed to refresh cookies:", err))
         }
       })
 
-      // Handle process completion
       ytdlpProcess.on("close", (code) => {
         console.log(`yt-dlp process exited with code ${code}`)
 
         if (code !== 0) {
-          console.error(`yt-dlp failed with code ${code}: ${stderrBuffer}`)
-
-          // If we get a bot detection error, try to extract video ID and use fallback
-          if (stderrBuffer.includes("Sign in to confirm you're not a bot")) {
-            const videoId = this.extractVideoId(url)
-            if (videoId) {
-              console.log(`Bot detection triggered, using fallback for video ID: ${videoId}`)
-
-              // Try to download using a different approach or just mark as failed
-              this.fail(downloadTaskId, `YouTube bot detection triggered. Please try again later.`)
-              return
-            }
-          }
-
           this.fail(downloadTaskId, `Download failed with code ${code}`)
           return
         }
 
-        // Find the downloaded file(s)
         const files = fs.readdirSync(this.tempDir)
         const downloadedFiles = files.filter((file) => file.startsWith(downloadTaskId))
-
         if (downloadedFiles.length === 0) {
           this.fail(downloadTaskId, "Download completed but no output files found")
           return
         }
 
-        // For MP4, we should have a single file
+        const download = activeDownloads.get(downloadTaskId)
+        const safeTitle = title.replace(/[^\w\s-]/g, "").replace(/\s+/g, "_").toLowerCase()
+        if (download) {
+          download.safeFilename = safeTitle // 👈 This line ensures it's accessible later
+        }
         if (!isMP3) {
-          // Look for MP4 file
-          const mp4File = downloadedFiles.find((file) => file.endsWith(".mp4"))
+          const mp4File = downloadedFiles.find((f) => f.endsWith(".mp4"))
           if (mp4File) {
             const inputFile = path.join(this.tempDir, mp4File)
-
-            // Store the original file path as fallback
-            const download = activeDownloads.get(downloadTaskId)
+            const outputFile = path.join(this.tempDir, `${safeTitle}_${downloadTaskId}.mp4`)
             if (download) {
               download.originalFile = inputFile
+              download.safeFilename = path.basename(outputFile)
             }
-
-            // Create a safe filename from the title
-            const safeTitle = title
-              .replace(/[^\w\s-]/g, "")
-              .replace(/\s+/g, "-")
-              .toLowerCase()
-
-            const outputFile = path.join(this.tempDir, `${safeTitle}_${downloadTaskId}.mp4`)
-
-            // Just rename the file instead of conversion
             this.finalizeDownload(downloadTaskId, inputFile, outputFile, false)
             return
           }
 
-          // If no MP4 file, look for other video files
-          const videoFile = downloadedFiles.find(
-            (file) => file.endsWith(".webm") || file.endsWith(".mkv") || file.endsWith(".avi") || file.endsWith(".mov"),
-          )
-
-          if (videoFile) {
-            const inputFile = path.join(this.tempDir, videoFile)
+          const fallback = downloadedFiles.find((f) => /\.(webm|mkv|avi|mov)$/.test(f))
+          if (fallback) {
+            const inputFile = path.join(this.tempDir, fallback)
             this.startConversion(downloadTaskId, inputFile, false)
             return
           }
         } else {
-          // For MP3, just use the first file (should be audio)
-          const audioFile = downloadedFiles.find(
-            (file) => file.endsWith(".m4a") || file.endsWith(".webm") || file.endsWith(".opus"),
-          )
-
+          const audioFile = downloadedFiles.find((f) => /\.(m4a|webm|opus)$/.test(f))
           if (audioFile) {
             const inputFile = path.join(this.tempDir, audioFile)
-
-            // Store the original file path as fallback
-            const download = activeDownloads.get(downloadTaskId)
             if (download) {
               download.originalFile = inputFile
+              download.safeFilename = `${safeTitle}_${downloadTaskId}.mp3`
             }
-
             this.startConversion(downloadTaskId, inputFile, true)
             return
           }
         }
 
-        // If we get here, something went wrong
         this.fail(downloadTaskId, "Could not find appropriate output files")
       })
 
@@ -518,12 +445,9 @@ export class DownloadManager extends EventEmitter {
     console.log(`Finalizing download for ${taskId}: ${inputFile} -> ${outputFile}`)
 
     try {
-      // If input and output are different, copy the file
       if (inputFile !== outputFile) {
         fs.copyFileSync(inputFile, outputFile)
         console.log(`File copied: ${inputFile} -> ${outputFile}`)
-
-        // Delete the original file
         try {
           fs.unlinkSync(inputFile)
           console.log(`Original file deleted: ${inputFile}`)
@@ -532,13 +456,12 @@ export class DownloadManager extends EventEmitter {
         }
       }
 
-      // Update the download record
       download.outputFile = outputFile
+      download.safeFilename = path.basename(outputFile)
       download.status = "completed"
       download.progress = 100
       download.lastUpdated = Date.now()
 
-      // Emit completion event
       this.emit("progress", {
         taskId,
         percentage: 100,
@@ -553,7 +476,6 @@ export class DownloadManager extends EventEmitter {
     } catch (error) {
       console.error(`Error finalizing download for ${taskId}:`, error)
 
-      // If we have the original file, use it as fallback
       if (download.originalFile && fs.existsSync(download.originalFile)) {
         download.outputFile = download.originalFile
         download.status = "completed"
@@ -576,6 +498,7 @@ export class DownloadManager extends EventEmitter {
       }
     }
   }
+
 
   /**
    * Parse yt-dlp progress output and update progress
