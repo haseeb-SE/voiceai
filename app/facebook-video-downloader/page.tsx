@@ -59,19 +59,19 @@ export default function FacebookPage() {
       <div className="flex flex-wrap justify-center gap-4 mt-8">
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Videos in HD or 4K resolution</span>
+          <span className="text-sm md:text-base">High-Definition Video Downloads</span>
         </div>
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Compatible with Mac & Windows</span>
+          <span className="text-sm md:text-base">Works Flawlessly on Mac & Windows</span>
         </div>
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">No Additional Software Or Plug-ins </span>
+          <span className="text-sm md:text-base">Securely Download Videos from Facebook</span>
         </div>
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Convert Videos to MP4 or MP3</span>
+          <span className="text-sm md:text-base">Convert Facebook Video to MP4 Effortlessly</span>
         </div>
       </div>
 
@@ -408,7 +408,7 @@ export default function FacebookPage() {
                   <Facebook className="h-6 w-6 text-blue-500" />
                 </div>
                 <h3 className="text-xl font-bold text-white">
-                  Facebook <span className="text-blue-500">Downloader</span>
+                  Facebook <span className="text-blue-500">Video Downloader</span>
                 </h3>
               </div>
               <p className="text-gray-400 mb-4">Download Facebook videos and reels – fast, free, & secure!</p>
@@ -423,7 +423,7 @@ export default function FacebookPage() {
                     className="text-gray-400 hover:text-blue-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    YouTube Downloader
+                    YouTube Video Downloader
                   </Link>
                 </li>
                 <li>
@@ -432,7 +432,7 @@ export default function FacebookPage() {
                     className="text-gray-400 hover:text-blue-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Instagram Downloader
+                    Instagram Video Downloader
                   </Link>
                 </li>
                 <li>
@@ -441,7 +441,7 @@ export default function FacebookPage() {
                     className="text-gray-400 hover:text-blue-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    TikTok Downloader
+                    TikTok Video Downloader
                   </Link>
                 </li>
                 <li>
@@ -450,7 +450,7 @@ export default function FacebookPage() {
                     className="text-gray-400 hover:text-blue-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Snapchat Downloader
+                    Snapchat Video Downloader
                   </Link>
                 </li>
               </ul>

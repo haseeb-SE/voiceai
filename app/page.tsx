@@ -90,7 +90,7 @@ export default function YouTubePage() {
         </div>
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">No Additional Software Or Plug-ins </span>
+          <span className="text-sm md:text-base">Convert YouTube Shorts To MP4</span>
         </div>
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
@@ -440,7 +440,7 @@ export default function YouTubePage() {
                   className="h-10 w-10 rounded-full border border-red-500"
                 />
                 <h3 className="text-xl font-bold text-white">
-                  YouTube <span className="text-red-500">Downloader</span>
+                  YouTube <span className="text-red-500">Video Downloader</span>
                 </h3>
               </div>
               <p className="text-gray-400 mb-4">Download YouTube videos and shorts – fast, free, & secure!</p>
@@ -455,7 +455,7 @@ export default function YouTubePage() {
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Facebook Downloader
+                    Facebook Video Downloader
                   </Link>
                 </li>
                 <li>
@@ -464,7 +464,7 @@ export default function YouTubePage() {
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Instagram Downloader
+                    Instagram Video Downloader
                   </Link>
                 </li>
                 <li>
@@ -473,7 +473,7 @@ export default function YouTubePage() {
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    TikTok Downloader
+                    TikTok Video Downloader
                   </Link>
                 </li>
                 <li>
@@ -482,7 +482,7 @@ export default function YouTubePage() {
                     className="text-gray-400 hover:text-red-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Snapchat Downloader
+                    Snapchat Video Downloader
                   </Link>
                 </li>
               </ul>

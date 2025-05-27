@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     "Quickly download Insta videos and reels for free. Use the easiest Instagram video downloader to save high-quality videos without installing anything.",
   keywords:
-    "Instagram video downloader, Download Insta video, Download Insta Reels, free instagram video downloader, Download Insta videos",
+    "Instagram video downloader, Download Insta videos, Download Insta Reels, free instagram video downloader, Download Insta video",
 }
 
 export default function InstagramPage() {
@@ -59,19 +59,19 @@ export default function InstagramPage() {
       <div className="flex flex-wrap justify-center gap-4 mt-8">
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Videos in HD or 4K resolution</span>
+          <span className="text-sm md:text-base">No limits or subscriptions</span>
         </div>
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Compatible with Mac & Windows</span>
+          <span className="text-sm md:text-base">High-quality MP4 downloads</span>
         </div>
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">No Additional Software Or Plug-ins </span>
+          <span className="text-sm md:text-base">Works on all devices and browsers</span>
         </div>
         <div className="flex items-center p-3 bg-gray-800 rounded-lg">
           <span className="text-red-400 mr-2">✓</span>
-          <span className="text-sm md:text-base">Convert Videos to MP4 or MP3</span>
+          <span className="text-sm md:text-base">Download Insta Reels and Videos</span>
         </div>
       </div>
 
@@ -371,7 +371,7 @@ export default function InstagramPage() {
                   <Instagram className="h-6 w-6 text-pink-500" />
                 </div>
                 <h3 className="text-xl font-bold text-white">
-                  Instagram <span className="text-pink-500">Downloader</span>
+                  Instagram <span className="text-pink-500">Video Downloader</span>
                 </h3>
               </div>
               <p className="text-gray-400 mb-4">
@@ -388,7 +388,7 @@ export default function InstagramPage() {
                     className="text-gray-400 hover:text-pink-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    YouTube Downloader
+                    YouTube Video Downloader
                   </Link>
                 </li>
                 <li>
@@ -397,7 +397,7 @@ export default function InstagramPage() {
                     className="text-gray-400 hover:text-pink-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Facebook Downloader
+                    Facebook Video Downloader
                   </Link>
                 </li>
                 <li>
@@ -406,7 +406,7 @@ export default function InstagramPage() {
                     className="text-gray-400 hover:text-pink-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    TikTok Downloader
+                    TikTok Video Downloader
                   </Link>
                 </li>
                 <li>
@@ -415,7 +415,7 @@ export default function InstagramPage() {
                     className="text-gray-400 hover:text-pink-400 transition-colors duration-300 flex items-center group"
                   >
                     <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                    Snapchat Downloader
+                    Snapchat Video Downloader
                   </Link>
                 </li>
               </ul>

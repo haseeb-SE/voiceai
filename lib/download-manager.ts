@@ -1,6 +1,10 @@
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+
+
 import ffmpeg from "fluent-ffmpeg"
 import fs from "fs"
-import path from "path"
 import { v4 as uuidv4 } from "uuid"
 import os from "os"
 import { spawn } from "child_process"
@@ -9,6 +13,8 @@ import { updateProgress } from "@/lib/global-store"
 import { config } from "@/lib/config"
 import { convertJsonCookiesToNetscape } from "@/lib/cookie-converter"
 import { ensureValidBinaryPath } from "./path-helper"
+
+const PROXY_URL = process.env.PROXY_URL;
 
 // In-memory store for active downloads
 interface DownloadRecord {
@@ -199,6 +205,12 @@ export class DownloadManager extends EventEmitter {
         "3",
         url,
       ]
+      // Inject proxy if defined
+      if (PROXY_URL) args.push('--proxy', PROXY_URL);
+
+      args.push(url);
+
+
 
       console.log(`Getting video info with args: ${args.join(" ")}`)
 
@@ -271,6 +283,7 @@ export class DownloadManager extends EventEmitter {
     const downloadTaskId = taskId || uuidv4().slice(0, 8)
     const isMP3 = format.includes("mp3")
 
+
     console.log(`Starting download for task ${downloadTaskId}: ${url} (${format})`)
 
     activeDownloads.set(downloadTaskId, {
@@ -304,6 +317,7 @@ export class DownloadManager extends EventEmitter {
       const ytdlpArgs = [
         "--newline",
         "--progress",
+
         "--no-playlist",
         "--no-warnings",
         "--verbose",
@@ -322,7 +336,7 @@ export class DownloadManager extends EventEmitter {
         "--extractor-retries", "3",
         "--socket-timeout", "30",
       ]
-
+      if (PROXY_URL) ytdlpArgs.push('--proxy', PROXY_URL);
       if (isMP3) {
         ytdlpArgs.push(
           "--format", "bestaudio[ext=m4a]/bestaudio",

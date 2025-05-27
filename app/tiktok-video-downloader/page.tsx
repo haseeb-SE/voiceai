@@ -7,9 +7,9 @@ import { ShareButtons } from "@/components/ShareButtons"
 import { ResponsiveHeader } from "@/components/responsive-header"
 
 export const metadata: Metadata = {
-    title: "TikTok Video Downloader | Download TikTok Videos Free",
-    description: "Download TikTok videos in MP4 or MP3 format. Free, fast, and no signup required.",
-    keywords: "TikTok downloader, TikTok to MP4, TikTok to MP3, download TikTok videos, TikTok video downloader",
+    title: "Free TikTok Video Downloader - No Watermark",
+    description: "Download Tik Tok videos instantly using our free TikTok video downloader. Use the best TikTok video downloader, no watermark.",
+    keywords: "tiktok video downloader,tiktok video downloader no watermark, download tiktok videos, tik tok download video, download video tiktok",
 }
 
 export default function TikTokPage() {
@@ -22,10 +22,11 @@ export default function TikTokPage() {
             <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
                 <div className="max-w-4xl mx-auto text-center space-y-4">
                     <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-2 text-teal-500 drop-shadow-lg">
-                        TikTok Video Downloader
+                       Free TikTok Video Downloader - No Watermark
                     </h1>
                     <p className="text-l md:text-1xl font-medium text-white mb-4">
-                        Download TikTok to MP4 with the Best Video Downloader Online
+                        Download Video TikTok in Seconds
+
                     </p>
                    
                 </div>
@@ -49,8 +50,8 @@ export default function TikTokPage() {
             <section className="py-8 bg-gray-900/50">
                 <div className="container mx-auto px-4 md:px-8">
                     <p className="mt-8 text-center text-gray-300 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
-                        Use our TikTok video downloader to download and convert TikTok to MP4 or MP3 securely. All you need is a
-                        browser; no additional software installation is required. Experience high-resolution ytmp4 downloads.
+                       Looking for a fast and free way to save TikTok videos? Our TikTok video downloader lets you instantly grab your favorite clips, with no watermark or hassle. Just paste the link, choose your quality, and download. No app, no login, just smooth downloads every time.
+                       
                     </p>
                 </div>
             </section>
@@ -59,19 +60,19 @@ export default function TikTokPage() {
             <div className="flex flex-wrap justify-center gap-4 mt-8">
                 <div className="flex items-center p-3 bg-gray-800 rounded-lg">
                     <span className="text-red-400 mr-2">✓</span>
-                    <span className="text-sm md:text-base">Videos in HD or 4K resolution</span>
+                    <span className="text-sm md:text-base">No limits, no fees</span>
                 </div>
                 <div className="flex items-center p-3 bg-gray-800 rounded-lg">
                     <span className="text-red-400 mr-2">✓</span>
-                    <span className="text-sm md:text-base">Compatible with Mac & Windows</span>
+                    <span className="text-sm md:text-base">High-quality MP4 video formats</span>
                 </div>
                 <div className="flex items-center p-3 bg-gray-800 rounded-lg">
                     <span className="text-red-400 mr-2">✓</span>
-                    <span className="text-sm md:text-base">No Additional Software Or Plug-ins </span>
+                    <span className="text-sm md:text-base">Works on all devices and browsers</span>
                 </div>
                 <div className="flex items-center p-3 bg-gray-800 rounded-lg">
                     <span className="text-red-400 mr-2">✓</span>
-                    <span className="text-sm md:text-base">Convert Videos to MP4 or MP3</span>
+                    <span className="text-sm md:text-base">Clean TikTok downloads, no watermarks</span>
                 </div>
 
 
@@ -83,7 +84,7 @@ export default function TikTokPage() {
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
-                            Key Features of Our YTMP4 Downloader
+                            Why Use Our TikTok Video Downloader?
                             <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-teal-600 to-teal-400"></div>
                         </h2>
                     </div>
@@ -107,11 +108,12 @@ export default function TikTokPage() {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
-                                Convert TikTok to MP4 or MP3 in Seconds
+                                TikTok Video Downloader + No Watermark
                             </h3>
                             <p className="text-gray-300">
-                                It converts YTMP4 links instantly. Paste, click, and download. It processes video links as soon as you
-                                drop them in the search field, ensuring high-quality output files.
+                                With our TikTok video downloader, no watermark, you can save videos without the distracting logo. Ideal for repurposing content or offline viewing.
+
+                                
                             </p>
                         </div>
 
@@ -133,11 +135,11 @@ export default function TikTokPage() {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
-                                User-Centric Interface for TikTok Video Downloads
+                                Download Tik Tok Videos with Ease
                             </h3>
                             <p className="text-gray-300">
-                                The downloader is built to convert TikTok to MP4 efficiently with a simple interface. You just have to
-                                paste your video link, select MP4 or MP3, and start the download. No technical background required.
+                                No software or sign-up required. Copy the video link, paste it into the downloader's input field, and download TikTok videos instantly.
+                                
                             </p>
                         </div>
 
@@ -159,11 +161,11 @@ export default function TikTokPage() {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
-                                Multi-Format TikTok to MP4 Converter
+                                Works Across All Platforms
                             </h3>
                             <p className="text-gray-300">
-                                You can convert TikTok to MP4 for the full video or extract MP3 audio with precision. It supports
-                                flexible format selection, ensuring compatibility with your playback devices.
+                               Whether you’re on a phone, tablet, or desktop, our TikTok video downloader is fully compatible and optimized for every browser.
+                               
                             </p>
                         </div>
 
@@ -185,11 +187,11 @@ export default function TikTokPage() {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
-                                Download TikTok to MP4 in HD and 4K
+                               Unlimited Downloads Anytime
                             </h3>
                             <p className="text-gray-300">
-                                Pick from the standard definition options, 1080p HD, or 4K resolution. This YTMP4 download platform
-                                guarantees high visual clarity for every file.
+                               Use our tool to download Tik Tok videos as many times as you need. No restrictions or download caps.
+                               
                             </p>
                         </div>
 
@@ -211,11 +213,11 @@ export default function TikTokPage() {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-teal-400 mb-3 group-hover:text-teal-300 transition-colors">
-                                Compatible with Windows and Mac Systems
+                                High-Quality Video Output
                             </h3>
                             <p className="text-gray-300">
-                                The Downloader is compatible with both operating systems: Mac and Windows. The YTMP4 process runs
-                                entirely online without the need for any additional software or device-specific versions.
+                               Get the best resolution for every TikTok video download, from standard to full HD.
+                               
                             </p>
                         </div>
 
@@ -252,7 +254,7 @@ export default function TikTokPage() {
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
-                            How to Download TikTok Videos
+                            3-Step Tik Tok Download Video Process
                             <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-teal-600 to-teal-400"></div>
                         </h2>
                     </div>
@@ -264,10 +266,10 @@ export default function TikTokPage() {
                                 <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
                                     1
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Copy the TikTok Link</h3>
+                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Copy the TikTok Video Link</h3>
                                 <p className="text-gray-300">
-                                    Find the video you want to download from TikTok. Tap "Share" and then "Copy Link" to get the video
-                                    URL.
+                                    Open the TikTok app or website, find the video you want, and tap “Share” to copy the video link.
+                                    
                                 </p>
                             </div>
                         </div>
@@ -278,10 +280,9 @@ export default function TikTokPage() {
                                 <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
                                     2
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Paste & Analyze</h3>
+                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Paste It in the TikTok Video Downloader</h3>
                                 <p className="text-gray-300">
-                                    Paste the TikTok link into our downloader tool. Click "Get Video Info" and our system will analyze the
-                                    available download options.
+                                  Go to our TikTok video downloader tool and paste the link of the TikTok video into the input box.
                                 </p>
                             </div>
                         </div>
@@ -292,9 +293,9 @@ export default function TikTokPage() {
                                 <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
                                     3
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Download Video</h3>
+                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Download Video from TikTok Without Watermark</h3>
                                 <p className="text-gray-300">
-                                    Choose your preferred format (MP4 or MP3) and click "Download" to start the download process.
+                                    Click the download button, select your quality, and save the video to your device. Your TikTok video download will be ready instantly.
                                 </p>
                             </div>
                         </div>
@@ -302,61 +303,6 @@ export default function TikTokPage() {
                 </div>
             </section>
 
-            {/* How It Works Section */}
-            <section className="py-16">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 relative inline-block">
-                            How to Download TikTok Videos
-                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-teal-600 to-teal-400"></div>
-                        </h2>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                        <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-teal-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
-                            <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
-                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
-                                    1
-                                </div>
-                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Copy the TikTok Link</h3>
-                                <p className="text-gray-300">
-                                    Find the video, reel, or story you want to download from TikTok. Tap the three dots and select
-                                    "Copy Link".
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-teal-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
-                            <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
-                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
-                                    2
-                                </div>
-                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Paste & Analyze</h3>
-                                <p className="text-gray-300">
-                                    Paste the TikTok link into our downloader tool. Click "Get Video Info" and our system will analyze
-                                    the available download options.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-teal-400 rounded-xl opacity-50 group-hover:opacity-100 blur group-hover:blur-md transition-all duration-500"></div>
-                            <div className="bg-gray-800 p-6 rounded-xl shadow-lg h-full relative">
-                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-xl font-bold group-hover:scale-110 transition-transform duration-300">
-                                    3
-                                </div>
-                                <h3 className="text-xl font-bold text-white mb-3 mt-4">Choose Format & Download</h3>
-                                <p className="text-gray-300">
-                                    Select your preferred format (MP4 video or MP3 audio) and quality. Click Download, and your TikTok
-                                    content will be ready in seconds.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* Share Section */}
             <section className="py-8 bg-gray-800/30">
@@ -383,58 +329,51 @@ export default function TikTokPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                         <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
                             <h3 className="text-lg font-bold text-teal-400 mb-2">
-                                1. Is the downloader for TikTok to MP4 free to use?
+                                1. Is this TikTok video downloader really free?
                             </h3>
                             <p className="text-gray-300">
-                                Yes. The downloader offers unlimited TikTok to MP4 download access without cost or subscription.
+                                Yes, it’s 100% free with unlimited access.
                             </p>
                         </div>
 
                         <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-teal-400 mb-2">2. Which formats are supported by the downloader?</h3>
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">2. Can I download video Tik Tok videos a watermark?</h3>
                             <p className="text-gray-300">
-                                You can convert TikTok to MP4 for video or MP3 for audio. Other supported formats include WebM and
-                                high-resolution variants.
+                                Yes. Our TikTok video downloader with no watermark ensures clean video files.
+                                
                             </p>
                         </div>
 
                         <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-teal-400 mb-2">3. Does ytmp4 work on all browsers and devices?</h3>
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">3. Does it work on mobile?</h3>
                             <p className="text-gray-300">
-                                Yes. This TikTok to MP4 downloader is fully operational on Chrome, Safari, Firefox, and all major
-                                browsers on mobile and desktop.
+                               Absolutely. You can download TikTok videos on both iOS and Android devices.
+                               
                             </p>
                         </div>
 
                         <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-teal-400 mb-2">4. Does ytmp4 support HD and 4K resolutions?</h3>
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">4. How do I use this to download TikTok videos?</h3>
                             <p className="text-gray-300">
-                                Yes. It allows TikTok to make MP4 downloads in both HD and 4K resolutions.
+                                Paste your video link into the tool, click download, and that’s it.
                             </p>
                         </div>
 
                         <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-teal-400 mb-2">5. Do you have any file size or download limits?</h3>
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">5. Are the downloads high-quality?</h3>
                             <p className="text-gray-300">
-                                No. The TikTok to MP4 service is unlimited. You can download as many videos as needed.
+                               Yes. You can choose your preferred resolution for every TikTok video download.
                             </p>
                         </div>
 
                         <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-teal-400 mb-2">6. Is this TikTok to MP4 converter secure?</h3>
+                            <h3 className="text-lg font-bold text-teal-400 mb-2">6. Can I use this tool to download videos from TikTok multiple times?</h3>
                             <p className="text-gray-300">
-                                Yes. All TikTok to MP4 downloads are processed over encrypted HTTPS connections, ensuring privacy and
-                                data protection with the downloader.
+                                Yes. There are no limits, so download TikTok videos as often as you want.
+                                
                             </p>
                         </div>
 
-                        <div className="bg-gray-800/80 p-6 rounded-xl shadow-lg hover:shadow-teal-500/10 transition-all duration-300 transform hover:-translate-y-1">
-                            <h3 className="text-lg font-bold text-teal-400 mb-2">7. Why is my video not downloading?</h3>
-                            <p className="text-gray-300">
-                                If you're experiencing issues, check if the video is public and not restricted. Try refreshing the page
-                                and entering the link again.
-                            </p>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -450,7 +389,7 @@ export default function TikTokPage() {
                                     </svg>
                                 </div>
                                 <h3 className="text-xl font-bold text-white">
-                                    TikTok <span className="text-teal-500">Downloader</span>
+                                    TikTok <span className="text-teal-500"> Video Downloader</span>
                                 </h3>
                             </div>
                             <p className="text-gray-400 mb-4">
@@ -467,7 +406,7 @@ export default function TikTokPage() {
                                         className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                                        YouTube Downloader
+                                        YouTube Video Downloader
                                     </Link>
                                 </li>
                                 <li>
@@ -476,7 +415,7 @@ export default function TikTokPage() {
                                         className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                                        Facebook Downloader
+                                        Facebook Video Downloader
                                     </Link>
                                 </li>
                                 <li>
@@ -485,7 +424,7 @@ export default function TikTokPage() {
                                         className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                                        TikTok Downloader
+                                        TikTok Video Downloader
                                     </Link>
                                 </li>
                                 <li>
@@ -494,7 +433,7 @@ export default function TikTokPage() {
                                         className="text-gray-400 hover:text-teal-400 transition-colors duration-300 flex items-center group"
                                     >
                                         <span className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">→</span>
-                                        Snapchat Downloader
+                                        Snapchat Video Downloader
                                     </Link>
                                 </li>
                             </ul>
