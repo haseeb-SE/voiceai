@@ -309,7 +309,7 @@ export default function TikTokPage() {
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row items-center justify-between max-w-4xl mx-auto">
                         <div className="mb-4 md:mb-0">
-                            <h3 className="text-xl font-bold text-white">Share Free YTMP4 Download:</h3>
+                            <h3 className="text-xl font-bold text-white">Share Free Tiktok Video Downloader:</h3>
                         </div>
                         <ShareButtons />
                     </div>
