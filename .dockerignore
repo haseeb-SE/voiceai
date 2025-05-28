@@ -1,0 +1,11 @@
+# .dockerignore
+node_modules
+.pnpm-store
+.vscode
+.git
+*.log
+.idea
+.DS_Store
+build
+dist
+.next
