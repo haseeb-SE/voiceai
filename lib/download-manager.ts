@@ -1,7 +1,20 @@
-import dotenv from 'dotenv';
-import path from 'path';
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+import dotenv from "dotenv"
+import path from "path"
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") })
 
+const INVIDIOUS = process.env.INVIDIOUS_BASE_URL || ""
+const USER_AGENTS = [
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0",
+]
+function pickUA() {
+  return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)]
+}
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms))
+}
 
 import ffmpeg from "fluent-ffmpeg"
 import fs from "fs"
@@ -11,10 +24,236 @@ import { spawn } from "child_process"
 import { EventEmitter } from "events"
 import { updateProgress } from "@/lib/global-store"
 import { config } from "@/lib/config"
-import { convertJsonCookiesToNetscape } from "@/lib/cookie-converter"
-import { ensureValidBinaryPath } from "./path-helper"
 
-const PROXY_URL = process.env.PROXY_URL;
+// Puppeteer stealth fallback - dynamically imported to avoid Next.js compilation issues
+async function fallbackWithPuppeteerStealth(url: string, taskId: string) {
+  console.log(`[${taskId}] Attempting Puppeteer stealth fallback for ${url}`)
+
+  try {
+    // Dynamic import to avoid Next.js static analysis issues
+    const puppeteer = await import("puppeteer-extra")
+    const StealthPlugin = await import("puppeteer-extra-plugin-stealth")
+
+    // Configure puppeteer with stealth plugin
+    puppeteer.default.use(StealthPlugin.default())
+
+    const browser = await puppeteer.default.launch({
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+        "--disable-gpu",
+        "--disable-web-security",
+        "--disable-features=VizDisplayCompositor",
+      ],
+    })
+
+    const [page] = await browser.pages()
+
+    // Set a realistic user agent and viewport
+    await page.setUserAgent(pickUA())
+    await page.setViewport({ width: 1920, height: 1080 })
+
+    // Set additional headers to mimic real browser
+    await page.setExtraHTTPHeaders({
+      "Accept-Language": "en-US,en;q=0.9",
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Site": "none",
+      "Sec-Fetch-User": "?1",
+      "Upgrade-Insecure-Requests": "1",
+    })
+
+    // Navigate to the video page
+    const targetUrl = INVIDIOUS || url
+    console.log(`[${taskId}] Navigating to: ${targetUrl}`)
+
+    await page.goto(targetUrl, {
+      waitUntil: "networkidle2",
+      timeout: 30000,
+    })
+
+    // Wait a bit to let the page fully load
+    await sleep(3000)
+
+    // Try to extract video information and stream URLs
+    const videoInfo = await page.evaluate(() => {
+      // Try multiple methods to get video info
+      const title =
+        document.querySelector("title")?.textContent ||
+        document.querySelector("h1")?.textContent ||
+        document.querySelector("[data-title]")?.getAttribute("data-title") ||
+        "Unknown Video"
+
+      // Look for video player config
+      let playerConfig = null
+      const streamUrls: string[] = []
+
+      try {
+        // Try to access YouTube player config
+        playerConfig = (window as any).ytplayer?.config?.args
+        if (playerConfig) {
+          // Extract stream URLs from player config
+          const streamMap = playerConfig.url_encoded_fmt_stream_map || playerConfig.adaptive_fmts
+          if (streamMap) {
+            streamUrls.push(streamMap)
+          }
+        }
+      } catch (e) {
+        console.log("Could not access ytplayer config")
+      }
+
+      // Try to find video elements and their sources
+      const videoElements = document.querySelectorAll("video")
+      videoElements.forEach((video) => {
+        if (video.src) streamUrls.push(video.src)
+        const sources = video.querySelectorAll("source")
+        sources.forEach((source) => {
+          if (source.src) streamUrls.push(source.src)
+        })
+      })
+
+      // Look for manifest URLs in the page
+      const scripts = document.querySelectorAll("script")
+      scripts.forEach((script) => {
+        const content = script.textContent || ""
+        const manifestMatch = content.match(/["']([^"']*\.m3u8[^"']*)["']/g)
+        if (manifestMatch) {
+          manifestMatch.forEach((match) => {
+            const url = match.replace(/["']/g, "")
+            if (url.includes("manifest") || url.includes("m3u8")) {
+              streamUrls.push(url)
+            }
+          })
+        }
+      })
+
+      return {
+        title: title.replace(" - YouTube", "").trim(),
+        playerConfig: playerConfig,
+        streamUrls: streamUrls.filter((url) => url && url.length > 10), // Filter out empty/invalid URLs
+        pageUrl: window.location.href,
+      }
+    })
+
+    await browser.close()
+
+    console.log(`[${taskId}] Puppeteer extracted:`, {
+      title: videoInfo.title,
+      streamCount: videoInfo.streamUrls.length,
+    })
+
+    // If we found stream URLs, we could potentially use them with yt-dlp
+    if (videoInfo.streamUrls.length > 0) {
+      console.log(`[${taskId}] Found ${videoInfo.streamUrls.length} potential stream URLs`)
+      // For now, just return the video info - in a full implementation,
+      // you could try to download directly from these URLs
+    }
+
+    return {
+      title: videoInfo.title || `YouTube Video`,
+      thumbnail: `https://img.youtube.com/vi/${extractVideoIdFromUrl(url)}/hqdefault.jpg`,
+      uploader: "Unknown",
+      duration: 0,
+      view_count: 0,
+      streamUrls: videoInfo.streamUrls, // Include stream URLs for potential direct download
+    }
+  } catch (error) {
+    console.error(`[${taskId}] Puppeteer stealth fallback failed:`, error)
+    throw error
+  }
+}
+
+// Invidious API fallback
+async function fallbackWithInvidiousAPI(url: string, taskId: string) {
+  console.log(`[${taskId}] Attempting Invidious API fallback for ${url}`)
+
+  try {
+    if (!INVIDIOUS) {
+      throw new Error("No Invidious instance configured")
+    }
+
+    const videoId = extractVideoIdFromUrl(url)
+    if (!videoId) {
+      throw new Error("Could not extract video ID")
+    }
+
+    const invidiousUrl = `${INVIDIOUS}/api/v1/videos/${videoId}`
+    console.log(`[${taskId}] Trying Invidious API: ${invidiousUrl}`)
+
+    const response = await fetch(invidiousUrl, {
+      headers: {
+        "User-Agent": pickUA(),
+        Accept: "application/json",
+      },
+      timeout: 10000,
+    })
+
+    if (!response.ok) {
+      throw new Error(`Invidious API returned ${response.status}`)
+    }
+
+    const data = await response.json()
+    console.log(`[${taskId}] Successfully got video info from Invidious`)
+
+    return {
+      title: data.title || `Video ${videoId}`,
+      thumbnail: data.videoThumbnails?.[0]?.url,
+      duration: data.lengthSeconds,
+      uploader: data.author,
+      view_count: data.viewCount || 0,
+    }
+  } catch (error) {
+    console.error(`[${taskId}] Invidious API fallback failed:`, error)
+    throw error
+  }
+}
+
+// Combined fallback method with multiple strategies
+async function fallbackWithAlternativeMethod(url: string, taskId: string) {
+  console.log(`[${taskId}] Attempting alternative fallback methods for ${url}`)
+
+  // Strategy 1: Try Invidious API first (fastest)
+  try {
+    return await fallbackWithInvidiousAPI(url, taskId)
+  } catch (error) {
+    console.log(`[${taskId}] Invidious API failed, trying Puppeteer stealth...`)
+  }
+
+  // Strategy 2: Try Puppeteer stealth (more reliable but slower)
+  try {
+    return await fallbackWithPuppeteerStealth(url, taskId)
+  } catch (error) {
+    console.log(`[${taskId}] Puppeteer stealth failed, using basic fallback...`)
+  }
+
+  // Strategy 3: Basic fallback with video ID
+  const videoId = extractVideoIdFromUrl(url)
+  if (videoId) {
+    return {
+      title: `YouTube Video (${videoId})`,
+      thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+      uploader: "Unknown",
+      duration: 0,
+      view_count: 0,
+    }
+  }
+
+  throw new Error("All fallback methods failed")
+}
+
+// Helper function to extract video ID
+function extractVideoIdFromUrl(url: string): string | null {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+  const match = url.match(regExp)
+  return match && match[2].length === 11 ? match[2] : null
+}
+
+const PROXY_URL = process.env.PROXY_URL
 
 // In-memory store for active downloads
 interface DownloadRecord {
@@ -27,7 +266,7 @@ interface DownloadRecord {
   eta: number | null
   fileSize: number | null
   outputFile?: string
-  originalFile?: string // Store the original file path as fallback
+  originalFile?: string
   isAudioOnly?: boolean
   lastUpdated: number
   safeFilename?: string
@@ -111,55 +350,28 @@ export class DownloadManager extends EventEmitter {
       this.cleanupCompletedDownloads()
     }, config.ytdl.cleanupInterval || 300000) // Default: 5 minutes
 
-    // Refresh cookies periodically
+    // Refresh cookies periodically (hourly reload from disk)
     setInterval(() => {
-      this.initializeCookiesFile()
+      try {
+        this.initializeCookiesFile()
+        console.log("Cookies refreshed from disk")
+      } catch (err) {
+        console.error("Failed to refresh cookies:", err)
+      }
     }, 3600000) // Refresh cookies every hour
   }
 
   /**
-   * Initialize cookies file from environment variable
+   * Initialize cookies file from disk
    */
-  private async initializeCookiesFile(): Promise<string> {
-    try {
-      // Create a temporary cookies file
-      const cookiesPath = path.join(this.cookiesDir, "youtube.com_cookies.txt")
-
-      // Check if we have cookies in the environment variable
-      const cookiesContent = process.env.YOUTUBE_COOKIES || ""
-
-      if (cookiesContent) {
-        // Check if the cookies are in JSON format and convert if needed
-        if (cookiesContent.trim().startsWith("[") || cookiesContent.trim().startsWith("{")) {
-          console.log("Detected JSON format cookies, converting to Netscape format")
-          const netscapeCookies = convertJsonCookiesToNetscape(cookiesContent)
-          fs.writeFileSync(cookiesPath, netscapeCookies)
-          console.log("Created cookies file from environment variable (converted from JSON)")
-        } else {
-          // Assume it's already in Netscape format
-          fs.writeFileSync(cookiesPath, cookiesContent)
-          console.log("Created cookies file from environment variable (Netscape format)")
-        }
-      } else {
-        // Create a minimal cookies file with default values
-        const minimalCookies = `# Netscape HTTP Cookie File
-.youtube.com	TRUE	/	FALSE	1735689600	CONSENT	YES+cb
-.youtube.com	TRUE	/	FALSE	1735689600	VISITOR_INFO1_LIVE	random_alphanumeric_string
-.youtube.com	TRUE	/	FALSE	1735689600	YSC	random_alphanumeric_string
-.youtube.com	TRUE	/	FALSE	1735689600	GPS	1
-`
-        fs.writeFileSync(cookiesPath, minimalCookies)
-        console.log("Created minimal cookies file")
-      }
-
-      // Store the cookies path for later use
-      this.cookiesPath = cookiesPath
-
-      return cookiesPath
-    } catch (error) {
-      console.error("Error creating cookies file:", error)
-      throw error
+  private initializeCookiesFile(): string {
+    const cookiesPath = path.join(this.cookiesDir, "youtube.com_cookies.txt")
+    if (!fs.existsSync(cookiesPath)) {
+      throw new Error(`Cookie file not found on disk: ${cookiesPath}`)
     }
+    this.cookiesPath = cookiesPath
+    console.log(`Loaded cookies from disk: ${cookiesPath}`)
+    return cookiesPath
   }
 
   public getDownload(taskId: string) {
@@ -167,11 +379,14 @@ export class DownloadManager extends EventEmitter {
   }
 
   /**
-   * Fetch video title using yt-dlp
+   * Fetch video title using yt-dlp with improved error handling and fallbacks
    */
   async getVideoInfo(
     url: string,
   ): Promise<{ title: string; thumbnail?: string; duration?: number; uploader?: string; view_count?: number }> {
+    // Rate limiting: random delay between 1-3 seconds
+    await sleep(1000 + Math.random() * 2000)
+
     // Ensure cookies file is initialized
     if (!this.cookiesPath) {
       await this.initializeCookiesFile()
@@ -183,10 +398,10 @@ export class DownloadManager extends EventEmitter {
         "--dump-json",
         "--no-playlist",
         "--no-warnings",
+        "--user-agent",
+        pickUA(),
         "--cookies",
         this.cookiesPath!,
-        "--user-agent",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "--add-header",
         "Accept-Language:en-US,en;q=0.9",
         "--add-header",
@@ -202,15 +417,29 @@ export class DownloadManager extends EventEmitter {
         "--geo-bypass",
         "--no-check-certificate",
         "--extractor-retries",
-        "3",
-        url,
+        "5",
+        "--socket-timeout",
+        "30",
+        "--sleep-requests",
+        "1",
+        "--sleep-interval",
+        "1",
+        "--max-sleep-interval",
+        "5",
+        "--ignore-errors",
       ]
+
+      // Use Invidious as extractor base URL if available
+      if (INVIDIOUS) {
+        args.unshift("--extractor-args", `youtube:base_url=${INVIDIOUS}`)
+      }
+
       // Inject proxy if defined
-      if (PROXY_URL) args.push('--proxy', PROXY_URL);
+      if (PROXY_URL) {
+        args.push("--proxy", PROXY_URL)
+      }
 
-      args.push(url);
-
-
+      args.push(url)
 
       console.log(`Getting video info with args: ${args.join(" ")}`)
 
@@ -224,7 +453,7 @@ export class DownloadManager extends EventEmitter {
         console.log(`yt-dlp stderr: ${d.toString()}`)
       })
 
-      cp.on("close", (code) => {
+      cp.on("close", async (code) => {
         if (code === 0 && out.trim()) {
           try {
             const info = JSON.parse(out.trim())
@@ -245,15 +474,40 @@ export class DownloadManager extends EventEmitter {
               return
             }
 
-            reject(new Error("Failed to parse video information"))
+            // Try alternative fallback methods
+            try {
+              const fallbackInfo = await fallbackWithAlternativeMethod(url, "info-fallback")
+              resolve(fallbackInfo)
+            } catch (fallbackError) {
+              reject(new Error("Failed to parse video information"))
+            }
           }
         } else {
-          console.error(`yt-dlp exited ${code}: ${err}`)
+          console.error(`yt-dlp exited with code ${code}: ${err}`)
 
-          // If we get a bot detection error, try to extract minimal info from the URL
-          if (err.includes("Sign in to confirm you're not a bot")) {
+          // Check for specific error conditions
+          if (err.includes("Video unavailable") || err.includes("This video is not available")) {
+            reject(new Error("Video is not available or has been removed"))
+            return
+          }
+
+          // Bot detection or 403 errors - trigger advanced fallbacks
+          if (err.includes("Sign in to confirm you're not a bot") || err.includes("HTTP Error 403")) {
             const videoId = this.extractVideoId(url)
+
             if (videoId) {
+              console.log(`[${videoId}] Bot detection triggered, using advanced fallbacks...`)
+
+              try {
+                // Use the comprehensive fallback method
+                const fallbackInfo = await fallbackWithAlternativeMethod(url, videoId)
+                resolve(fallbackInfo)
+                return
+              } catch (fallbackError) {
+                console.error(`All fallback methods failed for ${videoId}:`, fallbackError)
+              }
+
+              // Final basic fallback
               resolve({
                 title: `YouTube Video (${videoId})`,
                 thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
@@ -262,10 +516,12 @@ export class DownloadManager extends EventEmitter {
                 view_count: 0,
               })
               return
+            } else {
+              console.error(`Couldn't parse video ID from ${url}`)
             }
           }
 
-          reject(new Error(`yt-dlp exited ${code}: ${err}`))
+          reject(new Error(`yt-dlp exited with code ${code}: ${err}`))
         }
       })
 
@@ -280,11 +536,20 @@ export class DownloadManager extends EventEmitter {
    * Start the download and conversion process
    */
   async startDownload(url: string, format: string, title: string, taskId?: string): Promise<string> {
+    // Rate limiting: random delay between 1-3 seconds
+    await sleep(1000 + Math.random() * 2000)
+
     const downloadTaskId = taskId || uuidv4().slice(0, 8)
     const isMP3 = format.includes("mp3")
 
-
     console.log(`Starting download for task ${downloadTaskId}: ${url} (${format})`)
+
+    // Create safe filename from title
+    const safeTitle = title
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "_")
+      .toLowerCase()
+      .substring(0, 50) // Limit length
 
     activeDownloads.set(downloadTaskId, {
       url,
@@ -296,6 +561,7 @@ export class DownloadManager extends EventEmitter {
       eta: null,
       fileSize: null,
       lastUpdated: Date.now(),
+      safeFilename: `${safeTitle}_${downloadTaskId}.${isMP3 ? "mp3" : "mp4"}`,
     })
 
     this.emit("progress", {
@@ -312,43 +578,72 @@ export class DownloadManager extends EventEmitter {
         await this.initializeCookiesFile()
       }
 
-      const tempBase = path.join(this.tempDir, `${downloadTaskId}`)
+      const tempBase = path.join(this.tempDir, `${safeTitle}_${downloadTaskId}`)
 
       const ytdlpArgs = [
         "--newline",
         "--progress",
-
+        "--user-agent",
+        pickUA(),
         "--no-playlist",
         "--no-warnings",
         "--verbose",
         "--cookies",
         this.cookiesPath!,
-        "--user-agent",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "--add-header", "Accept-Language:en-US,en;q=0.9",
-        "--add-header", "Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-        "--add-header", "Sec-Fetch-Mode:navigate",
-        "--add-header", "Sec-Fetch-Site:none",
-        "--add-header", "Sec-Fetch-User:?1",
-        "--add-header", "Upgrade-Insecure-Requests:1",
+        "--add-header",
+        "Accept-Language:en-US,en;q=0.9",
+        "--add-header",
+        "Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        "--add-header",
+        "Sec-Fetch-Mode:navigate",
+        "--add-header",
+        "Sec-Fetch-Site:none",
+        "--add-header",
+        "Sec-Fetch-User:?1",
+        "--add-header",
+        "Upgrade-Insecure-Requests:1",
         "--geo-bypass",
         "--no-check-certificate",
-        "--extractor-retries", "3",
-        "--socket-timeout", "30",
+        "--extractor-retries",
+        "5",
+        "--socket-timeout",
+        "30",
+        "--sleep-requests",
+        "1",
+        "--sleep-interval",
+        "1",
+        "--max-sleep-interval",
+        "5",
+        "--ignore-errors",
       ]
-      if (PROXY_URL) ytdlpArgs.push('--proxy', PROXY_URL);
+
+      // Use Invidious as extractor base URL if available
+      if (INVIDIOUS) {
+        ytdlpArgs.unshift("--extractor-args", `youtube:base_url=${INVIDIOUS}`)
+      }
+
+      if (PROXY_URL) {
+        ytdlpArgs.push("--proxy", PROXY_URL)
+      }
+
       if (isMP3) {
         ytdlpArgs.push(
-          "--format", "bestaudio[ext=m4a]/bestaudio",
+          "--format",
+          "bestaudio[ext=m4a]/bestaudio",
           "--extract-audio",
-          "--audio-format", "m4a",
-          "--output", `${tempBase}.%(ext)s`,
+          "--audio-format",
+          "m4a",
+          "--output",
+          `${tempBase}.%(ext)s`,
         )
       } else {
         ytdlpArgs.push(
-          "--format", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio/bestvideo+bestaudio",
-          "--merge-output-format", "mp4",
-          "--output", `${tempBase}.%(ext)s`,
+          "--format",
+          "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio/bestvideo+bestaudio",
+          "--merge-output-format",
+          "mp4",
+          "--output",
+          `${tempBase}.%(ext)s`,
         )
       }
 
@@ -376,31 +671,34 @@ export class DownloadManager extends EventEmitter {
         stderrBuffer += data.toString()
         console.error(`yt-dlp stderr: ${data}`)
         if (data.toString().includes("Sign in to confirm you're not a bot")) {
-          console.log("Bot detection triggered, refreshing cookies...")
+          console.log("Bot detection triggered during download, refreshing cookies...")
           this.initializeCookiesFile().catch((err) => console.error("Failed to refresh cookies:", err))
         }
       })
 
-      ytdlpProcess.on("close", (code) => {
+      ytdlpProcess.on("close", async (code) => {
         console.log(`yt-dlp process exited with code ${code}`)
 
         if (code !== 0) {
+          // If download failed due to bot detection, we could potentially
+          // try using the stream URLs from Puppeteer fallback here
           this.fail(downloadTaskId, `Download failed with code ${code}`)
           return
         }
 
         const files = fs.readdirSync(this.tempDir)
-        const downloadedFiles = files.filter((file) => file.startsWith(downloadTaskId))
+        const downloadedFiles = files.filter((file) => file.startsWith(`${safeTitle}_${downloadTaskId}`))
+
         if (downloadedFiles.length === 0) {
           this.fail(downloadTaskId, "Download completed but no output files found")
           return
         }
 
         const download = activeDownloads.get(downloadTaskId)
-        const safeTitle = title.replace(/[^\w\s-]/g, "").replace(/\s+/g, "_").toLowerCase()
         if (download) {
-          download.safeFilename = safeTitle // 👈 This line ensures it's accessible later
+          download.safeFilename = `${safeTitle}_${downloadTaskId}.${isMP3 ? "mp3" : "mp4"}`
         }
+
         if (!isMP3) {
           const mp4File = downloadedFiles.find((f) => f.endsWith(".mp4"))
           if (mp4File) {
@@ -512,7 +810,6 @@ export class DownloadManager extends EventEmitter {
       }
     }
   }
-
 
   /**
    * Parse yt-dlp progress output and update progress
@@ -870,6 +1167,7 @@ export class DownloadManager extends EventEmitter {
     if (!download) return
 
     download.status = "failed"
+    download.error = message
     download.lastUpdated = Date.now()
 
     this.emit("progress", {
