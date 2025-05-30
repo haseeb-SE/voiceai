@@ -13,28 +13,29 @@ async function sleep(ms: number): Promise<void> {
 export function detectPlatform(url: string): string | null {
   if (!url) return null
 
-  if (url.includes("tiktok.com") || url.includes("vt.tiktok.com")) {
+  // Clean URL for better detection
+  const cleanUrl = url.toLowerCase().trim()
+
+  if (cleanUrl.includes("tiktok.com") || cleanUrl.includes("vt.tiktok.com") || cleanUrl.includes("vm.tiktok.com")) {
     return "tiktok"
-  } else if (url.includes("instagram.com")) {
+  } else if (cleanUrl.includes("instagram.com") || cleanUrl.includes("instagr.am")) {
     return "instagram"
-  } else if (url.includes("facebook.com")) {
+  } else if (cleanUrl.includes("facebook.com") || cleanUrl.includes("fb.watch") || cleanUrl.includes("fb.com")) {
     return "facebook"
-  } else if (url.includes("youtube.com") || url.includes("youtu.be")) {
+  } else if (cleanUrl.includes("youtube.com") || cleanUrl.includes("youtu.be") || cleanUrl.includes("m.youtube.com")) {
     return "youtube"
-  } else if (url.includes("twitter.com")) {
+  } else if (cleanUrl.includes("twitter.com") || cleanUrl.includes("t.co")) {
     return "twitter"
-  } else if (url.includes("x.com")) {
+  } else if (cleanUrl.includes("x.com")) {
     return "twitter"
-  } else if (url.includes("snapchat.com")) {
+  } else if (cleanUrl.includes("snapchat.com") || cleanUrl.includes("snap.com")) {
     return "snapchat"
   }
   return null
 }
 
-// Add this function after detectPlatform and before getPlatformButtonColor
-
 /**
- * Extract video ID from URL based on platform
+ * Extract video ID from URL based on platform - Enhanced to handle all video types
  */
 export function extractVideoId(url: string, platform: string | null = null): string | null {
   if (!url) return null
@@ -48,95 +49,215 @@ export function extractVideoId(url: string, platform: string | null = null): str
   try {
     switch (platform) {
       case "youtube": {
-        // Handle youtube.com/watch?v=ID and youtu.be/ID formats
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
-        const match = url.match(regExp)
-        return match && match[2].length === 11 ? match[2] : null
+        // Handle all YouTube URL formats including Shorts
+
+        // YouTube Shorts: /shorts/VIDEO_ID
+        const shortsMatch = url.match(/(?:youtube\.com|youtu\.be|m\.youtube\.com)\/shorts\/([a-zA-Z0-9_-]{11})/)
+        if (shortsMatch) return shortsMatch[1]
+
+        // Standard YouTube: /watch?v=VIDEO_ID
+        const watchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/)
+        if (watchMatch) return watchMatch[1]
+
+        // YouTube short URL: youtu.be/VIDEO_ID
+        const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/)
+        if (shortMatch) return shortMatch[1]
+
+        // YouTube embed: /embed/VIDEO_ID
+        const embedMatch = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/)
+        if (embedMatch) return embedMatch[1]
+
+        // YouTube live: /live/VIDEO_ID
+        const liveMatch = url.match(/youtube\.com\/live\/([a-zA-Z0-9_-]{11})/)
+        if (liveMatch) return liveMatch[1]
+
+        // YouTube channel video: /c/CHANNEL/VIDEO_ID or /user/USER/VIDEO_ID
+        const channelMatch = url.match(/youtube\.com\/(?:c|user|channel)\/[^/]+\/.*[?&]v=([a-zA-Z0-9_-]{11})/)
+        if (channelMatch) return channelMatch[1]
+
+        // Fallback: try to find any 11-character alphanumeric string that looks like a YouTube ID
+        const fallbackMatch = url.match(/([a-zA-Z0-9_-]{11})/)
+        if (fallbackMatch && fallbackMatch[1]) {
+          // Verify it's likely a YouTube ID (contains mix of letters/numbers)
+          const id = fallbackMatch[1]
+          if (/[a-zA-Z]/.test(id) && /[0-9]/.test(id)) {
+            return id
+          }
+        }
+
+        return null
       }
 
       case "tiktok": {
-        // Handle TikTok URLs
-        const regExp = /tiktok\.com\/.*\/video\/(\d+)/
-        const match = url.match(regExp)
-        if (match && match[1]) return match[1]
+        // Handle all TikTok URL formats
 
-        // Handle shortened TikTok URLs (vt.tiktok.com)
-        const shortVtMatch = url.match(/vt\.tiktok\.com\/([^/?]+)/)
+        // Standard TikTok video: /video/VIDEO_ID
+        const videoMatch = url.match(/tiktok\.com\/.*\/video\/(\d+)/)
+        if (videoMatch) return videoMatch[1]
+
+        // TikTok user video: /@username/video/VIDEO_ID
+        const userVideoMatch = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/)
+        if (userVideoMatch) return userVideoMatch[1]
+
+        // Shortened TikTok URLs (vt.tiktok.com, vm.tiktok.com)
+        const shortVtMatch = url.match(/(?:vt|vm)\.tiktok\.com\/([a-zA-Z0-9]+)/)
         if (shortVtMatch) return shortVtMatch[1]
 
-        // Handle other shortened TikTok URLs
-        const shortMatch = url.match(/tiktok\.com\/(@[^/]+)\/([^/?]+)/)
-        return shortMatch ? shortMatch[2] : null
+        // TikTok share URLs
+        const shareMatch = url.match(/tiktok\.com\/t\/([a-zA-Z0-9]+)/)
+        if (shareMatch) return shareMatch[1]
+
+        // TikTok user profile with video
+        const profileMatch = url.match(/tiktok\.com\/@([^/]+)\/([^/?]+)/)
+        if (profileMatch) return profileMatch[2]
+
+        // Extract from any TikTok URL as fallback
+        const fallbackMatch = url.match(/tiktok\.com\/.*\/([a-zA-Z0-9]+)/)
+        if (fallbackMatch) return fallbackMatch[1]
+
+        return null
       }
 
       case "facebook": {
-        // Handle various Facebook video URL formats
+        // Handle all Facebook video URL formats
+
+        // Facebook Watch: /watch?v=VIDEO_ID
         const watchMatch = url.match(/facebook\.com\/watch\/?\?v=(\d+)/)
         if (watchMatch) return watchMatch[1]
 
+        // Facebook video: /videos/VIDEO_ID
         const videoMatch = url.match(/facebook\.com\/[^/]+\/videos\/(\d+)/)
         if (videoMatch) return videoMatch[1]
 
+        // Facebook story: /stories/USER/STORY_ID
         const storyMatch = url.match(/facebook\.com\/stories\/[^/]+\/(\d+)/)
         if (storyMatch) return storyMatch[1]
 
-        // If no specific pattern matches, use the last path segment
-        const urlObj = new URL(url)
-        const pathParts = urlObj.pathname.split("/").filter(Boolean)
-        return pathParts.length > 0 ? pathParts[pathParts.length - 1] : null
+        // Facebook reel: /reel/REEL_ID
+        const reelMatch = url.match(/facebook\.com\/reel\/(\d+)/)
+        if (reelMatch) return reelMatch[1]
+
+        // Facebook short URL: fb.watch/VIDEO_ID
+        const fbWatchMatch = url.match(/fb\.watch\/([a-zA-Z0-9]+)/)
+        if (fbWatchMatch) return fbWatchMatch[1]
+
+        // Facebook permalink: /permalink.php?story_fbid=ID
+        const permalinkMatch = url.match(/story_fbid=(\d+)/)
+        if (permalinkMatch) return permalinkMatch[1]
+
+        // Facebook video with additional parameters
+        const paramVideoMatch = url.match(/facebook\.com\/.*\/videos\/.*\/(\d+)/)
+        if (paramVideoMatch) return paramVideoMatch[1]
+
+        // Extract any numeric ID as fallback
+        const numericMatch = url.match(/(\d{10,})/)
+        if (numericMatch) return numericMatch[1]
+
+        return null
       }
 
       case "instagram": {
-        // Handle Instagram post, reel, and story URLs
-        const postMatch = url.match(/instagram\.com\/p\/([^/?]+)/)
+        // Handle all Instagram content types
+
+        // Instagram post: /p/POST_ID
+        const postMatch = url.match(/instagram\.com\/p\/([a-zA-Z0-9_-]+)/)
         if (postMatch) return postMatch[1]
 
-        const reelMatch = url.match(/instagram\.com\/reel\/([^/?]+)/)
+        // Instagram reel: /reel/REEL_ID
+        const reelMatch = url.match(/instagram\.com\/reel\/([a-zA-Z0-9_-]+)/)
         if (reelMatch) return reelMatch[1]
 
+        // Instagram TV: /tv/TV_ID
+        const tvMatch = url.match(/instagram\.com\/tv\/([a-zA-Z0-9_-]+)/)
+        if (tvMatch) return tvMatch[1]
+
+        // Instagram story: /stories/USERNAME/STORY_ID
         const storyMatch = url.match(/instagram\.com\/stories\/[^/]+\/(\d+)/)
         if (storyMatch) return storyMatch[1]
 
-        // If no specific pattern matches, use the last path segment
-        const urlObj = new URL(url)
-        const pathParts = urlObj.pathname.split("/").filter(Boolean)
-        return pathParts.length > 0 ? pathParts[pathParts.length - 1] : null
+        // Instagram story highlight: /stories/highlights/HIGHLIGHT_ID
+        const highlightMatch = url.match(/instagram\.com\/stories\/highlights\/(\d+)/)
+        if (highlightMatch) return highlightMatch[1]
+
+        // Short Instagram URL: instagr.am/p/POST_ID
+        const shortMatch = url.match(/instagr\.am\/p\/([a-zA-Z0-9_-]+)/)
+        if (shortMatch) return shortMatch[1]
+
+        // Extract any alphanumeric ID as fallback
+        const fallbackMatch = url.match(/\/([a-zA-Z0-9_-]{8,})/)
+        if (fallbackMatch) return fallbackMatch[1]
+
+        return null
       }
 
       case "twitter": {
         // Handle Twitter/X URLs
-        const statusMatch = url.match(/twitter\.com\/[^/]+\/status\/(\d+)/)
+
+        // Twitter status: /status/TWEET_ID
+        const statusMatch = url.match(/(?:twitter\.com|x\.com)\/[^/]+\/status\/(\d+)/)
         if (statusMatch) return statusMatch[1]
 
-        const xMatch = url.match(/x\.com\/[^/]+\/status\/(\d+)/)
-        if (xMatch) return xMatch[1]
+        // Twitter short URL: t.co/SHORT_ID
+        const shortMatch = url.match(/t\.co\/([a-zA-Z0-9]+)/)
+        if (shortMatch) return shortMatch[1]
 
-        // If no specific pattern matches, use the last path segment
-        const urlObj = new URL(url)
-        const pathParts = urlObj.pathname.split("/").filter(Boolean)
-        return pathParts.length > 0 ? pathParts[pathParts.length - 1] : null
+        // Twitter video with additional parameters
+        const videoMatch = url.match(/(?:twitter\.com|x\.com)\/.*\/status\/(\d+)/)
+        if (videoMatch) return videoMatch[1]
+
+        // Extract numeric ID as fallback
+        const numericMatch = url.match(/(\d{10,})/)
+        if (numericMatch) return numericMatch[1]
+
+        return null
       }
 
       case "snapchat": {
-        // Handle Snapchat URLs
-        const storyMatch = url.match(/snapchat\.com\/[^/]+\/([^/?]+)/)
-        if (storyMatch) return storyMatch[1]
+        // Handle all Snapchat content types
 
-        // Handle spotlight URLs
-        const spotlightMatch = url.match(/snapchat\.com\/spotlight\/([^/?]+)/)
+        // Snapchat story: /add/USERNAME or /u/USERNAME
+        const userMatch = url.match(/snapchat\.com\/(?:add|u)\/([a-zA-Z0-9._-]+)/)
+        if (userMatch) return userMatch[1]
+
+        // Snapchat spotlight: /spotlight/SPOTLIGHT_ID
+        const spotlightMatch = url.match(/snapchat\.com\/spotlight\/([a-zA-Z0-9_-]+)/)
         if (spotlightMatch) return spotlightMatch[1]
 
-        // If no specific pattern matches, use the last path segment
-        const urlObj = new URL(url)
-        const pathParts = urlObj.pathname.split("/").filter(Boolean)
-        return pathParts.length > 0 ? pathParts[pathParts.length - 1] : null
+        // Snapchat discover: /discover/STORY_ID
+        const discoverMatch = url.match(/snapchat\.com\/discover\/([a-zA-Z0-9_-]+)/)
+        if (discoverMatch) return discoverMatch[1]
+
+        // Snapchat lens: /lens/LENS_ID
+        const lensMatch = url.match(/snapchat\.com\/lens\/([a-zA-Z0-9_-]+)/)
+        if (lensMatch) return lensMatch[1]
+
+        // Snapchat unlock: /unlock/?type=SNAP_CODE
+        const unlockMatch = url.match(/snapchat\.com\/unlock\/.*[?&](?:type|code)=([a-zA-Z0-9_-]+)/)
+        if (unlockMatch) return unlockMatch[1]
+
+        // Extract any alphanumeric ID as fallback
+        const fallbackMatch = url.match(/snapchat\.com\/[^/]*\/([a-zA-Z0-9_-]+)/)
+        if (fallbackMatch) return fallbackMatch[1]
+
+        return null
       }
 
       default:
-        // For other platforms, try to extract the last path segment as ID
+        // For other platforms, try to extract meaningful ID
         try {
           const urlObj = new URL(url)
           const pathParts = urlObj.pathname.split("/").filter(Boolean)
+
+          // Look for video-like patterns in path
+          for (let i = 0; i < pathParts.length; i++) {
+            const part = pathParts[i]
+            // If we find 'video', 'watch', 'v', etc., the next part might be the ID
+            if (["video", "watch", "v", "embed", "shorts"].includes(part.toLowerCase()) && pathParts[i + 1]) {
+              return pathParts[i + 1]
+            }
+          }
+
+          // Return the last meaningful path segment
           return pathParts.length > 0 ? pathParts[pathParts.length - 1] : null
         } catch (e) {
           return null
