@@ -518,7 +518,7 @@ export default function YouTubePage() {
                     Terms & Conditions
                   </Link>
                 </li>
-              
+
               </ul>
             </div>
           </div>
@@ -529,25 +529,108 @@ export default function YouTubePage() {
         </div>
       </footer>
 
-      {/* Structured Data for SEO */}
+
+
+      {/* Enhanced Structured Data for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            name: "Free YTMP4 Download",
-            url: "https://youtubetomp4download.com",
-            description:
-              "Download YouTube videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
-            applicationCategory: "MultimediaApplication",
-            operatingSystem: "Windows, macOS, Android, iOS",
-            offers: {
-              "@type": "Offer",
-              price: "0",
-              priceCurrency: "USD",
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "Free YouTube To MP4 Download",
+              url: "https://youtubetomp4download.com",
+              description:
+                "Convert YouTube to MP4 with the best YouTube video downloader online. Quick, free YouTube video converter to MP4.",
+              applicationCategory: "MultimediaApplication",
+              operatingSystem: "Windows, macOS, Android, iOS",
+              browserRequirements: "Chrome, Firefox, Safari, Edge",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              featureList: [
+                "YouTube to MP4 conversion",
+                "HD and 4K video downloads",
+                "YouTube Shorts support",
+                "No software installation required",
+                "Cross-platform compatibility",
+              ],
+              screenshot: "/Fav.svg",
             },
-          }),
+            {
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "YouTube Video Downloader",
+              applicationCategory: "MultimediaApplication",
+              operatingSystem: "Web Browser",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: "4.8",
+                ratingCount: "15420",
+              },
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "HowTo",
+              name: "How to Download YouTube Videos to MP4",
+              description: "Step-by-step guide to download YouTube videos in MP4 format",
+              step: [
+                {
+                  "@type": "HowToStep",
+                  name: "Copy YouTube URL",
+                  text: "Find the video you want to download or convert from YouTube. Copy its full URL directly from the browser's address bar.",
+                },
+                {
+                  "@type": "HowToStep",
+                  name: "Paste URL and Convert",
+                  text: "Paste the YouTube link into the ytmp4 tool's search field. Then, click on Download to begin converting videos to MP3 or MP4.",
+                },
+                {
+                  "@type": "HowToStep",
+                  name: "Download Video",
+                  text: "Choose MP4, MP3, 1080p, or even 4K. Hit Download, and your converted file will be ready in seconds.",
+                },
+              ],
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "Is the downloader for YouTube to MP4 free to use?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes. The downloader offers unlimited YouTube to MP4 download access without cost or subscription.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Which formats are supported by the downloader?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "You can convert YouTube to MP4 for video or MP3 for audio. Other supported formats include WebM and high-resolution variants.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Does YouTube to MP4 work on all browsers and devices?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes. This YouTube to MP4 downloader is fully operational on Chrome, Safari, Firefox, and all major browsers on mobile and desktop.",
+                  },
+                },
+              ],
+            },
+          ]),
         }}
       />
     </div>

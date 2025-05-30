@@ -481,27 +481,81 @@ export default function SnapchatPage() {
                     </div>
                 </div>
             </footer>
-            {/* Structure Data for SEO */}
+
             <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{
-                    __html: JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "WebApplication",
-                        name: "Free YTMP4 Download",
-                        url: "https://youtubetomp4download.com",
-                        description:
-                            "Download Facebook videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
-                        applicationCategory: "MultimediaApplication",
-                        operatingSystem: "Windows, macOS, Android, iOS",
-                        offers: {
-                            "@type": "Offer",
-                            price: "0",
-                            priceCurrency: "USD",
-                        },
-                    }),
-                }}
-            />
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "Free Snapchat Video Downloader Online",
+              url: "https://youtubetomp4download.com/snapchat-video-downloader",
+              description:
+                "Download Snapchat videos easily and securely. Use the best Snapchat video downloader for fast video download from Snapchat to your device.",
+              applicationCategory: "MultimediaApplication",
+              operatingSystem: "Windows, macOS, Android, iOS",
+              browserRequirements: "Chrome, Firefox, Safari, Edge",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              featureList: [
+                "Choose SD or HD Video Quality",
+                "Works Seamlessly on Desktop and Mobile",
+                "Easy Video Download From Snapchat To Any Device",
+                "Convert and Download Snapchat Video Instantly",
+              ],
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "HowTo",
+              name: "How to Download Snapchat Videos",
+              description: "Simple steps to download videos from Snapchat",
+              step: [
+                {
+                  "@type": "HowToStep",
+                  name: "Copy the Snap Link",
+                  text: "Find the Snapchat video you want. Copy its direct link from your app or browser.",
+                },
+                {
+                  "@type": "HowToStep",
+                  name: "Paste into the Snapchat Video Downloader",
+                  text: "Drop the link into our download field.",
+                },
+                {
+                  "@type": "HowToStep",
+                  name: "Select Format and Download",
+                  text: "Choose your format and resolution, then hit 'Download' to save the video instantly.",
+                },
+              ],
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "Is this Snapchat video downloader free to use?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes, the video downloader is 100% free with no sign-up or hidden charges.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Can I download a Snapchat video in MP4 format?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Absolutely. Use our tool to convert and download Snapchat videos in MP4 instantly.",
+                  },
+                },
+              ],
+            },
+          ]),
+        }}
+      />
         </div>
     )
 }

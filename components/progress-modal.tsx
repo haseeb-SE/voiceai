@@ -191,21 +191,55 @@ export function ProgressModal({
 
   // Update completion status based on status prop
   useEffect(() => {
+    debugLog("Status changed to:", status, "Progress:", progress)
+
     if (status === "completed") {
+      debugLog("Setting completion state")
       setIsComplete(true)
       setDisplayProgress(100)
+      setConversionPhase("completed")
+      setConversionDetails("Download complete!")
+      setFormattedEta("Complete")
+
+      // Clear any completion timeout
+      if (completionTimeoutRef.current) {
+        clearTimeout(completionTimeoutRef.current)
+        completionTimeoutRef.current = null
+      }
 
       // Auto-trigger download if not already triggered
       if (!downloadTriggeredRef.current) {
+        debugLog("Auto-triggering download")
         setTimeout(() => {
-          downloadTriggeredRef.current = true
-          onDownload()
-        }, 500)
+          if (!downloadTriggeredRef.current) {
+            downloadTriggeredRef.current = true
+            onDownload()
+          }
+        }, 1000) // Increased delay to 1 second
       }
     } else if (status === "failed") {
+      setConversionPhase("failed")
       setConversionDetails("Download failed. Please try again.")
+      setFormattedEta("Failed")
+    } else if (status === "cancelled") {
+      setConversionPhase("cancelled")
+      setConversionDetails("Download was cancelled.")
+      setFormattedEta("Cancelled")
     }
   }, [status, onDownload])
+
+  // Also update the progress-based completion detection
+  useEffect(() => {
+    // If progress reaches 100% and status is still processing, mark as complete
+    if (progress >= 100 && status === "processing" && !isComplete) {
+      debugLog("Progress reached 100%, marking as complete")
+      setIsComplete(true)
+      setDisplayProgress(100)
+      setConversionPhase("completed")
+      setConversionDetails("Download complete!")
+      setFormattedEta("Complete")
+    }
+  }, [progress, status, isComplete])
 
   // Reset download triggered flag when modal closes
   useEffect(() => {
@@ -319,6 +353,31 @@ export function ProgressModal({
       onCancel()
     }
   }
+
+  // Add this style tag in the component
+  const progressBarStyle = `
+    .progress-bar-animation {
+      background: linear-gradient(90deg, #dc2626, #ef4444, #dc2626);
+      background-size: 200% 100%;
+      animation: progressShimmer 2s ease-in-out infinite;
+    }
+    
+    @keyframes progressShimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  `
+
+  // Add the style element to the component
+  useEffect(() => {
+    const style = document.createElement("style")
+    style.textContent = progressBarStyle
+    document.head.appendChild(style)
+
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>

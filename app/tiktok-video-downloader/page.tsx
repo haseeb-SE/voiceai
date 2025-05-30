@@ -481,27 +481,83 @@ export default function TikTokPage() {
                     </div>
                 </div>
             </footer>
-            {/* Structure Data for SEO */}
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{
-                    __html: JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "WebApplication",
-                        name: "Free YTMP4 Download",
-                        url: "https://youtubetomp4download.com",
-                        description:
-                            "Download Facebook videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
-                        applicationCategory: "MultimediaApplication",
-                        operatingSystem: "Windows, macOS, Android, iOS",
-                        offers: {
-                            "@type": "Offer",
-                            price: "0",
-                            priceCurrency: "USD",
-                        },
-                    }),
-                }}
-            />
+
+            {/* Enhanced Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "Free TikTok Video Downloader - No Watermark",
+              url: "https://youtubetomp4download.com/tiktok-video-downloader",
+              description:
+                "Download Tik Tok videos instantly using our free TikTok video downloader. Use the best TikTok video downloader, no watermark.",
+              applicationCategory: "MultimediaApplication",
+              operatingSystem: "Windows, macOS, Android, iOS",
+              browserRequirements: "Chrome, Firefox, Safari, Edge",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              featureList: [
+                "TikTok video downloads without watermark",
+                "High-quality MP4 video formats",
+                "Works on all devices and browsers",
+                "No limits, no fees",
+                "Clean TikTok downloads",
+              ],
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "HowTo",
+              name: "How to Download TikTok Videos Without Watermark",
+              description: "3-step process to download TikTok videos",
+              step: [
+                {
+                  "@type": "HowToStep",
+                  name: "Copy the TikTok Video Link",
+                  text: "Open the TikTok app or website, find the video you want, and tap 'Share' to copy the video link.",
+                },
+                {
+                  "@type": "HowToStep",
+                  name: "Paste It in the TikTok Video Downloader",
+                  text: "Go to our TikTok video downloader tool and paste the link of the TikTok video into the input box.",
+                },
+                {
+                  "@type": "HowToStep",
+                  name: "Download Video from TikTok Without Watermark",
+                  text: "Click the download button, select your quality, and save the video to your device. Your TikTok video download will be ready instantly.",
+                },
+              ],
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "Is this TikTok video downloader really free?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes, it's 100% free with unlimited access.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Can I download video Tik Tok videos without watermark?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes. Our TikTok video downloader with no watermark ensures clean video files.",
+                  },
+                },
+              ],
+            },
+          ]),
+        }}
+      />
         </div>
     )
 }

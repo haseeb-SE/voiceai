@@ -463,25 +463,78 @@ export default function InstagramPage() {
           </div>
         </div>
       </footer>
-      {/* Structure Data for SEO */}
-      <script
+       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            name: "Free YTMP4 Download",
-            url: "https://youtubetomp4download.com",
-            description:
-              "Download Instagram videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
-            applicationCategory: "MultimediaApplication",
-            operatingSystem: "Windows, macOS, Android, iOS",
-            offers: {
-              "@type": "Offer",
-              price: "0",
-              priceCurrency: "USD",
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "Free Instagram Video Downloader Online",
+              url: "https://youtubetomp4download.com/instagram-video-downloader",
+              description:
+                "Quickly download Insta videos and reels for free. Use the easiest Instagram video downloader to save high-quality videos without installing anything.",
+              applicationCategory: "MultimediaApplication",
+              operatingSystem: "Windows, macOS, Android, iOS",
+              browserRequirements: "Chrome, Firefox, Safari, Edge",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              featureList: [
+                "No limits or subscriptions",
+                "High-quality MP4 downloads",
+                "Works on all devices and browsers",
+                "Download Insta Reels and Videos",
+              ],
             },
-          }),
+            {
+              "@context": "https://schema.org",
+              "@type": "HowTo",
+              name: "How to Download Instagram Videos and Reels",
+              description: "3 easy steps to download Insta reels & videos",
+              step: [
+                {
+                  "@type": "HowToStep",
+                  name: "Copy the Link",
+                  text: "Find the Instagram video or reel you want to download. Copy its URL from the app or browser.",
+                },
+                {
+                  "@type": "HowToStep",
+                  name: "Paste the Link & Start",
+                  text: "Paste the Instagram video link into our downloader's search box. Click the Download button to begin.",
+                },
+                {
+                  "@type": "HowToStep",
+                  name: "Choose Format & Save",
+                  text: "Select MP4 format and preferred quality, then hit Download. Your Insta video will be saved in seconds.",
+                },
+              ],
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "Is this Instagram video downloader free to use?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes, our Instagram video downloader is totally free of cost. You can download Instagram videos and reels without any charges or subscriptions.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Can I download Instagram videos and reels in MP4 format?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Absolutely. Our downloader converts Instagram videos and reels to MP4 quickly and reliably.",
+                  },
+                },
+              ],
+            },
+          ]),
         }}
       />
     </div>

@@ -27,7 +27,7 @@ export default function FacebookPage() {
             Top-Rated Facebook Video Downloader
           </h1>
           <p className="text-l md:text-1xl font-medium text-white mb-4">Facebook Video Download Is Now The Easiest!</p>
-          
+
         </div>
       </div>
 
@@ -486,7 +486,7 @@ export default function FacebookPage() {
                     Terms & Conditions
                   </Link>
                 </li>
-                
+
               </ul>
             </div>
           </div>
@@ -499,25 +499,78 @@ export default function FacebookPage() {
         </div>
       </footer>
 
-      {/* Structublue Data for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            name: "Free YTMP4 Download",
-            url: "https://youtubetomp4download.com",
-            description:
-              "Download Facebook videos in MP4, 1080p HD, 4K, and MP3 formats for free. No software needed, works on all devices.",
-            applicationCategory: "MultimediaApplication",
-            operatingSystem: "Windows, macOS, Android, iOS",
-            offers: {
-              "@type": "Offer",
-              price: "0",
-              priceCurrency: "USD",
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "Free Facebook Video Downloader Online",
+              url: "https://youtubetomp4download.com/facebook-video-downloader",
+              description:
+                "Download Facebook videos quickly and for free. Use the best Facebook video downloader to convert Facebook videos to MP4 without software.",
+              applicationCategory: "MultimediaApplication",
+              operatingSystem: "Windows, macOS, Android, iOS",
+              browserRequirements: "Chrome, Firefox, Safari, Edge",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              featureList: [
+                "High-Definition Video Downloads",
+                "Works Flawlessly on Mac & Windows",
+                "Securely Download Videos from Facebook",
+                "Convert Facebook Video to MP4 Effortlessly",
+              ],
             },
-          }),
+            {
+              "@context": "https://schema.org",
+              "@type": "HowTo",
+              name: "How to Download Video from Facebook",
+              description: "Simple process to download Facebook videos",
+              step: [
+                {
+                  "@type": "HowToStep",
+                  name: "Find the Video",
+                  text: "Figure out which of the Facebook videos you want to download. Right-click and copy the video URL or use the 'Copy link' option.",
+                },
+                {
+                  "@type": "HowToStep",
+                  name: "Paste the Link & Start Downloading",
+                  text: "Paste the Facebook video URL into our Facebook video downloader search box. Click 'Download' to begin processing.",
+                },
+                {
+                  "@type": "HowToStep",
+                  name: "Select Format & Save",
+                  text: "Choose the MP4 format and video quality you want, then click 'Download' again to save the file to your device instantly.",
+                },
+              ],
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "Is this Facebook video downloader free to use?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes, our downloader is fully free with no hidden fees.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Can I convert Facebook video to MP4 using this downloader?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes, you can easily convert Facebook video to MP4 with fast, high-quality results.",
+                  },
+                },
+              ],
+            },
+          ]),
         }}
       />
     </div >

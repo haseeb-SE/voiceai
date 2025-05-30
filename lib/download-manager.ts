@@ -9,9 +9,11 @@ const USER_AGENTS = [
   "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0",
 ]
+
 function pickUA() {
   return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)]
 }
+
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms))
 }
@@ -24,17 +26,15 @@ import { spawn } from "child_process"
 import { EventEmitter } from "events"
 import { updateProgress } from "@/lib/global-store"
 import { config } from "@/lib/config"
+import { detectPlatform } from "@/lib/platform-detector"
 
-// Puppeteer stealth fallback - dynamically imported to avoid Next.js compilation issues
-async function fallbackWithPuppeteerStealth(url: string, taskId: string) {
-  console.log(`[${taskId}] Attempting Puppeteer stealth fallback for ${url}`)
+// Enhanced Puppeteer stealth fallback with platform-specific handling
+async function fallbackWithPuppeteerStealth(url: string, taskId: string, platform: string) {
+  console.log(`[${taskId}] Attempting Puppeteer stealth fallback for ${platform}: ${url}`)
 
   try {
-    // Dynamic import to avoid Next.js static analysis issues
     const puppeteer = await import("puppeteer-extra")
     const StealthPlugin = await import("puppeteer-extra-plugin-stealth")
-
-    // Configure puppeteer with stealth plugin
     puppeteer.default.use(StealthPlugin.default())
 
     const browser = await puppeteer.default.launch({
@@ -44,131 +44,166 @@ async function fallbackWithPuppeteerStealth(url: string, taskId: string) {
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-accelerated-2d-canvas",
-        "--no-first-run",
-        "--no-zygote",
         "--disable-gpu",
         "--disable-web-security",
         "--disable-features=VizDisplayCompositor",
+        "--disable-blink-features=AutomationControlled",
+        "--no-first-run",
+        "--no-default-browser-check",
       ],
     })
 
     const [page] = await browser.pages()
-
-    // Set a realistic user agent and viewport
     await page.setUserAgent(pickUA())
     await page.setViewport({ width: 1920, height: 1080 })
 
-    // Set additional headers to mimic real browser
-    await page.setExtraHTTPHeaders({
+    // Platform-specific headers
+    const headers: Record<string, string> = {
       "Accept-Language": "en-US,en;q=0.9",
       Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
       "Sec-Fetch-Mode": "navigate",
       "Sec-Fetch-Site": "none",
       "Sec-Fetch-User": "?1",
       "Upgrade-Insecure-Requests": "1",
-    })
+    }
 
-    // Navigate to the video page
-    const targetUrl = INVIDIOUS || url
-    console.log(`[${taskId}] Navigating to: ${targetUrl}`)
+    if (platform === "facebook") {
+      headers["Sec-Fetch-Dest"] = "document"
+      headers["Cache-Control"] = "max-age=0"
+    }
 
-    await page.goto(targetUrl, {
-      waitUntil: "networkidle2",
-      timeout: 30000,
-    })
+    await page.setExtraHTTPHeaders(headers)
 
-    // Wait a bit to let the page fully load
-    await sleep(3000)
+    // Navigate with platform-specific timeout
+    const timeout = platform === "facebook" ? 15000 : 10000
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout })
 
-    // Try to extract video information and stream URLs
-    const videoInfo = await page.evaluate(() => {
-      // Try multiple methods to get video info
-      const title =
-        document.querySelector("title")?.textContent ||
-        document.querySelector("h1")?.textContent ||
-        document.querySelector("[data-title]")?.getAttribute("data-title") ||
-        "Unknown Video"
+    // Platform-specific extraction logic
+    let videoInfo: any = {}
 
-      // Look for video player config
-      let playerConfig = null
-      const streamUrls: string[] = []
+    if (platform === "facebook") {
+      // Wait for Facebook content to load
+      await sleep(3000)
 
-      try {
-        // Try to access YouTube player config
-        playerConfig = (window as any).ytplayer?.config?.args
-        if (playerConfig) {
-          // Extract stream URLs from player config
-          const streamMap = playerConfig.url_encoded_fmt_stream_map || playerConfig.adaptive_fmts
-          if (streamMap) {
-            streamUrls.push(streamMap)
+      videoInfo = await page.evaluate(() => {
+        const streams: string[] = []
+        const title =
+          document.querySelector("title")?.textContent ||
+          document.querySelector('[data-testid="post_message"]')?.textContent ||
+          "Facebook Video"
+
+        // Look for video elements
+        document.querySelectorAll<HTMLVideoElement>("video").forEach((v) => {
+          if (v.src && !v.src.startsWith("blob:")) {
+            streams.push(v.src)
           }
-        }
-      } catch (e) {
-        console.log("Could not access ytplayer config")
-      }
-
-      // Try to find video elements and their sources
-      const videoElements = document.querySelectorAll("video")
-      videoElements.forEach((video) => {
-        if (video.src) streamUrls.push(video.src)
-        const sources = video.querySelectorAll("source")
-        sources.forEach((source) => {
-          if (source.src) streamUrls.push(source.src)
-        })
-      })
-
-      // Look for manifest URLs in the page
-      const scripts = document.querySelectorAll("script")
-      scripts.forEach((script) => {
-        const content = script.textContent || ""
-        const manifestMatch = content.match(/["']([^"']*\.m3u8[^"']*)["']/g)
-        if (manifestMatch) {
-          manifestMatch.forEach((match) => {
-            const url = match.replace(/["']/g, "")
-            if (url.includes("manifest") || url.includes("m3u8")) {
-              streamUrls.push(url)
+          v.querySelectorAll("source").forEach((s) => {
+            if (s.src && !s.src.startsWith("blob:")) {
+              streams.push(s.src)
             }
           })
+        })
+
+        // Look for HD/SD video URLs in page scripts
+        const scripts = document.querySelectorAll("script")
+        scripts.forEach((script) => {
+          const content = script.textContent || ""
+
+          // Facebook video URL patterns
+          const hdMatch = content.match(/"hd_src":"([^"]+)"/g)
+          const sdMatch = content.match(/"sd_src":"([^"]+)"/g)
+          const videoMatch = content.match(/"video_url":"([^"]+)"/g)
+
+          if (hdMatch) {
+            hdMatch.forEach((match) => {
+              const url = match.replace(/"hd_src":"/, "").replace(/"$/, "")
+              if (url && !url.startsWith("blob:")) {
+                streams.push(decodeURIComponent(url.replace(/\\u0026/g, "&")))
+              }
+            })
+          }
+
+          if (sdMatch) {
+            sdMatch.forEach((match) => {
+              const url = match.replace(/"sd_src":"/, "").replace(/"$/, "")
+              if (url && !url.startsWith("blob:")) {
+                streams.push(decodeURIComponent(url.replace(/\\u0026/g, "&")))
+              }
+            })
+          }
+
+          if (videoMatch) {
+            videoMatch.forEach((match) => {
+              const url = match.replace(/"video_url":"/, "").replace(/"$/, "")
+              if (url && !url.startsWith("blob:")) {
+                streams.push(decodeURIComponent(url.replace(/\\u0026/g, "&")))
+              }
+            })
+          }
+        })
+
+        return {
+          title: title.replace(" | Facebook", "").trim(),
+          streamUrls: Array.from(new Set(streams)).filter(
+            (url) =>
+              url &&
+              !url.startsWith("blob:") &&
+              !url.startsWith("data:") &&
+              (url.includes(".mp4") || url.includes("video")),
+          ),
         }
       })
+    } else {
+      // Generic video extraction for other platforms
+      await page.waitForSelector("video", { timeout: 5000 }).catch(() => {})
 
-      return {
-        title: title.replace(" - YouTube", "").trim(),
-        playerConfig: playerConfig,
-        streamUrls: streamUrls.filter((url) => url && url.length > 10), // Filter out empty/invalid URLs
-        pageUrl: window.location.href,
-      }
-    })
+      videoInfo = await page.evaluate(() => {
+        const streams: string[] = []
+        const title = document.querySelector("title")?.textContent || "Video"
+
+        document.querySelectorAll<HTMLVideoElement>("video").forEach((v) => {
+          if (v.src && !v.src.startsWith("blob:")) {
+            streams.push(v.src)
+          }
+          v.querySelectorAll("source").forEach((s) => {
+            if (s.src && !s.src.startsWith("blob:")) {
+              streams.push(s.src)
+            }
+          })
+        })
+
+        return {
+          title: title.trim(),
+          streamUrls: Array.from(new Set(streams)).filter(
+            (url) => url && !url.startsWith("blob:") && !url.startsWith("data:"),
+          ),
+        }
+      })
+    }
 
     await browser.close()
 
-    console.log(`[${taskId}] Puppeteer extracted:`, {
-      title: videoInfo.title,
-      streamCount: videoInfo.streamUrls.length,
-    })
-
-    // If we found stream URLs, we could potentially use them with yt-dlp
-    if (videoInfo.streamUrls.length > 0) {
-      console.log(`[${taskId}] Found ${videoInfo.streamUrls.length} potential stream URLs`)
-      // For now, just return the video info - in a full implementation,
-      // you could try to download directly from these URLs
+    if (!videoInfo.streamUrls || videoInfo.streamUrls.length === 0) {
+      throw new Error(`No downloadable video URLs found for ${platform}`)
     }
 
+    console.log(`[${taskId}] Puppeteer found ${videoInfo.streamUrls.length} streams for ${platform}`)
     return {
-      title: videoInfo.title || `YouTube Video`,
-      thumbnail: `https://img.youtube.com/vi/${extractVideoIdFromUrl(url)}/hqdefault.jpg`,
+      title: videoInfo.title || `${platform} Video`,
+      streamUrls: videoInfo.streamUrls,
+      thumbnail:
+        platform === "youtube" ? `https://img.youtube.com/vi/${extractVideoIdFromUrl(url)}/hqdefault.jpg` : undefined,
       uploader: "Unknown",
       duration: 0,
       view_count: 0,
-      streamUrls: videoInfo.streamUrls, // Include stream URLs for potential direct download
     }
   } catch (error) {
-    console.error(`[${taskId}] Puppeteer stealth fallback failed:`, error)
+    console.error(`[${taskId}] Puppeteer stealth fallback failed for ${platform}:`, error)
     throw error
   }
 }
 
-// Invidious API fallback
+// Invidious API fallback (YouTube only)
 async function fallbackWithInvidiousAPI(url: string, taskId: string) {
   console.log(`[${taskId}] Attempting Invidious API fallback for ${url}`)
 
@@ -190,7 +225,6 @@ async function fallbackWithInvidiousAPI(url: string, taskId: string) {
         "User-Agent": pickUA(),
         Accept: "application/json",
       },
-      timeout: 10000,
     })
 
     if (!response.ok) {
@@ -213,27 +247,32 @@ async function fallbackWithInvidiousAPI(url: string, taskId: string) {
   }
 }
 
-// Combined fallback method with multiple strategies
+// Combined fallback method with platform-specific strategies
 async function fallbackWithAlternativeMethod(url: string, taskId: string) {
   console.log(`[${taskId}] Attempting alternative fallback methods for ${url}`)
 
-  // Strategy 1: Try Invidious API first (fastest)
-  try {
-    return await fallbackWithInvidiousAPI(url, taskId)
-  } catch (error) {
-    console.log(`[${taskId}] Invidious API failed, trying Puppeteer stealth...`)
+  const platform = detectPlatform(url) || "unknown"
+  console.log(`[${taskId}] Detected platform: ${platform}`)
+
+  // Strategy 1: For YouTube, try Invidious API first
+  if (platform === "youtube") {
+    try {
+      return await fallbackWithInvidiousAPI(url, taskId)
+    } catch (error) {
+      console.log(`[${taskId}] Invidious API failed, trying Puppeteer stealth...`)
+    }
   }
 
-  // Strategy 2: Try Puppeteer stealth (more reliable but slower)
+  // Strategy 2: Try Puppeteer stealth for all platforms
   try {
-    return await fallbackWithPuppeteerStealth(url, taskId)
+    return await fallbackWithPuppeteerStealth(url, taskId, platform)
   } catch (error) {
     console.log(`[${taskId}] Puppeteer stealth failed, using basic fallback...`)
   }
 
-  // Strategy 3: Basic fallback with video ID
+  // Strategy 3: Basic fallback
   const videoId = extractVideoIdFromUrl(url)
-  if (videoId) {
+  if (videoId && platform === "youtube") {
     return {
       title: `YouTube Video (${videoId})`,
       thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
@@ -243,7 +282,13 @@ async function fallbackWithAlternativeMethod(url: string, taskId: string) {
     }
   }
 
-  throw new Error("All fallback methods failed")
+  return {
+    title: `${platform.charAt(0).toUpperCase() + platform.slice(1)} Video`,
+    thumbnail: undefined,
+    uploader: "Unknown",
+    duration: 0,
+    view_count: 0,
+  }
 }
 
 // Helper function to extract video ID
@@ -271,6 +316,7 @@ interface DownloadRecord {
   lastUpdated: number
   safeFilename?: string
   error?: string
+  platform?: string
 }
 
 const activeDownloads = new Map<string, DownloadRecord>()
@@ -350,7 +396,7 @@ export class DownloadManager extends EventEmitter {
       this.cleanupCompletedDownloads()
     }, config.ytdl.cleanupInterval || 300000) // Default: 5 minutes
 
-    // Refresh cookies periodically (hourly reload from disk)
+    // Refresh cookies periodically
     setInterval(() => {
       try {
         this.initializeCookiesFile()
@@ -362,15 +408,43 @@ export class DownloadManager extends EventEmitter {
   }
 
   /**
+   * Get platform-specific cookies file
+   */
+  private getPlatformCookiesFile(platform: string): string {
+    const cookiesFiles = {
+      youtube: "youtube.com_cookies.txt",
+      facebook: "facebook.com_cookies.txt",
+      instagram: "instagram.com_cookies.txt",
+      tiktok: "tiktok.com_cookies.txt",
+      snapchat: "snapchat.com_cookies.txt",
+    }
+
+    const filename = cookiesFiles[platform as keyof typeof cookiesFiles] || "youtube.com_cookies.txt"
+    return path.join(this.cookiesDir, filename)
+  }
+
+  /**
    * Initialize cookies file from disk
    */
-  private initializeCookiesFile(): string {
-    const cookiesPath = path.join(this.cookiesDir, "youtube.com_cookies.txt")
+  private initializeCookiesFile(platform = "youtube"): string {
+    const cookiesPath = this.getPlatformCookiesFile(platform)
+
+    // If platform-specific cookies don't exist, fall back to YouTube cookies
+    if (!fs.existsSync(cookiesPath) && platform !== "youtube") {
+      const fallbackPath = this.getPlatformCookiesFile("youtube")
+      if (fs.existsSync(fallbackPath)) {
+        console.log(`Using YouTube cookies as fallback for ${platform}`)
+        this.cookiesPath = fallbackPath
+        return fallbackPath
+      }
+    }
+
     if (!fs.existsSync(cookiesPath)) {
       throw new Error(`Cookie file not found on disk: ${cookiesPath}`)
     }
+
     this.cookiesPath = cookiesPath
-    console.log(`Loaded cookies from disk: ${cookiesPath}`)
+    console.log(`Loaded ${platform} cookies from disk: ${cookiesPath}`)
     return cookiesPath
   }
 
@@ -379,7 +453,7 @@ export class DownloadManager extends EventEmitter {
   }
 
   /**
-   * Fetch video title using yt-dlp with improved error handling and fallbacks
+   * Fetch video title using yt-dlp with platform-specific handling
    */
   async getVideoInfo(
     url: string,
@@ -387,13 +461,19 @@ export class DownloadManager extends EventEmitter {
     // Rate limiting: random delay between 1-3 seconds
     await sleep(1000 + Math.random() * 2000)
 
-    // Ensure cookies file is initialized
-    if (!this.cookiesPath) {
-      await this.initializeCookiesFile()
+    const platform = detectPlatform(url) || "youtube"
+    console.log(`Getting video info for ${platform}: ${url}`)
+
+    // Initialize platform-specific cookies
+    try {
+      await this.initializeCookiesFile(platform)
+    } catch (err) {
+      console.warn(`Could not load ${platform} cookies, using YouTube cookies as fallback`)
+      await this.initializeCookiesFile("youtube")
     }
 
     return new Promise((resolve, reject) => {
-      // Build arguments with cookies and user agent
+      // Build platform-specific arguments
       const args = [
         "--dump-json",
         "--no-playlist",
@@ -429,9 +509,14 @@ export class DownloadManager extends EventEmitter {
         "--ignore-errors",
       ]
 
-      // Use Invidious as extractor base URL if available
-      if (INVIDIOUS) {
+      // Platform-specific configurations
+      if (platform === "youtube" && INVIDIOUS) {
         args.unshift("--extractor-args", `youtube:base_url=${INVIDIOUS}`)
+      }
+
+      if (platform === "facebook") {
+        args.push("--add-header", "Sec-Fetch-Dest:document")
+        args.push("--add-header", "Cache-Control:max-age=0")
       }
 
       // Inject proxy if defined
@@ -491,34 +576,30 @@ export class DownloadManager extends EventEmitter {
             return
           }
 
-          // Bot detection or 403 errors - trigger advanced fallbacks
-          if (err.includes("Sign in to confirm you're not a bot") || err.includes("HTTP Error 403")) {
-            const videoId = this.extractVideoId(url)
+          // Unsupported URL or authentication required
+          if (err.includes("Unsupported URL") || err.includes("Sign in to confirm") || err.includes("HTTP Error 403")) {
+            console.log(`[${platform}] Primary extraction failed, using advanced fallbacks...`)
 
-            if (videoId) {
-              console.log(`[${videoId}] Bot detection triggered, using advanced fallbacks...`)
-
-              try {
-                // Use the comprehensive fallback method
-                const fallbackInfo = await fallbackWithAlternativeMethod(url, videoId)
-                resolve(fallbackInfo)
-                return
-              } catch (fallbackError) {
-                console.error(`All fallback methods failed for ${videoId}:`, fallbackError)
-              }
-
-              // Final basic fallback
-              resolve({
-                title: `YouTube Video (${videoId})`,
-                thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-                uploader: "Unknown",
-                duration: 0,
-                view_count: 0,
-              })
+            try {
+              const fallbackInfo = await fallbackWithAlternativeMethod(url, platform)
+              resolve(fallbackInfo)
               return
-            } else {
-              console.error(`Couldn't parse video ID from ${url}`)
+            } catch (fallbackError) {
+              console.error(`All fallback methods failed for ${platform}:`, fallbackError)
             }
+
+            // Final basic fallback
+            resolve({
+              title: `${platform.charAt(0).toUpperCase() + platform.slice(1)} Video`,
+              thumbnail:
+                platform === "youtube"
+                  ? `https://img.youtube.com/vi/${this.extractVideoId(url)}/hqdefault.jpg`
+                  : undefined,
+              uploader: "Unknown",
+              duration: 0,
+              view_count: 0,
+            })
+            return
           }
 
           reject(new Error(`yt-dlp exited with code ${code}: ${err}`))
@@ -533,28 +614,28 @@ export class DownloadManager extends EventEmitter {
   }
 
   /**
-   * Start the download and conversion process
+   * Start the download and conversion process with enhanced platform support
    */
-  async startDownload(url: string, format: string, title: string, taskId?: string): Promise<string> {
-    // Rate limiting: random delay between 1-3 seconds
+  public async startDownload(url: string, format: string, title: string, taskId?: string): Promise<string> {
     await sleep(1000 + Math.random() * 2000)
 
     const downloadTaskId = taskId || uuidv4().slice(0, 8)
-    const isMP3 = format.includes("mp3")
+    const isMP3 = format.startsWith("mp3")
+    const platform = detectPlatform(url) || "youtube"
 
-    console.log(`Starting download for task ${downloadTaskId}: ${url} (${format})`)
+    console.log(`Starting download for task ${downloadTaskId}: ${url} (${format}) - Platform: ${platform}`)
 
-    // Create safe filename from title
     const safeTitle = title
       .replace(/[^\w\s-]/g, "")
       .replace(/\s+/g, "_")
       .toLowerCase()
-      .substring(0, 50) // Limit length
+      .slice(0, 50)
 
     activeDownloads.set(downloadTaskId, {
       url,
       format,
       title,
+      platform,
       process: null,
       status: "processing",
       progress: 0,
@@ -573,178 +654,258 @@ export class DownloadManager extends EventEmitter {
       status: "processing",
     })
 
+    // Initialize platform-specific cookies
     try {
-      if (!this.cookiesPath) {
-        await this.initializeCookiesFile()
-      }
+      await this.initializeCookiesFile(platform)
+    } catch (err) {
+      console.warn(`Could not load ${platform} cookies, using YouTube cookies as fallback`)
+      await this.initializeCookiesFile("youtube")
+    }
 
-      const tempBase = path.join(this.tempDir, `${safeTitle}_${downloadTaskId}`)
+    const tempBase = path.join(this.tempDir, `${safeTitle}_${downloadTaskId}`)
 
-      const ytdlpArgs = [
-        "--newline",
-        "--progress",
-        "--user-agent",
-        pickUA(),
-        "--no-playlist",
-        "--no-warnings",
-        "--verbose",
-        "--cookies",
-        this.cookiesPath!,
-        "--add-header",
-        "Accept-Language:en-US,en;q=0.9",
-        "--add-header",
-        "Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-        "--add-header",
-        "Sec-Fetch-Mode:navigate",
-        "--add-header",
-        "Sec-Fetch-Site:none",
-        "--add-header",
-        "Sec-Fetch-User:?1",
-        "--add-header",
-        "Upgrade-Insecure-Requests:1",
-        "--geo-bypass",
-        "--no-check-certificate",
-        "--extractor-retries",
-        "5",
-        "--socket-timeout",
-        "30",
-        "--sleep-requests",
-        "1",
-        "--sleep-interval",
-        "1",
-        "--max-sleep-interval",
-        "5",
-        "--ignore-errors",
-      ]
+    const args = [
+      "--newline",
+      "--progress",
+      "--user-agent",
+      pickUA(),
+      "--no-playlist",
+      "--no-warnings",
+      "--verbose",
+      "--cookies",
+      this.cookiesPath!,
+      "--add-header",
+      "Accept-Language:en-US,en;q=0.9",
+      "--add-header",
+      "Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+      "--add-header",
+      "Sec-Fetch-Mode:navigate",
+      "--add-header",
+      "Sec-Fetch-Site:none",
+      "--add-header",
+      "Sec-Fetch-User:?1",
+      "--add-header",
+      "Upgrade-Insecure-Requests:1",
+      "--geo-bypass",
+      "--no-check-certificate",
+      "--extractor-retries",
+      "5",
+      "--socket-timeout",
+      "30",
+      "--sleep-requests",
+      "1",
+      "--sleep-interval",
+      "1",
+      "--max-sleep-interval",
+      "5",
+      "--ignore-errors",
+    ]
 
-      // Use Invidious as extractor base URL if available
-      if (INVIDIOUS) {
-        ytdlpArgs.unshift("--extractor-args", `youtube:base_url=${INVIDIOUS}`)
-      }
+    // Platform-specific configurations
+    if (platform === "youtube" && INVIDIOUS) {
+      args.unshift("--extractor-args", `youtube:base_url=${INVIDIOUS}`)
+    }
 
-      if (PROXY_URL) {
-        ytdlpArgs.push("--proxy", PROXY_URL)
-      }
+    if (platform === "facebook") {
+      args.push("--add-header", "Sec-Fetch-Dest:document")
+      args.push("--add-header", "Cache-Control:max-age=0")
+    }
 
-      if (isMP3) {
-        ytdlpArgs.push(
+    if (PROXY_URL) {
+      args.push("--proxy", PROXY_URL)
+    }
+
+    // Enhanced format selection based on platform and request
+    if (isMP3) {
+      // For platforms that don't have separate audio streams, download video first then convert
+      if (platform === "tiktok" || platform === "snapchat") {
+        args.push("--format", "best", "--output", `${tempBase}.%(ext)s`)
+      } else {
+        // For platforms with separate audio streams
+        args.push(
           "--format",
-          "bestaudio[ext=m4a]/bestaudio",
+          "bestaudio",
           "--extract-audio",
           "--audio-format",
-          "m4a",
-          "--output",
-          `${tempBase}.%(ext)s`,
-        )
-      } else {
-        ytdlpArgs.push(
-          "--format",
-          "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio/bestvideo+bestaudio",
-          "--merge-output-format",
-          "mp4",
+          "mp3",
           "--output",
           `${tempBase}.%(ext)s`,
         )
       }
+    } else {
+      let formatString: string
+      switch (format) {
+        case "mp4_720":
+          formatString = "bestvideo[height<=720]+bestaudio/best[height<=720]"
+          break
+        case "mp4_1080":
+          formatString = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
+          break
+        case "mp4_best":
+        default:
+          formatString = "bestvideo+bestaudio/best"
+          break
+      }
 
-      ytdlpArgs.push(url)
+      args.push("--format", formatString, "--merge-output-format", "mp4", "--output", `${tempBase}.%(ext)s`)
+    }
 
-      console.log(`Starting yt-dlp with args:`, ytdlpArgs)
+    args.push(url)
+    console.log(`[${downloadTaskId}] yt-dlp args:`, args)
 
-      const ytdlpProcess = spawn(this.ytDlpPath, ytdlpArgs)
-      activeDownloads.get(downloadTaskId)!.process = ytdlpProcess
+    const cp = spawn(this.ytDlpPath, args)
+    activeDownloads.get(downloadTaskId)!.process = cp
 
-      let stdoutBuffer = ""
-      ytdlpProcess.stdout.on("data", (data) => {
-        const text = data.toString()
-        stdoutBuffer += text
-        if (this.debug) console.log(`yt-dlp stdout: ${text}`)
-        const lines = stdoutBuffer.split("\n")
-        stdoutBuffer = lines.pop() || ""
-        for (const line of lines) {
-          this.parseYtDlpProgress(line, downloadTaskId, format)
+    let buf = ""
+    cp.stdout.on("data", (d) => {
+      buf += d.toString()
+      const lines = buf.split("\n")
+      buf = lines.pop() || ""
+      lines.forEach((l) => this.parseYtDlpProgress(l, downloadTaskId, format))
+    })
+
+    cp.stderr.on("data", (d) => {
+      const msg = d.toString()
+      console.error(`yt-dlp stderr: ${msg}`)
+      if (msg.includes("Sign in to confirm you're not a bot")) {
+        console.log(`[${downloadTaskId}] Bot detected, refreshing cookies`)
+        try {
+          this.initializeCookiesFile(platform)
+        } catch (e) {
+          console.error(e)
         }
-      })
+      }
+    })
 
-      let stderrBuffer = ""
-      ytdlpProcess.stderr.on("data", (data) => {
-        stderrBuffer += data.toString()
-        console.error(`yt-dlp stderr: ${data}`)
-        if (data.toString().includes("Sign in to confirm you're not a bot")) {
-          console.log("Bot detection triggered during download, refreshing cookies...")
-          this.initializeCookiesFile().catch((err) => console.error("Failed to refresh cookies:", err))
-        }
-      })
+    const finalize = () => {
+      try {
+        const files = fs.readdirSync(this.tempDir).filter((f) => f.startsWith(`${safeTitle}_${downloadTaskId}`))
+        if (!files.length) return this.fail(downloadTaskId, "no output files")
 
-      ytdlpProcess.on("close", async (code) => {
-        console.log(`yt-dlp process exited with code ${code}`)
-
-        if (code !== 0) {
-          // If download failed due to bot detection, we could potentially
-          // try using the stream URLs from Puppeteer fallback here
-          this.fail(downloadTaskId, `Download failed with code ${code}`)
-          return
-        }
-
-        const files = fs.readdirSync(this.tempDir)
-        const downloadedFiles = files.filter((file) => file.startsWith(`${safeTitle}_${downloadTaskId}`))
-
-        if (downloadedFiles.length === 0) {
-          this.fail(downloadTaskId, "Download completed but no output files found")
-          return
-        }
-
-        const download = activeDownloads.get(downloadTaskId)
-        if (download) {
-          download.safeFilename = `${safeTitle}_${downloadTaskId}.${isMP3 ? "mp3" : "mp4"}`
-        }
+        const rec = activeDownloads.get(downloadTaskId)!
+        rec.safeFilename = `${safeTitle}_${downloadTaskId}.${isMP3 ? "mp3" : "mp4"}`
 
         if (!isMP3) {
-          const mp4File = downloadedFiles.find((f) => f.endsWith(".mp4"))
-          if (mp4File) {
-            const inputFile = path.join(this.tempDir, mp4File)
-            const outputFile = path.join(this.tempDir, `${safeTitle}_${downloadTaskId}.mp4`)
-            if (download) {
-              download.originalFile = inputFile
-              download.safeFilename = path.basename(outputFile)
-            }
-            this.finalizeDownload(downloadTaskId, inputFile, outputFile, false)
-            return
+          const mp4 = files.find((f) => f.endsWith(".mp4"))
+          if (mp4) {
+            const inp = path.join(this.tempDir, mp4)
+            const out = path.join(this.tempDir, `${safeTitle}_${downloadTaskId}.mp4`)
+            rec.originalFile = inp
+            rec.safeFilename = path.basename(out)
+            return this.finalizeDownload(downloadTaskId, inp, out, false)
           }
-
-          const fallback = downloadedFiles.find((f) => /\.(webm|mkv|avi|mov)$/.test(f))
-          if (fallback) {
-            const inputFile = path.join(this.tempDir, fallback)
-            this.startConversion(downloadTaskId, inputFile, false)
-            return
-          }
+          const alt = files.find((f) => /\.(webm|mkv|avi|mov)$/.test(f))
+          if (alt) return this.startConversion(downloadTaskId, path.join(this.tempDir, alt), false)
         } else {
-          const audioFile = downloadedFiles.find((f) => /\.(m4a|webm|opus)$/.test(f))
-          if (audioFile) {
-            const inputFile = path.join(this.tempDir, audioFile)
-            if (download) {
-              download.originalFile = inputFile
-              download.safeFilename = `${safeTitle}_${downloadTaskId}.mp3`
+          // For MP3 requests
+          if (platform === "tiktok" || platform === "snapchat") {
+            // These platforms downloaded video, need to convert to MP3
+            const videoFile = files.find((f) => /\.(mp4|webm|mkv|avi|mov)$/.test(f))
+            if (videoFile) {
+              const inp = path.join(this.tempDir, videoFile)
+              rec.originalFile = inp
+              rec.safeFilename = `${safeTitle}_${downloadTaskId}.mp3`
+              return this.startConversion(downloadTaskId, inp, true)
             }
-            this.startConversion(downloadTaskId, inputFile, true)
-            return
+          } else {
+            // Other platforms should have audio files
+            const af = files.find((f) => /\.(m4a|opus|webm|mp3)$/.test(f))
+            if (af) {
+              const inp = path.join(this.tempDir, af)
+              rec.originalFile = inp
+              rec.safeFilename = `${safeTitle}_${downloadTaskId}.mp3`
+              return this.startConversion(downloadTaskId, inp, true)
+            }
           }
         }
-
-        this.fail(downloadTaskId, "Could not find appropriate output files")
-      })
-
-      ytdlpProcess.on("error", (err) => {
-        console.error(`yt-dlp process error: ${err.message}`)
-        this.fail(downloadTaskId, `Download process error: ${err.message}`)
-      })
-
-      return downloadTaskId
-    } catch (error) {
-      console.error(`Error starting download for task ${downloadTaskId}:`, error)
-      this.fail(downloadTaskId, `Failed to start download: ${error}`)
-      return downloadTaskId
+        this.fail(downloadTaskId, "could not locate output")
+      } catch (e) {
+        console.error(e)
+        this.fail(downloadTaskId, "finalization error")
+      }
     }
+
+    cp.on("close", async (code) => {
+      console.log(`[${downloadTaskId}] yt-dlp exited with code ${code}`)
+
+      if (code !== 0) {
+        try {
+          console.log(`[${downloadTaskId}] Falling back to alternative extraction…`)
+          const fbInfo = await fallbackWithAlternativeMethod(url, downloadTaskId)
+
+          // Check if we got stream URLs from fallback
+          if ("streamUrls" in fbInfo && Array.isArray(fbInfo.streamUrls) && fbInfo.streamUrls.length > 0) {
+            // Try to download from the first available stream URL
+            const streamUrl = fbInfo.streamUrls[0]
+            console.log(`[${downloadTaskId}] Trying direct download from: ${streamUrl}`)
+
+            const fbArgs = [
+              "--newline",
+              "--progress",
+              "--user-agent",
+              pickUA(),
+              "--add-header",
+              "Referer:" + url,
+              "--add-header",
+              "Origin:" + new URL(url).origin,
+              "--format",
+              isMP3 ? (platform === "tiktok" || platform === "snapchat" ? "best" : "bestaudio") : "best",
+              ...(isMP3 && platform !== "tiktok" && platform !== "snapchat"
+                ? ["--extract-audio", "--audio-format", "mp3"]
+                : isMP3
+                  ? []
+                  : ["--merge-output-format", "mp4"]),
+              "--output",
+              `${tempBase}.%(ext)s`,
+              streamUrl,
+            ]
+
+            console.log(`[${downloadTaskId}] Fallback yt-dlp args:`, fbArgs)
+
+            const fbProc = spawn(this.ytDlpPath, fbArgs)
+            activeDownloads.get(downloadTaskId)!.process = fbProc
+
+            let fbBuf = ""
+            fbProc.stdout.on("data", (data) => {
+              fbBuf += data.toString()
+              const lines = fbBuf.split("\n")
+              fbBuf = lines.pop() || ""
+              for (const line of lines) {
+                this.parseYtDlpProgress(line, downloadTaskId, format)
+              }
+            })
+
+            fbProc.stderr.on("data", (data) => console.error(data.toString()))
+
+            fbProc.on("close", (exitCode) => {
+              if (exitCode === 0) {
+                finalize()
+              } else {
+                this.fail(downloadTaskId, `fallback yt-dlp exited ${exitCode}`)
+              }
+            })
+
+            return // Wait for fallback process
+          } else {
+            throw new Error("No downloadable stream URLs found")
+          }
+        } catch (err) {
+          console.error(`[${downloadTaskId}] all fallback methods failed:`, err)
+          this.fail(downloadTaskId, "all methods failed")
+        }
+        return
+      }
+
+      // Primary download succeeded
+      finalize()
+    })
+
+    cp.on("error", (err) => {
+      console.error(`[${downloadTaskId}] spawn error:`, err)
+      this.fail(downloadTaskId, `spawn error: ${err.message}`)
+    })
+
+    return downloadTaskId
   }
 
   /**
@@ -969,18 +1130,17 @@ export class DownloadManager extends EventEmitter {
         // For MP3, convert to MP3 format with appropriate bitrate
         const bitrate = download.format.includes("320") ? 320 : download.format.includes("256") ? 256 : 128
 
-        // Use faster encoding preset for better performance
         ffmpegCommand
           .audioCodec("libmp3lame")
           .audioBitrate(bitrate)
           .format("mp3")
-          .outputOptions(["-y", "-preset", "ultrafast"]) // Overwrite output file if it exists and use ultrafast preset
+          .outputOptions(["-y", "-preset", "ultrafast"])
       } else if (isAudioOnly) {
-        // For audio-only files requested as MP4, convert to MP4 container but it will be audio-only
-        ffmpegCommand.audioCodec("aac").audioBitrate(192).format("mp4").outputOptions(["-y", "-preset", "ultrafast"]) // Overwrite output file if it exists and use ultrafast preset
+        // For audio-only files requested as MP4, convert to MP4 container
+        ffmpegCommand.audioCodec("aac").audioBitrate(192).format("mp4").outputOptions(["-y", "-preset", "ultrafast"])
       } else {
         // For MP4, just copy the streams to avoid re-encoding
-        ffmpegCommand.outputOptions(["-c", "copy", "-y"]) // Copy streams and overwrite output
+        ffmpegCommand.outputOptions(["-c", "copy", "-y"])
       }
 
       ffmpegCommand
