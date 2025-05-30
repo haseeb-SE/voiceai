@@ -16,7 +16,14 @@ export function detectPlatform(url: string): string | null {
   // Clean URL for better detection
   const cleanUrl = url.toLowerCase().trim()
 
-  if (cleanUrl.includes("tiktok.com") || cleanUrl.includes("vt.tiktok.com") || cleanUrl.includes("vm.tiktok.com")) {
+  // Check Snapchat FIRST to avoid conflicts with other platforms
+  if (cleanUrl.includes("snapchat.com") || cleanUrl.includes("snap.com")) {
+    return "snapchat"
+  } else if (
+    cleanUrl.includes("tiktok.com") ||
+    cleanUrl.includes("vt.tiktok.com") ||
+    cleanUrl.includes("vm.tiktok.com")
+  ) {
     return "tiktok"
   } else if (cleanUrl.includes("instagram.com") || cleanUrl.includes("instagr.am")) {
     return "instagram"
@@ -24,12 +31,6 @@ export function detectPlatform(url: string): string | null {
     return "facebook"
   } else if (cleanUrl.includes("youtube.com") || cleanUrl.includes("youtu.be") || cleanUrl.includes("m.youtube.com")) {
     return "youtube"
-  } else if (cleanUrl.includes("twitter.com") || cleanUrl.includes("t.co")) {
-    return "twitter"
-  } else if (cleanUrl.includes("x.com")) {
-    return "twitter"
-  } else if (cleanUrl.includes("snapchat.com") || cleanUrl.includes("snap.com")) {
-    return "snapchat"
   }
   return null
 }
@@ -148,7 +149,11 @@ export function extractVideoId(url: string, platform: string | null = null): str
         // Facebook video with additional parameters
         const paramVideoMatch = url.match(/facebook\.com\/.*\/videos\/.*\/(\d+)/)
         if (paramVideoMatch) return paramVideoMatch[1]
-
+        // Facebook share URLs: /share/r/:VIDEO_ID
+        const shareMatch = url.match(
+          /facebook\.com\/share\/r\/([A-Za-z0-9_-]+)/
+        )
+        if (shareMatch) return shareMatch[1]
         // Extract any numeric ID as fallback
         const numericMatch = url.match(/(\d{10,})/)
         if (numericMatch) return numericMatch[1]
@@ -186,28 +191,6 @@ export function extractVideoId(url: string, platform: string | null = null): str
         // Extract any alphanumeric ID as fallback
         const fallbackMatch = url.match(/\/([a-zA-Z0-9_-]{8,})/)
         if (fallbackMatch) return fallbackMatch[1]
-
-        return null
-      }
-
-      case "twitter": {
-        // Handle Twitter/X URLs
-
-        // Twitter status: /status/TWEET_ID
-        const statusMatch = url.match(/(?:twitter\.com|x\.com)\/[^/]+\/status\/(\d+)/)
-        if (statusMatch) return statusMatch[1]
-
-        // Twitter short URL: t.co/SHORT_ID
-        const shortMatch = url.match(/t\.co\/([a-zA-Z0-9]+)/)
-        if (shortMatch) return shortMatch[1]
-
-        // Twitter video with additional parameters
-        const videoMatch = url.match(/(?:twitter\.com|x\.com)\/.*\/status\/(\d+)/)
-        if (videoMatch) return videoMatch[1]
-
-        // Extract numeric ID as fallback
-        const numericMatch = url.match(/(\d{10,})/)
-        if (numericMatch) return numericMatch[1]
 
         return null
       }
@@ -437,33 +420,6 @@ async function puppeteerFallback(url: string, platform: string): Promise<VideoIn
 
         return {
           title: title.replace(" - YouTube", "").trim(),
-          streamUrls: Array.from(new Set(streams)).filter(
-            (url) => url && !url.startsWith("blob:") && !url.startsWith("data:"),
-          ),
-        }
-      })
-    } else if (platform === "twitter") {
-      // Wait for Twitter content to load
-      await sleep(3000)
-
-      videoInfo = await page.evaluate(() => {
-        const streams: string[] = []
-        const title = document.querySelector("title")?.textContent || "Twitter Video"
-
-        // Look for video elements
-        document.querySelectorAll<HTMLVideoElement>("video").forEach((v) => {
-          if (v.src && !v.src.startsWith("blob:")) {
-            streams.push(v.src)
-          }
-          v.querySelectorAll("source").forEach((s) => {
-            if (s.src && !s.src.startsWith("blob:")) {
-              streams.push(s.src)
-            }
-          })
-        })
-
-        return {
-          title: title.replace(" | Twitter", "").trim(),
           streamUrls: Array.from(new Set(streams)).filter(
             (url) => url && !url.startsWith("blob:") && !url.startsWith("data:"),
           ),
