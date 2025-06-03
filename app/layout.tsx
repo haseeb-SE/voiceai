@@ -41,6 +41,8 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/ytlogo.jpg" sizes="any" />
         <link rel="apple-touch-icon" href="/ytlogo.jpg" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-GXXFX999RS"></script>
+
         <script
           dangerouslySetInnerHTML={{
             __html: `
