@@ -120,7 +120,7 @@ export function extractVideoId(url: string, platform: string | null = null): str
       }
 
       case "facebook": {
-        // Handle all Facebook video URL formats
+        // Handle all Facebook video URL formats with enhanced patterns
 
         // Facebook Watch: /watch?v=VIDEO_ID
         const watchMatch = url.match(/facebook\.com\/watch\/?\?v=(\d+)/)
@@ -149,12 +149,28 @@ export function extractVideoId(url: string, platform: string | null = null): str
         // Facebook video with additional parameters
         const paramVideoMatch = url.match(/facebook\.com\/.*\/videos\/.*\/(\d+)/)
         if (paramVideoMatch) return paramVideoMatch[1]
-        // Facebook share URLs: /share/r/:VIDEO_ID
-        const shareMatch = url.match(
-          /facebook\.com\/share\/r\/([A-Za-z0-9_-]+)/
-        )
+
+        // Facebook share URLs: /share/r/VIDEO_ID (Enhanced pattern)
+        const shareMatch = url.match(/facebook\.com\/share\/r\/([A-Za-z0-9_-]+)/)
         if (shareMatch) return shareMatch[1]
-        // Extract any numeric ID as fallback
+
+        // Facebook share URLs with additional parameters
+        const shareParamMatch = url.match(/facebook\.com\/share\/.*[?&]id=([A-Za-z0-9_-]+)/)
+        if (shareParamMatch) return shareParamMatch[1]
+
+        // Facebook groups video: /groups/GROUP_ID/permalink/POST_ID
+        const groupMatch = url.match(/facebook\.com\/groups\/[^/]+\/permalink\/(\d+)/)
+        if (groupMatch) return groupMatch[1]
+
+        // Facebook page video: /PAGE_NAME/videos/VIDEO_ID
+        const pageVideoMatch = url.match(/facebook\.com\/[^/]+\/videos\/[^/]*\/(\d+)/)
+        if (pageVideoMatch) return pageVideoMatch[1]
+
+        // Extract any long alphanumeric ID as fallback (Facebook IDs are typically long)
+        const longIdMatch = url.match(/([A-Za-z0-9_-]{15,})/)
+        if (longIdMatch) return longIdMatch[1]
+
+        // Extract any numeric ID as final fallback
         const numericMatch = url.match(/(\d{10,})/)
         if (numericMatch) return numericMatch[1]
 
@@ -304,6 +320,126 @@ export function getPlatformTextColor(platform: string | null): string {
   }
 }
 
+// Enhanced Facebook video extraction with multiple strategies
+async function extractFacebookVideo(url: string, page: any): Promise<VideoInfo | null> {
+  console.log("Starting enhanced Facebook video extraction...")
+
+  try {
+    // Wait for content to load
+    await sleep(5000)
+
+    const videoInfo = await page.evaluate(() => {
+      const streams: string[] = []
+      let title = "Facebook Video"
+
+      // Strategy 1: Get title from various sources
+      const titleSources = [
+        document.querySelector("title")?.textContent,
+        document.querySelector('[data-testid="post_message"]')?.textContent,
+        document.querySelector('[data-ad-preview="message"]')?.textContent,
+        document.querySelector("h1")?.textContent,
+        document.querySelector('[role="main"] h2')?.textContent,
+      ]
+
+      for (const source of titleSources) {
+        if (source && source.trim() && !source.includes("Facebook")) {
+          title = source.trim()
+          break
+        }
+      }
+
+      // Strategy 2: Extract video URLs from DOM elements
+      document.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
+        if (video.src && !video.src.startsWith("blob:") && !video.src.startsWith("data:")) {
+          streams.push(video.src)
+        }
+
+        video.querySelectorAll("source").forEach((source) => {
+          if (source.src && !source.src.startsWith("blob:") && !source.src.startsWith("data:")) {
+            streams.push(source.src)
+          }
+        })
+      })
+
+      // Strategy 3: Extract from script tags with enhanced patterns
+      const scripts = document.querySelectorAll("script")
+      scripts.forEach((script) => {
+        const content = script.textContent || ""
+
+        // Enhanced Facebook video URL patterns
+        const patterns = [
+          /"hd_src":"([^"]+)"/g,
+          /"sd_src":"([^"]+)"/g,
+          /"video_url":"([^"]+)"/g,
+          /"playable_url":"([^"]+)"/g,
+          /"playable_url_quality_hd":"([^"]+)"/g,
+          /"browser_native_hd_url":"([^"]+)"/g,
+          /"browser_native_sd_url":"([^"]+)"/g,
+          /https:\/\/[^"]*\.facebook\.com[^"]*\.mp4[^"]*/g,
+          /https:\/\/[^"]*\.fbcdn\.net[^"]*\.mp4[^"]*/g,
+          /https:\/\/[^"]*video[^"]*\.mp4[^"]*/g,
+        ]
+
+        patterns.forEach((pattern) => {
+          const matches = content.match(pattern)
+          if (matches) {
+            matches.forEach((match) => {
+              let url = match
+                .replace(/"hd_src":"/, "")
+                .replace(/"sd_src":"/, "")
+                .replace(/"video_url":"/, "")
+                .replace(/"playable_url":"/, "")
+                .replace(/"playable_url_quality_hd":"/, "")
+                .replace(/"browser_native_hd_url":"/, "")
+                .replace(/"browser_native_sd_url":"/, "")
+                .replace(/"/g, "")
+
+              // Decode URL
+              url = decodeURIComponent(url.replace(/\\u0026/g, "&").replace(/\\/g, ""))
+
+              if (
+                url &&
+                !url.startsWith("blob:") &&
+                !url.startsWith("data:") &&
+                (url.includes(".mp4") || url.includes("video")) &&
+                url.startsWith("http")
+              ) {
+                streams.push(url)
+              }
+            })
+          }
+        })
+      })
+
+      // Strategy 4: Look for data attributes
+      document.querySelectorAll("[data-video-url], [data-src]").forEach((element) => {
+        const videoUrl = element.getAttribute("data-video-url") || element.getAttribute("data-src")
+        if (videoUrl && videoUrl.includes(".mp4") && videoUrl.startsWith("http")) {
+          streams.push(videoUrl)
+        }
+      })
+
+      return {
+        title: title.replace(" | Facebook", "").replace(" - Facebook", "").trim(),
+        streamUrls: Array.from(new Set(streams)).filter(
+          (url) =>
+            url &&
+            !url.startsWith("blob:") &&
+            !url.startsWith("data:") &&
+            url.startsWith("http") &&
+            (url.includes(".mp4") || url.includes("video")),
+        ),
+      }
+    })
+
+    console.log(`Facebook extraction found ${videoInfo.streamUrls.length} video URLs`)
+    return videoInfo
+  } catch (error) {
+    console.error("Facebook video extraction error:", error)
+    return null
+  }
+}
+
 // Server-side only function - use dynamic import for puppeteer
 export async function detectPlatformAndExtract(
   url: string,
@@ -338,24 +474,99 @@ export async function detectPlatformAndExtract(
 }
 
 async function puppeteerFallback(url: string, platform: string): Promise<VideoInfo | null> {
-  // Dynamic import to avoid bundling issues
-  const puppeteer = await import("puppeteer")
-
-  const browser = await puppeteer.default.launch({
-    headless: "new",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  })
-  const page = await browser.newPage()
+  let browser = null
 
   try {
+    // Try to use puppeteer-extra with stealth plugin first
+    let puppeteer
+    try {
+      puppeteer = await import("puppeteer-extra")
+      const StealthPlugin = await import("puppeteer-extra-plugin-stealth")
+      puppeteer.default.use(StealthPlugin.default())
+      console.log("Using puppeteer-extra with stealth plugin")
+    } catch (stealthError) {
+      console.log("Stealth plugin not available, using regular puppeteer")
+      puppeteer = await import("puppeteer")
+    }
+
+    // Enhanced browser launch options
+    const launchOptions = {
+      headless: "new" as const,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--disable-gpu",
+        "--disable-web-security",
+        "--disable-features=VizDisplayCompositor",
+        "--disable-blink-features=AutomationControlled",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-renderer-backgrounding",
+        "--disable-extensions",
+        "--disable-plugins",
+        "--disable-default-apps",
+        "--disable-hang-monitor",
+        "--disable-prompt-on-repost",
+        "--disable-sync",
+        "--disable-translate",
+        "--metrics-recording-only",
+        "--no-first-run",
+        "--safebrowsing-disable-auto-update",
+        "--enable-automation",
+        "--password-store=basic",
+        "--use-mock-keychain",
+      ],
+    }
+
+    // Try to install Chrome if not found
+    try {
+      browser = await puppeteer.default.launch(launchOptions)
+    } catch (chromeError) {
+      console.log("Chrome not found, attempting to install...")
+      try {
+        // Try to install Chrome using puppeteer
+        const { install } = await import("@puppeteer/browsers")
+        await install({
+          browser: "chrome",
+          buildId: "latest",
+        })
+        browser = await puppeteer.default.launch(launchOptions)
+      } catch (installError) {
+        console.error("Failed to install Chrome:", installError)
+        throw new Error("Chrome browser not available and installation failed")
+      }
+    }
+
+    const page = await browser.newPage()
+
+    // Set realistic user agent and viewport
     await page.setUserAgent(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     )
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 })
+    await page.setViewport({ width: 1920, height: 1080 })
+
+    // Set extra headers
+    await page.setExtraHTTPHeaders({
+      "Accept-Language": "en-US,en;q=0.9",
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Site": "none",
+      "Sec-Fetch-User": "?1",
+      "Upgrade-Insecure-Requests": "1",
+    })
+
+    // Navigate to the URL with extended timeout
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 })
 
     let videoInfo: VideoInfo | null = null
 
-    if (platform === "instagram") {
+    if (platform === "facebook") {
+      videoInfo = await extractFacebookVideo(url, page)
+    } else if (platform === "instagram") {
       videoInfo = await page.evaluate(() => {
         const streams: string[] = []
         const title = document.querySelector("title")?.textContent || "Instagram Video"
@@ -366,33 +577,6 @@ async function puppeteerFallback(url: string, platform: string): Promise<VideoIn
         })
         return {
           title: title.replace(" | Instagram", "").trim(),
-          streamUrls: Array.from(new Set(streams)).filter(
-            (url) => url && !url.startsWith("blob:") && !url.startsWith("data:"),
-          ),
-        }
-      })
-    } else if (platform === "facebook") {
-      // Wait for Facebook content to load
-      await sleep(3000)
-
-      videoInfo = await page.evaluate(() => {
-        const streams: string[] = []
-        const title = document.querySelector("title")?.textContent || "Facebook Video"
-
-        // Look for video elements
-        document.querySelectorAll<HTMLVideoElement>("video").forEach((v) => {
-          if (v.src && !v.src.startsWith("blob:")) {
-            streams.push(v.src)
-          }
-          v.querySelectorAll("source").forEach((s) => {
-            if (s.src && !s.src.startsWith("blob:")) {
-              streams.push(s.src)
-            }
-          })
-        })
-
-        return {
-          title: title.replace(" | Facebook", "").trim(),
           streamUrls: Array.from(new Set(streams)).filter(
             (url) => url && !url.startsWith("blob:") && !url.startsWith("data:"),
           ),
@@ -536,6 +720,8 @@ async function puppeteerFallback(url: string, platform: string): Promise<VideoIn
     console.error("Error during evaluation:", error)
     return null
   } finally {
-    await browser.close()
+    if (browser) {
+      await browser.close()
+    }
   }
 }
