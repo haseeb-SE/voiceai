@@ -1,15 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 1) Declare serverExternalPackages at the top level (no longer under `experimental`)
+  // ➔ this key replaced `experimental.serverComponentsExternalPackages`
   serverExternalPackages: [
     'fluent-ffmpeg',
     'puppeteer',
     'puppeteer-extra',
     'puppeteer-extra-plugin-stealth',
   ],
-
-  // 2) If you have no other experimental flags, you can omit this key entirely
-  // experimental: {},
 
   eslint: {
     ignoreDuringBuilds: true,
@@ -25,7 +22,7 @@ const nextConfig = {
 
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Exclude server‐only packages from the client bundle
+      // exclude Node-only modules from the client bundle
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -59,7 +56,7 @@ const nextConfig = {
     }
 
     if (isServer) {
-      // Exclude problematic packages from server‐side bundling
+      // exclude certain packages from server-side bundling (so they get required at runtime instead)
       config.externals = config.externals || [];
       config.externals.push({
         'puppeteer-extra': 'commonjs puppeteer-extra',
@@ -68,7 +65,7 @@ const nextConfig = {
       });
     }
 
-    // Handle binary files
+    // allow loading of binary files (.node, .exe)
     config.module.rules.push({
       test: /\.(node|exe)$/,
       use: 'file-loader',
