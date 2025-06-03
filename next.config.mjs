@@ -1,20 +1,31 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['fluent-ffmpeg', 'puppeteer', 'puppeteer-extra', 'puppeteer-extra-plugin-stealth'],
-  },
+  // 1) Declare serverExternalPackages at the top level (no longer under `experimental`)
+  serverExternalPackages: [
+    'fluent-ffmpeg',
+    'puppeteer',
+    'puppeteer-extra',
+    'puppeteer-extra-plugin-stealth',
+  ],
+
+  // 2) If you have no other experimental flags, you can omit this key entirely
+  // experimental: {},
+
   eslint: {
     ignoreDuringBuilds: true,
   },
+
   typescript: {
     ignoreBuildErrors: true,
   },
+
   images: {
     unoptimized: true,
   },
+
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Exclude server-only packages from client bundle
+      // Exclude server‐only packages from the client bundle
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -32,10 +43,10 @@ const nextConfig = {
         net: false,
         child_process: false,
       };
-      
+
       config.externals = config.externals || [];
       config.externals.push({
-        'puppeteer': 'commonjs puppeteer',
+        puppeteer: 'commonjs puppeteer',
         'puppeteer-extra': 'commonjs puppeteer-extra',
         'puppeteer-extra-plugin-stealth': 'commonjs puppeteer-extra-plugin-stealth',
         'fluent-ffmpeg': 'commonjs fluent-ffmpeg',
@@ -46,9 +57,9 @@ const nextConfig = {
         '@puppeteer/browsers': 'commonjs @puppeteer/browsers',
       });
     }
-    
+
     if (isServer) {
-      // Exclude problematic packages from server-side bundling
+      // Exclude problematic packages from server‐side bundling
       config.externals = config.externals || [];
       config.externals.push({
         'puppeteer-extra': 'commonjs puppeteer-extra',
@@ -56,7 +67,7 @@ const nextConfig = {
         'clone-deep': 'commonjs clone-deep',
       });
     }
-    
+
     // Handle binary files
     config.module.rules.push({
       test: /\.(node|exe)$/,
