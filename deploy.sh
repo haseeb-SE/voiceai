@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
 
 APP_NAME="ytmp4"
 DOCKER_IMAGE="ytmp4-app"
@@ -7,41 +6,22 @@ PORT=3000
 
 echo "🛠️  Starting deployment..."
 
-# Step 1: Pull latest code
+# 1) Pull latest code
 echo "🔄 Pulling latest code from GitHub..."
-git pull origin main
+git pull origin main || { echo "❌ Git pull failed"; exit 1; }
 
-# Step 2: Build Docker image
+# 2) Build Docker image (you can optionally pass --memory if needed)
 echo "🐳 Rebuilding Docker image..."
-sudo docker build -t "$DOCKER_IMAGE" .
+sudo docker build -t $DOCKER_IMAGE . || { echo "❌ Docker build failed"; exit 1; }
 
-# Step 3: Stop and remove old container (if it exists)
+# 3) Stop & remove old container
 echo "🧹 Stopping old container (if any)..."
-if sudo docker ps -q --filter "name=^/${APP_NAME}$" | grep -q .; then
-  sudo docker stop "$APP_NAME"
-  sudo docker rm "$APP_NAME"
-fi
+sudo docker stop $APP_NAME 2>/dev/null
+sudo docker rm $APP_NAME 2>/dev/null
 
-# Step 4: Run new container
+# 4) Run new container
 echo "🚀 Starting new container..."
-sudo docker run -d \
-  --restart always \
-  -p "$PORT:3000" \
-  --name "$APP_NAME" \
-  "$DOCKER_IMAGE"
+sudo docker run -d --restart always -p $PORT:3000 --name $APP_NAME $DOCKER_IMAGE \
+  || { echo "❌ Docker run failed"; exit 1; }
 
-# Step 5: Cleanup dangling images/containers/networks to free space
-echo "🧼 Cleaning up unused Docker resources..."
-# Remove stopped containers
-sudo docker container prune -f
-
-# Remove dangling images (untagged)
-sudo docker image prune -f
-
-# Remove unused networks
-sudo docker network prune -f
-
-# Optionally, remove unused volumes (uncomment if you wish to prune volumes too)
-# sudo docker volume prune -f
-
-echo "✅ Deployment complete. App is live at http://185.247.226.177:${PORT} (or your domain)."
+echo "✅ Deployment complete. App is live at http://<your-host>:$PORT"
