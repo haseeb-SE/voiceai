@@ -1,76 +1,80 @@
-#########################################
-# 1) BUILD STAGE: install deps & build #
-#########################################
+# Use smaller alpine image to reduce footprint
 FROM node:18-alpine AS builder
 
-# 1a) Install system dependencies, yt-dlp (via apk), and static ffmpeg
+# Install only necessary system dependencies
 RUN apk add --no-cache \
       curl \
       xz \
       python3 \
       yt-dlp \
-      ca-certificates \
-    && \
-    # Download + extract a static FFmpeg build:
-    mkdir -p /tmp/ffmpeg \
+      ca-certificates
+
+# Create a dedicated temp directory to avoid filling up root
+WORKDIR /tmp/build
+
+# Download FFmpeg with proper cleanup
+RUN mkdir -p /tmp/ffmpeg \
     && curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
          -o /tmp/ffmpeg.tar.xz \
     && tar -xJf /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg \
+    && mkdir -p /usr/local/bin \
     && cp /tmp/ffmpeg/ffmpeg-*/ffmpeg /usr/local/bin/ffmpeg \
     && cp /tmp/ffmpeg/ffmpeg-*/ffprobe /usr/local/bin/ffprobe \
     && chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
     && rm -rf /tmp/ffmpeg /tmp/ffmpeg.tar.xz
 
-# 1b) Symlink yt-dlp so our app can call it at runtime
+# Set up yt-dlp
 RUN mkdir -p /app/bin \
- && ln -sf "$(which yt-dlp)" /usr/local/bin/yt-dlp \
- && ln -sf "$(which yt-dlp)" /app/bin/yt-dlp \
- && ln -sf "$(which yt-dlp)" /usr/local/bin/ytdlp
+    && ln -sf "$(which yt-dlp)" /usr/local/bin/yt-dlp \
+    && ln -sf "$(which yt-dlp)" /app/bin/yt-dlp
 
-# 1c) Make sure /app/bin comes first in PATH
+# Set up the PATH
 ENV PATH="/usr/local/bin:/app/bin:$PATH"
 
+# Set up the working directory
 WORKDIR /app
 
-# 1d) Prepare temp dir for youtube-downloader at runtime
+# Create download directory
 RUN mkdir -p /tmp/youtube-downloader/temp \
- && chmod 777 /tmp/youtube-downloader/temp
+    && chmod 777 /tmp/youtube-downloader/temp
 
-# 1e) Copy lockfile + package.json; install npm dependencies via npm ci
+# Install production dependencies only
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --only=production \
+    && npm cache clean --force
 
-# 1f) Copy source code & build Next.js
+# Copy source code
 COPY . .
+
+# Build the application
 RUN npm run build
 
-
-#########################################
-# 2) RUNTIME STAGE: lean production    #
-#########################################
-FROM node:18-alpine
+# Create a smaller production image
+FROM node:18-alpine AS production
 
 WORKDIR /app
 
-# 2a) Copy the built Next.js output + runtime dependencies
+# Copy built files from builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# 2b) Copy ffmpeg, ffprobe, and yt-dlp binaries into the final image
+# Copy binaries
 COPY --from=builder /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=builder /usr/local/bin/ffprobe /usr/local/bin/ffprobe
 COPY --from=builder /usr/local/bin/yt-dlp /usr/local/bin/yt-dlp
 COPY --from=builder /app/bin/yt-dlp /app/bin/yt-dlp
 
-# (If you have any other runtime folders, e.g. /app/lib or /app/tmp, copy as needed)
-# COPY --from=builder /app/lib ./lib
+# Create temp directory
+RUN mkdir -p /tmp/youtube-downloader/temp \
+    && chmod 777 /tmp/youtube-downloader/temp
 
+# Set environment variables
 ENV NODE_ENV=production
+ENV PATH="/usr/local/bin:/app/bin:$PATH"
 ENV DATABASE_URL="postgresql://neondb_owner:npg_j3Fftup2RJIA@ep-broad-dream-a4jw9cwh-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
 EXPOSE 3000
 
-# Start Next.js in production mode
 CMD ["npm", "start"]
