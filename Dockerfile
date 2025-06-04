@@ -44,6 +44,7 @@ RUN mkdir -p /tmp/youtube-downloader/temp \
 
 # Install PNPM globally
 RUN npm install -g pnpm@10.10.0
+RUN pnpm config set network-concurrency 1
 
 # Copy dependency files and install dependencies
 COPY package.json pnpm-lock.yaml* ./
