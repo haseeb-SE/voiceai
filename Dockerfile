@@ -1,9 +1,9 @@
-#########################################
-# 1) BUILD STAGE: install, build, bundle #
-#########################################
+############################
+# 1) BUILD STAGE
+############################
 FROM node:18-bullseye-slim AS builder
 
-# 1a) Install system dependencies + yt-dlp + ffmpeg
+# 1a) System deps + yt-dlp + ffmpeg
 RUN apt-get update -qq \
  && apt-get install -y --no-install-recommends \
       curl \
@@ -14,14 +14,13 @@ RUN apt-get update -qq \
  && pip3 install --no-cache-dir --upgrade yt-dlp \
  && rm -rf /var/lib/apt/lists/*
 
-# Symlink yt-dlp into /app/bin and create a "ytdlp" alias—don’t re‐link the existing /usr/local/bin/yt-dlp
+# Symlink yt-dlp into /app/bin
 RUN mkdir -p /app/bin \
+ && ln -sf "$(which yt-dlp)" /usr/local/bin/yt-dlp \
  && ln -sf "$(which yt-dlp)" /app/bin/yt-dlp \
  && ln -sf "$(which yt-dlp)" /usr/local/bin/ytdlp
 
-
-
-# Download static FFmpeg build and place into /usr/local/bin + /app/bin
+# Download static ffmpeg & ffprobe
 RUN curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
       -o /tmp/ffmpeg.tar.xz \
  && mkdir -p /tmp/ffmpeg \
@@ -29,58 +28,47 @@ RUN curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-stat
  && cp /tmp/ffmpeg/ffmpeg-*/ffmpeg /usr/local/bin/ffmpeg \
  && cp /tmp/ffmpeg/ffmpeg-*/ffprobe /usr/local/bin/ffprobe \
  && chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
- && ln -s /usr/local/bin/ffmpeg /app/bin/ffmpeg \
- && ln -s /usr/local/bin/ffprobe /app/bin/ffprobe \
+ && ln -sf /usr/local/bin/ffmpeg /app/bin/ffmpeg \
+ && ln -sf /usr/local/bin/ffprobe /app/bin/ffprobe \
  && rm -rf /tmp/ffmpeg /tmp/ffmpeg.tar.xz
 
-# Ensure our /app/bin is found first
 ENV PATH="/usr/local/bin:/app/bin:$PATH"
-
 WORKDIR /app
 
-# Prepare a temp folder for yt-dlp to write into at runtime
+# Prepare temp folder for downloads
 RUN mkdir -p /tmp/youtube-downloader/temp \
  && chmod 777 /tmp/youtube-downloader/temp
 
-# 1b) Install pnpm, throttle concurrency, cap Node’s heap to 512 MB
-RUN npm install -g pnpm@10.10.0 \
- && pnpm config set network-concurrency 1
+# 1b) Copy lockfile & package.json, install with npm
+COPY package.json package-lock.json ./
+RUN npm ci
 
-ENV NODE_OPTIONS="--max_old_space_size=512"
-
-# 1c) Copy lockfile & package.json and install deps
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --no-frozen-lockfile --ignore-scripts
-
-# 1d) Copy application code & build
+# 1c) Copy source & build
 COPY . .
-RUN pnpm build
+RUN npm run build
 
 
-#####################################
-# 2) RUNTIME STAGE: lean production #
-#####################################
+############################
+# 2) RUNTIME STAGE
+############################
 FROM node:18-bullseye-slim
-
 WORKDIR /app
 
-# 2a) Copy built output + runtime dependencies
+# Copy only the “built” bits from builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# 2b) Copy ffmpeg, ffprobe, and yt-dlp binaries
+# Copy binaries from builder
 COPY --from=builder /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=builder /usr/local/bin/ffprobe /usr/local/bin/ffprobe
 COPY --from=builder /usr/local/bin/yt-dlp /usr/local/bin/yt-dlp
 COPY --from=builder /app/bin/yt-dlp /app/bin/yt-dlp
 
-# If you have any extra runtime folders (e.g. lib or tmp), copy them as well:
+# If you have any other runtime folders (e.g. lib/), copy them too:
 COPY --from=builder /app/lib ./lib
 
 ENV NODE_ENV=production
 EXPOSE 3000
-
-# Start the Next.js app
-CMD ["pnpm", "start"]
+CMD ["npm", "start"]
