@@ -16,9 +16,9 @@ RUN apt-get update -qq \
 
 # Symlink yt-dlp into /app/bin so our code can invoke it at runtime
 RUN mkdir -p /app/bin \
- && ln -s "$(which yt-dlp)" /usr/local/bin/yt-dlp \
- && ln -s "$(which yt-dlp)" /app/bin/yt-dlp \
- && ln -s "$(which yt-dlp)" /usr/local/bin/ytdlp
+ && ln -sf "$(which yt-dlp)" /usr/local/bin/yt-dlp \
+ && ln -sf "$(which yt-dlp)" /app/bin/yt-dlp \
+ && ln -sf "$(which yt-dlp)" /usr/local/bin/ytdlp
 
 # Download static FFmpeg build and place into /usr/local/bin + /app/bin
 RUN curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
