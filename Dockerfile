@@ -46,6 +46,9 @@ RUN mkdir -p /tmp/youtube-downloader/temp \
 RUN npm install -g pnpm@10.10.0
 RUN pnpm config set network-concurrency 1
 
+# Tell Node to limit its max-old-space to 512 MB
+ENV NODE_OPTIONS="--max_old_space_size=512"
+
 # Copy dependency files and install dependencies
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --no-frozen-lockfile --ignore-scripts
