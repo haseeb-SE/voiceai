@@ -14,11 +14,12 @@ RUN apt-get update -qq \
  && pip3 install --no-cache-dir --upgrade yt-dlp \
  && rm -rf /var/lib/apt/lists/*
 
-# Symlink yt-dlp into /app/bin so our code can invoke it at runtime
+# Symlink yt-dlp into /app/bin and create a "ytdlp" alias—don’t re‐link the existing /usr/local/bin/yt-dlp
 RUN mkdir -p /app/bin \
- && ln -sf "$(which yt-dlp)" /usr/local/bin/yt-dlp \
  && ln -sf "$(which yt-dlp)" /app/bin/yt-dlp \
  && ln -sf "$(which yt-dlp)" /usr/local/bin/ytdlp
+
+
 
 # Download static FFmpeg build and place into /usr/local/bin + /app/bin
 RUN curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
