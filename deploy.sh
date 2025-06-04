@@ -14,24 +14,20 @@ git pull origin main || { echo "❌ Git pull failed"; exit 1; }
 echo "🐳 Rebuilding Docker image..."
 sudo docker build -t $DOCKER_IMAGE . || { echo "❌ Docker build failed"; exit 1; }
 
-# 3) Stop & remove old container
+# 3) Stop & remove old container (if any)
 echo "🧹 Stopping old container (if any)..."
-sudo docker stop $APP_NAME 2>/dev/null
-sudo docker rm $APP_NAME 2>/dev/null
+sudo docker stop $APP_NAME 2>/dev/null || true
+sudo docker rm   $APP_NAME 2>/dev/null || true
 
 # 4) Run new container
 echo "🚀 Starting new container..."
-sudo docker run -d --restart always -p $PORT:3000 --name $APP_NAME $DOCKER_IMAGE || { echo "❌ Docker run failed"; exit 1; }
+sudo docker run -d --restart always -p $PORT:3000 --name $APP_NAME $DOCKER_IMAGE \
+  || { echo "❌ Docker run failed"; exit 1; }
 
-# Step 5: Cleanup dangling images/containers/networks to free space
+# 5) Cleanup unused Docker objects
 echo "🧼 Cleaning up unused Docker resources..."
-# Remove stopped containers
 sudo docker container prune -f
-
-# Remove dangling images (untagged)
-sudo docker image prune -f
-
-# Remove unused networks
-sudo docker network prune -f
+sudo docker image prune     -f
+sudo docker network prune   -f
 
 echo "✅ Deployment complete. App is live at http://<your-host>:$PORT"
