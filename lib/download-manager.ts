@@ -155,7 +155,7 @@ async function fallbackWithPuppeteerStealth(url: string, taskId: string, platfor
       })
     } else {
       // Generic video extraction for other platforms
-      await page.waitForSelector("video", { timeout: 5000 }).catch(() => {})
+      await page.waitForSelector("video", { timeout: 5000 }).catch(() => { })
 
       videoInfo = await page.evaluate(() => {
         const streams: string[] = []
@@ -733,17 +733,21 @@ export class DownloadManager extends EventEmitter {
         )
       }
     } else {
+      function autoFormat(maxHeight: number) {
+        return `bv*[height<=${maxHeight}]+ba/b`
+      }
+
       let formatString: string
       switch (format) {
         case "mp4_720":
-          formatString = "bestvideo[height<=720]+bestaudio/best[height<=720]"
+          formatString = autoFormat(720)
           break
         case "mp4_1080":
-          formatString = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
+          formatString = autoFormat(1080)
           break
         case "mp4_best":
         default:
-          formatString = "bestvideo+bestaudio/best"
+          formatString = "bv+ba/b"  // no height cap
           break
       }
 
