@@ -733,23 +733,34 @@ export class DownloadManager extends EventEmitter {
         )
       }
     } else {
-      function autoFormat(maxHeight: number) {
-        return `bv*[height<=${maxHeight}]+ba/b`
+      // ─── Flexible selector helper ──────────────────────────────────────────────
+      function autoFormat(maxHeight: number): string {
+        // best video (any codec) up to the cap  +  best audio
+        // if merging not possible, fall back to best single file
+        return `bv*[height<=${maxHeight}]+ba/b`;
       }
 
-      let formatString: string
+      // ─── Replace the old switch with this one ──────────────────────────────────
+      let formatString: string;
+
       switch (format) {
         case "mp4_720":
-          formatString = autoFormat(720)
-          break
+          // cap at 720 p
+          formatString = autoFormat(720);
+          break;
+
         case "mp4_1080":
-          formatString = autoFormat(1080)
-          break
+          // cap at 1080 p
+          formatString = autoFormat(1080);
+          break;
+
         case "mp4_best":
         default:
-          formatString = "bv+ba/b"  // no height cap
-          break
+          // no height cap → highest available quality
+          formatString = "bv+ba/b";   // same as autoFormat(4320) but shorter
+          break;
       }
+
 
       args.push("--format", formatString, "--merge-output-format", "mp4", "--output", `${tempBase}.%(ext)s`)
     }

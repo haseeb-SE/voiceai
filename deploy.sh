@@ -30,4 +30,4 @@ sudo docker container prune -f
 sudo docker image prune     -f
 sudo docker network prune   -f
 
-echo "✅ Deployment complete. App is live at http://<your-host>:$PORT"
+echo "✅ Deployment complete. App is live at http://185.247.226.177:$PORT"
