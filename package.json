@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "install-yt-dlp": "node scripts/install-yt-dlp.js",
     "refresh-cookies": "node scripts/schedule-cookie-refresh.js"
   },
   "dependencies": {
@@ -64,8 +65,9 @@
     "node-cron": "^4.0.7",
     "node-fetch": "^3.3.2",
     "os": "latest",
+    "p-limit": "^6.2.0",
     "path": "latest",
-    "puppeteer": "^24.9.0",
+    "puppeteer": "^24.10.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-proxy": "^1.0.2",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
@@ -87,7 +89,8 @@
     "vaul": "^0.9.6",
     "yt-dlp-exec": "^1.0.2",
     "ytdl-core": "latest",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.27",

@@ -13,12 +13,17 @@ RUN apk add --no-cache \
       ca-certificates \
     && pip3 install --no-cache-dir --upgrade yt-dlp --break-system-packages
 
-# Create binary directory and symlink yt-dlp into it
-RUN mkdir -p /app/bin \
-    && ln -s "$(which yt-dlp)" /usr/local/bin/yt-dlp \
-    && ln -s "$(which yt-dlp)" /app/bin/yt-dlp \
-    && ln -s "$(which yt-dlp)" /usr/local/bin/ytdlp
+RUN apk add --no-cache curl ca-certificates
 
+# Create binary directory and symlink yt-dlp into it
+RUN mkdir -p /app/bin
+
+RUN curl -L \
+    https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
+    -o /app/bin/yt-dlp \
+  && chmod +x /app/bin/yt-dlp \
+  && ln -s /app/bin/yt-dlp /usr/local/bin/yt-dlp \
+  && ln -s /app/bin/yt-dlp /usr/local/bin/ytdlp
 # Environment variables
 ENV NODE_ENV=production
 ENV DATABASE_URL="postgresql://neondb_owner:npg_j3Fftup2RJIA@ep-broad-dream-a4jw9cwh-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require"
@@ -48,7 +53,8 @@ RUN npm install -g pnpm@10.10.0
 # Copy dependency files and install dependencies
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --no-frozen-lockfile --ignore-scripts
-
+RUN apt-get update && apt-get install -y chromium-browser
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 # Copy application source code
 COPY . .
 
