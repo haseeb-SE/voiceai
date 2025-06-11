@@ -1,55 +1,65 @@
-# syntax=docker/dockerfile:1.4
-################################################################################
-### STAGE 1: Builder (heavy tooling + build)
-FROM node:18-alpine AS builder
+# Use Node.js Alpine base
+FROM node:18-alpine
+
+# Set working directory
 WORKDIR /app
 
-# 1) Install pnpm & cache the store between builds
-RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
-    npm install -g pnpm@10.12.1
+# Install required tools + Python3/pip
+RUN apk add --no-cache \
+  curl \
+  xz \
+  python3 \
+  py3-pip \
+  ca-certificates \
+  && pip3 install --no-cache-dir --upgrade yt-dlp --break-system-packages
 
-# 2) Copy only lockfiles & install deps
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --ignore-scripts
+# Create binary directory and symlink yt-dlp into it
+RUN mkdir -p /app/bin 
+# download the latest GitHub binary of yt-dlp
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
+  -o /usr/local/bin/yt-dlp \
+  && chmod +x /usr/local/bin/yt-dlp \
+  && ln -s /usr/local/bin/yt-dlp /usr/local/bin/ytdlp \
+  && \
 
-# 3) Pull in your runtime binaries: yt-dlp, ffmpeg, chromium
-RUN apk add --no-cache curl xz python3 py3-pip ca-certificates chromium \
- && \
- # download the latest GitHub binary of yt-dlp
- curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
-   -o /usr/local/bin/yt-dlp \
- && chmod +x /usr/local/bin/yt-dlp \
- && ln -s /usr/local/bin/yt-dlp /usr/local/bin/ytdlp \
- && \
- # download & install FFmpeg
- curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz \
-   -o /tmp/ffmpeg.tar.xz \
- && tar -xJf /tmp/ffmpeg.tar.xz -C /tmp \
- && cp /tmp/ffmpeg-*/ffmpeg /usr/local/bin/ \
- && cp /tmp/ffmpeg-*/ffprobe /usr/local/bin/ \
- && chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
- && rm -rf /tmp/ffmpeg*
+  # Environment variables
+  ENV NODE_ENV=production
+ENV DATABASE_URL="postgresql://neondb_owner:npg_j3Fftup2RJIA@ep-broad-dream-a4jw9cwh-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
-# 4) Copy source & build your app
+# Download and extract FFmpeg static build
+RUN curl -L "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+  -o /tmp/ffmpeg.tar.xz \
+  && mkdir -p /tmp/ffmpeg \
+  && tar -xJf /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg \
+  && cp /tmp/ffmpeg/ffmpeg-*/ffmpeg /usr/local/bin/ \
+  && cp /tmp/ffmpeg/ffmpeg-*/ffprobe /usr/local/bin/ \
+  && chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
+  && ln -s /usr/local/bin/ffmpeg /app/bin/ffmpeg \
+  && ln -s /usr/local/bin/ffprobe /app/bin/ffprobe \
+  && rm -rf /tmp/ffmpeg /tmp/ffmpeg.tar.xz
+
+# Ensure our binaries come first in PATH
+ENV PATH="/usr/local/bin:/app/bin:$PATH"
+
+# Prepare temp directory
+RUN mkdir -p /tmp/youtube-downloader/temp \
+  && chmod 777 /tmp/youtube-downloader/temp
+
+# Install PNPM globally
+RUN npm install -g pnpm@10.10.0
+
+# Copy dependency files and install dependencies
+COPY package.json pnpm-lock.yaml* ./
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+
+# Copy application source code
 COPY . .
+
+# Verify binaries are accessible
+RUN which yt-dlp && which ffmpeg && which ffprobe
+
+# Build the application
 RUN pnpm build
 
-################################################################################
-### STAGE 2: Runtime (slim, only what you need to run)
-FROM node:18-alpine
-WORKDIR /app
-
-# copy build output + binaries
-COPY --from=builder /app/dist         ./dist
-COPY --from=builder /usr/local/bin/yt-dlp  /usr/local/bin/
-COPY --from=builder /usr/local/bin/ffmpeg  /usr/local/bin/
-COPY --from=builder /usr/local/bin/ffprobe /usr/local/bin/
-COPY --from=builder /usr/bin/chromium-browser /usr/bin/
-
-# install production deps only
-COPY --from=builder /app/package.json ./
-RUN npm install -g pnpm@10.12.1 \
- && pnpm install --prod --frozen-lockfile
-
-ENV NODE_ENV=production
-CMD ["pnpm","start"]
+# Start the application
+CMD ["pnpm", "start"]

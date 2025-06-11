@@ -14,7 +14,7 @@ git pull origin main
 # 2) Build Docker image (no cache + pull base)
 echo "🐳 Rebuilding Docker image (no-cache + pulling base image)..."
 sudo docker build \
-   \
+  --no-cache \
   --pull \
   -t "$DOCKER_IMAGE" \
   .
