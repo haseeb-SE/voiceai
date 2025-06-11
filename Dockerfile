@@ -53,7 +53,7 @@ RUN npm install -g pnpm@10.10.0
 # Copy dependency files and install dependencies
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --no-frozen-lockfile --ignore-scripts
-RUN apt-get update && apt-get install -y chromium-browser
+RUN apk add --no-cache chromium
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 # Copy application source code
 COPY . .
