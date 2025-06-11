@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 APP_NAME="ytmp4"
 DOCKER_IMAGE="ytmp4-app"
@@ -8,29 +9,28 @@ echo "🛠️  Starting deployment..."
 
 # 1) Pull latest code
 echo "🔄 Pulling latest code from GitHub..."
-git pull origin main || { echo "❌ Git pull failed"; exit 1; }
+git pull origin main
 
 # 2) Build Docker image (no cache + pull base)
 echo "🐳 Rebuilding Docker image (no-cache + pulling base image)..."
 sudo docker build \
-  --no-cache \           # force fresh steps (re-download yt-dlp, etc)
-  --pull \               # always pull latest node:18-alpine
-  -t $DOCKER_IMAGE . \
-  || { echo "❌ Docker build failed"; exit 1; }
+  --no-cache \
+  --pull \
+  -t "$DOCKER_IMAGE" \
+  .
 
 # 3) Stop & remove old container (if any)
 echo "🧹 Stopping old container (if any)..."
-sudo docker stop $APP_NAME 2>/dev/null || true
-sudo docker rm   $APP_NAME 2>/dev/null || true
+sudo docker stop "$APP_NAME" 2>/dev/null || true
+sudo docker rm   "$APP_NAME" 2>/dev/null || true
 
 # 4) Run new container
 echo "🚀 Starting new container..."
 sudo docker run -d \
   --restart always \
-  -p $PORT:3000 \
-  --name $APP_NAME \
-  $DOCKER_IMAGE \
-  || { echo "❌ Docker run failed"; exit 1; }
+  -p "$PORT":3000 \
+  --name "$APP_NAME" \
+  "$DOCKER_IMAGE"
 
 # 5) Cleanup unused Docker objects
 echo "🧼 Cleaning up unused Docker resources..."
