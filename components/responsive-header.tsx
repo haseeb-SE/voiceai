@@ -87,7 +87,7 @@ export function ResponsiveHeader() {
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-bold text-white">{config.name}</span>
-              <span className={`text-xl font-bold ${config.color}`}>Video Downloader</span>
+              <span className={`text-xl font-bold ${config.color}`}> Downloader</span>
             </div>
           </div>
 

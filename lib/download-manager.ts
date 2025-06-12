@@ -732,6 +732,23 @@ export class DownloadManager extends EventEmitter {
     // Enhanced format selection based on platform and request
     if (isMP3) {
       // For platforms that don't have separate audio streams, download video first then convert
+      // map your mp3_* format identifier to yt-dlp format selector and bitrate
+      let ytFormat: string;
+      let bitrate: number;
+      switch (format) {
+        case "mp3_320":
+          ytFormat = "bestaudio[abr>=320]/bestaudio";
+          bitrate = 320;
+          break;
+        case "mp3_256":
+          ytFormat = "bestaudio[abr>=192]/bestaudio";
+          bitrate = 256;
+          break;
+        case "mp3_128":
+        default:
+          ytFormat = "bestaudio[abr>=128]/bestaudio";
+          bitrate = 128;
+      }
       if (platform === "tiktok" || platform === "snapchat") {
         args.push("--format", "best", "--output", `${tempBase}.%(ext)s`)
       } else {

@@ -37,7 +37,7 @@ export function DownloadOptions({ type, onDownload, platform }: DownloadOptionsP
   ]
 
   const formats = type === "audio" ? audioFormats : videoFormats
-  const buttonColorClass = getPlatformButtonColor(platform) || "bg-red-600 hover:bg-red-700"
+  const buttonColorClass = getPlatformButtonColor(platform) || "bg-red-600 bg-red-700"
 
   return (
     <Table className="border-gray-700">
