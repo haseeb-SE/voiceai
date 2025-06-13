@@ -272,17 +272,17 @@ export function extractVideoId(url: string, platform: string | null = null): str
 export function getPlatformButtonColor(platform: string | null): string {
   switch (platform) {
     case "youtube":
-      return "bg-red-600 hover:bg-red-700"
+      return "bg-red-600 "
     case "facebook":
-      return "bg-blue-600 hover:bg-blue-700"
+      return "bg-blue-600 "
     case "instagram":
-      return "bg-pink-600 hover:bg-pink-700"
+      return "bg-pink-600 "
     case "tiktok":
-      return "bg-teal-600 hover:bg-teal-700"
+      return "bg-teal-600 "
     case "snapchat":
-      return "bg-yellow-500 hover:bg-yellow-600"
+      return "bg-yellow-500 "
     default:
-      return "bg-gray-600 hover:bg-gray-700"
+      return "bg-gray-600 "
   }
 }
 
