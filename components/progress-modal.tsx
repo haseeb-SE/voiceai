@@ -208,15 +208,15 @@ export function ProgressModal({
       }
 
       // Auto-trigger download if not already triggered
-      if (!downloadTriggeredRef.current) {
-        debugLog("Auto-triggering download")
-        setTimeout(() => {
-          if (!downloadTriggeredRef.current) {
-            downloadTriggeredRef.current = true
-            onDownload()
-          }
-        }, 1000) // Increased delay to 1 second
-      }
+      //if (!downloadTriggeredRef.current) {
+      //  debugLog("Auto-triggering download")
+      //  setTimeout(() => {
+      //    if (!downloadTriggeredRef.current) {
+      //      downloadTriggeredRef.current = true
+      //      onDownload()
+      //    }
+      //  }, 1000) // Increased delay to 1 second
+      //}
     } else if (status === "failed") {
       setConversionPhase("failed")
       setConversionDetails("Download failed. Please try again.")
@@ -378,10 +378,30 @@ export function ProgressModal({
       document.head.removeChild(style)
     }
   }, [])
+  // add this handler just above your return:
+  const handleCancelClick = () => {
+    // 1️⃣ close the UI immediately
+    onCancel();
 
+    // 2️⃣ fire‐and‐forget the cancel request
+    if (taskId) {
+      fetch("/api/video/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task_id: taskId }),
+      }).catch((err) => {
+        console.error("Failed to cancel on server:", err);
+      });
+    }
+  };
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md bg-gray-900 border-gray-700 text-white">
+      <DialogContent // prevent clicks outside from closing
+        onInteractOutside={e => e.preventDefault()}
+        // prevent the Escape key from closing
+        onEscapeKeyDown={e => e.preventDefault()}
+        className="sm:max-w-md bg-gray-900 border-gray-700 text-white">
+
         <DialogHeader>
           <DialogTitle className="text-white">
             {isComplete ? "Download Complete" : "Processing Your Download"}
@@ -412,13 +432,12 @@ export function ProgressModal({
 
             <div className="relative h-2 w-full bg-gray-700 rounded-full overflow-hidden">
               <div
-                className={`h-full ${
-                  status === "failed"
-                    ? "bg-red-600"
-                    : displayProgress < 100
-                      ? "progress-bar-animation bg-red-600"
-                      : "bg-green-600"
-                }`}
+                className={`h-full ${status === "failed"
+                  ? "bg-red-600"
+                  : displayProgress < 100
+                    ? "progress-bar-animation bg-red-600"
+                    : "bg-green-600"
+                  }`}
                 style={{ width: `${Math.max(1, displayProgress)}%` }}
               />
             </div>
@@ -452,6 +471,7 @@ export function ProgressModal({
             </Button>
           )}
         </DialogFooter>
+
       </DialogContent>
     </Dialog>
   )

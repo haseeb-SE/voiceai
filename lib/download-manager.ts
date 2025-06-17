@@ -531,7 +531,11 @@ export class DownloadManager extends EventEmitter {
       if (PROXY_URL) {
         args.push("--proxy", PROXY_URL)
       }
-
+      // ───── aria2c parallel downloader ─────
+      args.push(
+        "--external-downloader", "aria2c",
+        "--external-downloader-args", "-x 8 -s 8 -k 1M"
+      )
       args.push(url)
 
       console.log(`Getting video info with args: ${args.join(" ")}`)
@@ -734,7 +738,7 @@ export class DownloadManager extends EventEmitter {
       // For platforms that don't have separate audio streams, download video first then convert
       // map your mp3_* format identifier to yt-dlp format selector and bitrate
       args.push(
-        
+
         "--extract-audio",
         "--audio-format", "mp3",
         "--audio-quality", "0",
@@ -743,21 +747,16 @@ export class DownloadManager extends EventEmitter {
 
 
     } else {
-      let formatString: string
-      switch (format) {
-        case "mp4_720":
-          formatString = "bestvideo[height<=720]+bestaudio/best[height<=720]"
-          break
-        case "mp4_1080":
-          formatString = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
-          break
-        case "mp4_best":
-        default:
-          formatString = "bestvideo+bestaudio/best"
-          break
-      }
+      const formatString = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best";
 
-      args.push("--format", formatString, "--merge-output-format", "mp4", "--output", `${tempBase}.%(ext)s`)
+      args.push(
+        "--format", formatString,
+        "--ffmpeg-location", config.ytdl.ffmpegPath!,
+        "--merge-output-format", "mp4",
+        "--output", `${tempBase}.%(ext)s`
+      );
+
+     
     }
 
     args.push(url)

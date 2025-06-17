@@ -1,12 +1,6 @@
-# robots.txt for Free YTMP4 Download
-
 User-agent: *
 Allow: /
-
-# Disallow admin and private areas
 Disallow: /admin/
 Disallow: /private/
 Disallow: /api/
-
-# Sitemap location
 Sitemap: https://youtubetomp4download.com/sitemap.xml

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Cancel the download
-    const result = await downloadManager.cancelDownload(task_id, socket_id)
+    const result = await downloadManager.cancelDownload(task_id)
 
     if (!result) {
       return NextResponse.json({ error: "Task not found or already completed" }, { status: 404 })
