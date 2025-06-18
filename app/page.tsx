@@ -562,7 +562,7 @@ export default function YouTubePage() {
             },
             {
               "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
+              "@type": "WebApplication",
               name: "YouTube Video Downloader",
               applicationCategory: "MultimediaApplication",
               operatingSystem: "Web Browser",
@@ -571,11 +571,7 @@ export default function YouTubePage() {
                 price: "0",
                 priceCurrency: "USD",
               },
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: "4.8",
-                ratingCount: "15420",
-              },
+             
             },
             {
               "@context": "https://schema.org",
