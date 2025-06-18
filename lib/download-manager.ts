@@ -75,7 +75,7 @@ async function fallbackWithPuppeteerStealth(url: string, taskId: string, platfor
     await page.setExtraHTTPHeaders(headers)
 
     // Navigate with platform-specific timeout
-    const timeout = platform === "facebook" ? 15000 : 10000
+    const timeout = platform === "facebook" ? 35000 : 30000
     await page.goto(url, { waitUntil: "domcontentloaded", timeout })
 
     // Platform-specific extraction logic

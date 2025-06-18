@@ -219,7 +219,7 @@ export function ProgressModal({
       //}
     } else if (status === "failed") {
       setConversionPhase("failed")
-      setConversionDetails("Download failed. Please try again.")
+      setConversionDetails("Download failed. Please Refresh Page and try again.")
       setFormattedEta("Failed")
     } else if (status === "cancelled") {
       setConversionPhase("cancelled")
@@ -419,7 +419,7 @@ export function ProgressModal({
                 {isComplete ? (
                   "Ready to download"
                 ) : status === "failed" ? (
-                  "Download failed"
+                  "Download Failed Please Refresh Page"
                 ) : (
                   <>
                     {conversionPhase === "downloading" ? "Downloading..." : "Converting..."}
