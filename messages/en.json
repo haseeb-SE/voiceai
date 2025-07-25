@@ -1,0 +1,81 @@
+{
+  "welcome": "Fast & Free YouTube To MP4 Download",
+  "subtitle": "The Best YouTube to MP4 Converter",
+  "download": "Download",
+  "downloaderTitle": "YouTube Video Downloader",
+  "downloaderDescription": "Enter a YouTube URL to download videos in MP3 or MP4 format",
+  "downloaderPara": " Enjoy a fast and free YouTube → MP4 download with our online tool. No software is needed;just paste your link into your browser and start converting. Experience seamless,high-resolution output every time.",
+  "heroDescription": "Enjoy a fast and free YouTube → MP4 download with our online tool. No software is needed; just paste your link into your browser and start converting. Experience seamless, high-resolution output every time.",
+  "feature1": "Videos in HD or 4K resolution",
+  "feature2": "Compatible with Mac & Windows",
+  "feature3": "Convert YouTube Shorts To MP4",
+  "feature4": "Convert Videos to MP4 or MP3",
+  "featuresTitle": "Key Features of Our YouTube To MP4 Converter",
+  "featuresSection": [
+    {
+      "title": "Fast & Free YouTube to MP4 Download",
+      "desc": "Get a fast, free YouTube to MP4 download with our online tool. No software is needed; just paste the video link and start converting. Reliable, high-quality output is guaranteed every time."
+    },
+    {
+      "title": "The Best YouTube to MP4 Converter",
+      "desc": "Use the best converter to convert a YouTube video to MP4 or YouTube Shorts to MP4. This tool delivers fast, high-quality downloads with no extra steps."
+    },
+    {
+      "title": "Convert YouTube to MP4",
+      "desc": "Convert YouTube to MP4 online hassle-free. Just use your regular browser; no software installation is needed. Get high-resolution, fast, and easy YouTube to MP4 downloads every time."
+    },
+    {
+      "title": "Convert YouTube Video to MP4",
+      "desc": "Paste any YouTube video URL to instantly convert YouTube video to MP4. Choose your format, then download your file in seconds with no delays."
+    },
+    {
+      "title": "Convert YouTube Shorts to MP4",
+      "desc": "Convert YouTube Shorts to MP4 quickly and easily. The process is simple: paste the Short URL, select MP4, and get your video fast and reliably."
+    },
+    {
+      "title": "Compatible with Mac & Windows",
+      "desc": "Our YouTube to MP4 converter works smoothly on both Mac and Windows. No downloads or plugins are required; just paste your link and convert it online in seconds."
+    }
+  ],
+
+
+  "howItWorksTitle": "3 Simple Steps to Convert YouTube Videos",
+  "step1Title": "Grab the Link",
+  "step1Description": "Find the video you want to download or convert from YouTube. Copy its full URL directly from the browser's address bar.",
+  "step2Title": "Drop It In & Hit Go",
+  "step2Description": "Paste the YouTube link into the ytmp4 tool's search field. Then, click on Download to begin converting videos to MP3 or MP4.",
+  "step3Title": "Pick Your Format, Get Your File",
+  "step3Description": "Choose MP4, MP3, 1080p, or even 4K. Hit Download, and your converted file will be ready in seconds.",
+  "downloadNow": "Download Now",
+  "footerDescription": "Download YouTube videos and shorts – fast, free, & secure!",
+  "otherPlatforms": "Other Platforms",
+  "quickLinks": "Quick Links",
+  "home": "Home",
+
+  "privacyPolicy": "Privacy Policy",
+  "yt": "YouTube ",
+"yd": "Video Downloader",
+  "allRightsReserved": "YouTube Video Downloader. All rights reserved.",
+  "shareSectionTitle": "Share Free YTMP4 Downloader:",
+  "faqTitle": "Frequently Asked Questions",
+  "faq1q": "Is the downloader for YouTube to MP4 free to use?",
+  "faq1a": "Yes. The downloader offers unlimited YouTube to MP4 download access without cost or subscription.",
+  "faq2q": "Which formats are supported by the downloader?",
+  "faq2a": "You can convert YouTube to MP4 for video or MP3 for audio. Other supported formats include WebM and high-resolution variants.",
+  "faq3q": "Does YouTube to MP4 work on all browsers and devices?",
+  "faq3a": "Yes. This YouTube to MP4 downloader is fully operational on Chrome, Safari, Firefox, and all major browsers on mobile and desktop.",
+  "faq4q": "Does ytmp4 support HD and 4K resolutions?",
+  "faq4a": "Yes. It allows YouTube to make MP4 downloads in both HD and 4K resolutions.",
+  "faq5q": "Do you have any file size or download limits?",
+  "faq5a": "No. The YouTube to MP4 service is unlimited. You can download as many videos as needed.",
+  "faq6q": "Is this YouTube to MP4 converter secure?",
+  "faq6a": "Yes. All YouTube to MP4 downloads are processed over encrypted HTTPS connections, ensuring privacy and data protection with the downloader.",
+  "faq7q": "Why is my video not downloading?",
+  "faq7a": "If you're experiencing issues, check if the video is public and not restricted. Try refreshing the page and entering the link again.",
+  "terms": "Terms & Conditions",
+  "fbVD": "Facebook Video Downloader ",
+  "snVD": "Snapchat Video Downloader ",
+  "tkVD": "TikTok Video Downloader ",
+  "instaVD": "Instagram Video Downloader "
+
+}

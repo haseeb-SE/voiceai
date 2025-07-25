@@ -69,50 +69,59 @@ const platforms = [
   },
 ]
 
+// list of your supported locales:
+const supportedLocales = [
+  'en', 'fr', 'es',
+  'id', 'pt', 'sv',
+  'ar', 'zh', 'de',
+  'hu', 'hi'
+];
+
 export function PlatformSelector() {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
+  // derive locale and "pure" path (without locale prefix)
+  const pathParts = pathname.split("/").filter(Boolean)
+  const locale = supportedLocales.includes(pathParts[0]) ? pathParts[0] : "en"
+  const pathWithoutLocale = "/" + pathParts.slice(supportedLocales.includes(pathParts[0]) ? 1 : 0).join("/")
+
   // Check if we're on mobile
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
     checkMobile()
     window.addEventListener("resize", checkMobile)
-
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
 
   // Close dropdown when clicking outside
   useEffect(() => {
+    if (!isOpen) return
     const handleClickOutside = () => setIsOpen(false)
-    if (isOpen) {
-      document.addEventListener("click", handleClickOutside)
-      return () => document.removeEventListener("click", handleClickOutside)
-    }
+    document.addEventListener("click", handleClickOutside)
+    return () => document.removeEventListener("click", handleClickOutside)
   }, [isOpen])
 
-  // Find current platform
-  const currentPlatform = platforms.find((platform) => pathname === platform.path) || platforms[0]
+  // Find current platform by the stripped path
+  const currentPlatform =
+    platforms.find((p) => p.path === (pathWithoutLocale === "/" ? "/" : pathWithoutLocale)) || platforms[0]
 
-  // Get other platforms (excluding current)
-  const otherPlatforms = platforms.filter((platform) => platform.path !== pathname)
+  // Exclude current from the list
+  const otherPlatforms = platforms.filter((p) => p.id !== currentPlatform.id)
 
-  // Desktop version
+  // Desktop
   if (!isMobile) {
     return (
       <div className="hidden md:flex items-center gap-2">
         {otherPlatforms.map((platform) => {
           const Icon = platform.icon
           return (
-            <Link href={platform.path} key={platform.id}>
+            <Link href={`${platform.path}/${locale}`} key={platform.id}>
               <div className="group relative">
                 <div
                   className={`absolute -inset-0.5 bg-gradient-to-r ${platform.gradientFrom} ${platform.gradientTo} rounded-lg opacity-50 group-hover:opacity-100 blur group-hover:blur-sm transition-all duration-300`}
-                ></div>
+                />
                 <div
                   className={`relative flex items-center gap-2 px-3 py-2 bg-gray-800 ${platform.borderColor} border rounded-lg text-white group-hover:bg-gray-700 transition-all duration-300 transform group-hover:scale-105`}
                 >
@@ -127,41 +136,41 @@ export function PlatformSelector() {
     )
   }
 
-  // Mobile version with dropdown
+  // Mobile dropdown
   return (
     <div className="md:hidden relative" onClick={(e) => e.stopPropagation()}>
       <Button
         variant="outline"
         className="flex items-center gap-2 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen((o) => !o)}
       >
         <Menu className="h-4 w-4" />
         <span className="text-sm">Platforms</span>
-        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </Button>
 
-      {/* Mobile Dropdown */}
       {isOpen && (
         <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 overflow-hidden">
-          <div className="py-2">
-            {otherPlatforms.map((platform) => {
-              const Icon = platform.icon
-              return (
-                <Link href={platform.path} key={platform.id} onClick={() => setIsOpen(false)} className="block">
+          {otherPlatforms.map((platform) => {
+            const Icon = platform.icon
+            return (
+              <Link
+                href={`${platform.path}/${locale}`}
+                key={platform.id}
+                onClick={() => setIsOpen(false)}
+                className="block"
+              >
+                <div className="flex items-center gap-3 px-4 py-3 text-white hover:bg-gray-700 transition-colors duration-200">
                   <div
-                    className={`flex items-center gap-3 px-4 py-3 text-white hover:bg-gray-700 transition-colors duration-200 group`}
+                    className={`${platform.color} p-1.5 rounded-full group-hover:scale-110 transform transition-transform duration-200`}
                   >
-                    <div
-                      className={`p-1.5 rounded-full ${platform.color} group-hover:scale-110 transition-transform duration-200`}
-                    >
-                      <Icon className="h-4 w-4 text-white" />
-                    </div>
-                    <span className="font-medium">{platform.name}</span>
+                    <Icon className="h-4 w-4 text-white" />
                   </div>
-                </Link>
-              )
-            })}
-          </div>
+                  <span className="font-medium">{platform.name}</span>
+                </div>
+              </Link>
+            )
+          })}
         </div>
       )}
     </div>

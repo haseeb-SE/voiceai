@@ -1,28 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ➔ this key replaced `experimental.serverComponentsExternalPackages`
+   trailingSlash: true,
   serverExternalPackages: [
     'fluent-ffmpeg',
     'puppeteer',
     'puppeteer-extra',
     'puppeteer-extra-plugin-stealth',
   ],
-
   eslint: {
     ignoreDuringBuilds: true,
   },
-
   typescript: {
     ignoreBuildErrors: true,
   },
-
   images: {
     unoptimized: true,
   },
-
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // exclude Node-only modules from the client bundle
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -56,7 +51,6 @@ const nextConfig = {
     }
 
     if (isServer) {
-      // exclude certain packages from server-side bundling (so they get required at runtime instead)
       config.externals = config.externals || [];
       config.externals.push({
         'puppeteer-extra': 'commonjs puppeteer-extra',
@@ -65,7 +59,6 @@ const nextConfig = {
       });
     }
 
-    // allow loading of binary files (.node, .exe)
     config.module.rules.push({
       test: /\.(node|exe)$/,
       use: 'file-loader',
@@ -73,6 +66,7 @@ const nextConfig = {
 
     return config;
   },
+  
 };
 
 export default nextConfig;

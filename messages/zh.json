@@ -1,0 +1,77 @@
+{
+  "welcome": "快速且免费的 YouTube 转 MP4 下载",
+  "subtitle": "最佳 YouTube 转 MP4 转换器",
+  "download": "下载",
+  "downloaderTitle": "YouTube 视频下载器",
+  "downloaderDescription": "输入 YouTube 链接以 MP3 或 MP4 格式下载视频",
+  "downloaderPara": "使用我们的在线工具，享受快速且免费的 YouTube → MP4 下载。无需任何软件；只需将链接粘贴到浏览器并开始转换。每次都可获得流畅的高分辨率输出体验。",
+  "heroDescription": "使用我们的在线工具，享受快速且免费的 YouTube → MP4 下载。无需任何软件；只需将链接粘贴到浏览器并开始转换。每次都可获得流畅的高分辨率输出体验。",
+  "feature1": "高清或 4K 分辨率视频",
+  "feature2": "兼容 Mac 和 Windows",
+  "feature3": "将 YouTube Shorts 转换为 MP4",
+  "feature4": "将视频转换为 MP4 或 MP3",
+  "featuresTitle": "我们 YouTube 转 MP4 转换器的主要功能",
+  "featuresSection": [
+    {
+      "title": "快速且免费的 YouTube 转 MP4 下载",
+      "desc": "使用我们的在线工具快速且免费地下载 YouTube 转 MP4。无需任何软件；只需粘贴视频链接并开始转换。每次都保证可靠的高质量输出。"
+    },
+    {
+      "title": "最佳 YouTube 转 MP4 转换器",
+      "desc": "使用最佳转换器将 YouTube 视频或 Shorts 转换为 MP4。此工具可提供快速、高质量的下载，无需额外步骤。"
+    },
+    {
+      "title": "将 YouTube 转换为 MP4",
+      "desc": "在线无忧地将 YouTube 转换为 MP4。只需使用常规浏览器；无需安装任何软件。每次都可获得高分辨率、快速且轻松的下载体验。"
+    },
+    {
+      "title": "将 YouTube 视频转换为 MP4",
+      "desc": "粘贴任意 YouTube 视频链接，即可即时将视频转换为 MP4。选择格式，然后在几秒钟内下载文件，无延迟。"
+    },
+    {
+      "title": "将 YouTube Shorts 转换为 MP4",
+      "desc": "快速轻松地将 YouTube Shorts 转换为 MP4。过程很简单：粘贴 Shorts 链接，选择 MP4，即可快速可靠地获取视频。"
+    },
+    {
+      "title": "兼容 Mac 和 Windows",
+      "desc": "我们的 YouTube 转 MP4 转换器在 Mac 和 Windows 上均可顺畅运行。无需下载或插件；只需粘贴链接，几秒钟内即可在线转换。"
+    }
+  ],
+  "howItWorksTitle": "将 YouTube 视频转换的 3 个简单步骤",
+  "step1Title": "获取链接",
+  "step1Description": "找到要从 YouTube 下载或转换的视频。从浏览器地址栏复制完整的 URL。",
+  "step2Title": "粘贴并开始",
+  "step2Description": "将 YouTube 链接粘贴到 ytmp4 工具的搜索框。然后，点击下载开始将视频转换为 MP3 或 MP4。",
+  "step3Title": "选择格式，获取文件",
+  "step3Description": "选择 MP4、MP3、1080p，甚至 4K。点击下载，您的转换文件将在几秒钟内准备就绪。",
+  "downloadNow": "立即下载",
+  "footerDescription": "下载 YouTube 视频和 Shorts – 快速、免费且安全！",
+  "otherPlatforms": "其他平台",
+  "quickLinks": "快速链接",
+  "home": "首页",
+  "privacyPolicy": "隐私政策",
+  "yt": "YouTube ",
+  "yd": "视频下载器",
+  "allRightsReserved": "YouTube 视频下载器。版权所有。",
+  "shareSectionTitle": "分享免费 YTMP4 下载器：",
+  "faqTitle": "常见问题",
+  "faq1q": "将 YouTube 转为 MP4 的下载器是免费使用的吗？",
+  "faq1a": "是的。该下载器提供无限制的 YouTube 转 MP4 下载，无需费用或订阅。",
+  "faq2q": "此下载器支持哪些格式？",
+  "faq2a": "您可以将 YouTube 转换为 MP4（视频）或 MP3（音频）。其他支持的格式包括 WebM 及高分辨率变体。",
+  "faq3q": "将 YouTube 转 MP4 在所有浏览器和设备上都可用吗？",
+  "faq3a": "是的。此 YouTube 转 MP4 下载器在 Chrome、Safari、Firefox 及所有主流移动和桌面浏览器上均可正常运行。",
+  "faq4q": "ytmp4 是否支持 HD 和 4K 分辨率？",
+  "faq4a": "是的。它允许将 YouTube 下载为 MP4 的 HD 和 4K 分辨率版本。",
+  "faq5q": "是否对文件大小或下载次数有限制？",
+  "faq5a": "不。YouTube 转 MP4 服务不限次数。您可以下载任意数量的视频。",
+  "faq6q": "此 YouTube 转 MP4 转换器安全吗？",
+  "faq6a": "是的。所有下载均通过加密的 HTTPS 连接处理，确保隐私和数据保护。",
+  "faq7q": "为什么我的视频无法下载？",
+  "faq7a": "如果遇到问题，请检查视频是否公开且未受限制。尝试刷新页面并重新输入链接。",
+  "terms": "条款与条件",
+  "fbVD": "Facebook 视频下载器 ",
+  "snVD": "Snapchat 视频下载器 ",
+  "tkVD": "TikTok 视频下载器 ",
+  "instaVD": "Instagram 视频下载器 "
+}
