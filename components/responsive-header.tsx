@@ -113,8 +113,8 @@ export function ResponsiveHeader({ locale }: ResponsiveHeaderProps) {
             </div>
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-bold text-white">{current.name}</span>
-            <span className={`text-xl font-bold ${current.color}`}>Downloader</span>
+            <span className="text-sm font-bold text-white">{current.name}</span>
+            <span className={`text-sm font-bold ${current.color}`}>Downloader</span>
           </div>
         </Link>
 
